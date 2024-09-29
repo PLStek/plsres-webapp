@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Charbon {
+  id            Int      @id @default(autoincrement())
+  name          String
+  description   String
+  dateTimeStamp DateTime
+  replayUrl     String?
+  courseId      Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  authorId      Int
+
+  resources   Resource[]
+  actionneurs CharbonActionneur[]
+  course      Course              @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@index([courseId], name: "courseId")
+}
+
+model Course {
+  id         Int    @id @default(autoincrement())
+  code       String @unique
+  name       String
+  categoryId Int
+
+  category CourseCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  charbon  Charbon[]
+}
+
+model CourseCategory {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  courses Course[]
+}
+
+model Resource {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String
+  charbonId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  Int
+
+  charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
+}
+
+model Actionneur {
+  id       Int                 @id @default(autoincrement())
+  username String              @unique
+  isAdmin  Boolean             @default(false)
+  isActive Boolean             @default(true)
+  charbons CharbonActionneur[]
+}
+
+model CharbonActionneur {
+  charbon   Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
+  charbonId Int
+
+  actionneur   Actionneur @relation(fields: [actionneurId], references: [id], onDelete: Cascade)
+  actionneurId Int
+
+  @@id([charbonId, actionneurId])
+}
