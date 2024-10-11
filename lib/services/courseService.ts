@@ -1,3 +1,5 @@
+"use server";
+
 import { getCourses, postCourse, putCourse } from "../data/courseData";
 import { CourseCreateInput, CourseUpdateInput } from "../models/course";
 

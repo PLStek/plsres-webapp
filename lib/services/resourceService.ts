@@ -1,3 +1,5 @@
+"use server";
+
 import { Resource } from "@prisma/client";
 import {
     deleteResource,
