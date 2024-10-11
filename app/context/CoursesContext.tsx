@@ -5,7 +5,6 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 type CoursesContextType = {
     getCourses: () => Course[];
-    getCourseById: (id: number) => Course | undefined;
     addCourse: (newCourse: Course) => void;
     removeCourse: (id: number) => void;
 };
@@ -22,7 +21,6 @@ export function CoursesProvider({
     const [courses, setCourses] = useState(initialCourses || []);
 
     const getCourses = () => courses;
-    const getCourseById = (id: number) => courses.find((c) => c.id === id);
     const addCourse = (newCourse: Course) =>
         setCourses([...courses, newCourse]);
     const removeCourse = (id: number) =>
@@ -30,16 +28,16 @@ export function CoursesProvider({
 
     return (
         <CoursesContext.Provider
-            value={{ getCourses, getCourseById, addCourse, removeCourse }}
+            value={{ getCourses, addCourse, removeCourse }}
         >
             {children}
         </CoursesContext.Provider>
     );
 }
 
-export function useCourses() {
+export function useCoursesContext() {
     const context = useContext(CoursesContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error("useCourses must be used within a CoursesProvider");
     }
     return context;

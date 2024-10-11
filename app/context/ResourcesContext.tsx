@@ -5,7 +5,6 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 type ResourcesContextType = {
     getResources: () => Resource[];
-    getResourceById: (id: number) => Resource | undefined;
     addResource: (newResource: Resource) => void;
     removeResource: (id: number) => void;
 };
@@ -24,7 +23,6 @@ export function ResourcesProvider({
     const [resources, setResources] = useState(initialResources || []);
 
     const getResources = () => resources;
-    const getResourceById = (id: number) => resources.find((c) => c.id === id);
     const addResource = (newResource: Resource) =>
         setResources([...resources, newResource]);
     const removeResource = (id: number) =>
@@ -34,7 +32,6 @@ export function ResourcesProvider({
         <ResourcesContext.Provider
             value={{
                 getResources,
-                getResourceById,
                 addResource,
                 removeResource,
             }}
@@ -44,7 +41,7 @@ export function ResourcesProvider({
     );
 }
 
-export function useResources() {
+export function useResourcesContext() {
     const context = useContext(ResourcesContext);
     if (context === undefined) {
         throw new Error("useResources must be used within a ResourcesProvider");
