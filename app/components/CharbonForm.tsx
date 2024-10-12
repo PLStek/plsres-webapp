@@ -4,6 +4,7 @@ import { CharbonCreateInput } from "@/lib/models/charbon";
 import { useCreateCharbon } from "../hooks/useCharbons";
 import { useGetCourses } from "../hooks/useCourses";
 import { useGetActionneurs } from "../hooks/useActionneurs";
+import Loading from "./loading/Loading";
 
 const CharbonForm = () => {
     const getCourses = useGetCourses();
@@ -26,6 +27,9 @@ const CharbonForm = () => {
     const actionneurs = getActionneurs();
 
     return (
+        loading ? <Loading>
+
+        </Loading> :(
         <form action={submit}>
             <label htmlFor="name">Name</label>
             <input type="text" name="name" />
@@ -50,7 +54,7 @@ const CharbonForm = () => {
                 ))}
             </select>
             <button>Add Charbon</button>
-        </form>
+        </form>)
     );
 };
 
