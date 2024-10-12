@@ -6,19 +6,19 @@ import {
 } from "@/lib/services/actionneurService";
 import { ActionneurCreateInput } from "@/lib/models/actionneur";
 
-export function useGetActionneurs() {
+export const useGetActionneurs = () => {
     const { getActionneurs } = useActionneursContext();
     return getActionneurs;
-}
+};
 
-export function useGetActionneurById() {
+export const useGetActionneurById = () => {
     const { getActionneurs } = useActionneursContext();
     const getActionneurById = (id: number) =>
         getActionneurs().find((c) => c.id === id);
     return getActionneurById;
-}
+};
 
-export function useCreateActionneur() {
+export const useCreateActionneur = () => {
     const { addActionneur } = useActionneursContext();
 
     const [loading, setLoading] = useState(false);
@@ -30,9 +30,9 @@ export function useCreateActionneur() {
     };
 
     return { createActionneur, loading };
-}
+};
 
-export function useDeleteActionneur() {
+export const useDeleteActionneur = () => {
     const { removeActionneur } = useActionneursContext();
 
     const [loading, setLoading] = useState(false);
@@ -44,4 +44,4 @@ export function useDeleteActionneur() {
     };
 
     return { deleteActionneur, loading };
-}
+};

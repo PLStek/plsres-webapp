@@ -6,18 +6,18 @@ import { useCoursesContext } from "../context/CoursesContext";
 import { useState } from "react";
 import { CourseCreateInput } from "@/lib/models/course";
 
-export function useGetCourses() {
+export const useGetCourses = () => {
     const { getCourses } = useCoursesContext();
     return getCourses;
-}
+};
 
-export function useGetCourseById() {
+export const useGetCourseById = () => {
     const { getCourses } = useCoursesContext();
     const getCourseById = (id: number) => getCourses().find((c) => c.id === id);
     return getCourseById;
-}
+};
 
-export function useCreateCourse() {
+export const useCreateCourse = () => {
     const { addCourse } = useCoursesContext();
 
     const [loading, setLoading] = useState(false);
@@ -29,9 +29,9 @@ export function useCreateCourse() {
     };
 
     return { createCourse, loading };
-}
+};
 
-export function useDeleteCourse() {
+export const useDeleteCourse = () => {
     const { removeCourse: removeCourseFromContext } = useCoursesContext();
 
     const [loading, setLoading] = useState(false);
@@ -43,4 +43,4 @@ export function useDeleteCourse() {
     };
 
     return { deleteCourse, loading };
-}
+};

@@ -6,19 +6,19 @@ import {
 } from "@/lib/services/charbonService";
 import { useState } from "react";
 
-export function useGetCharbons() {
+export const useGetCharbons = () => {
     const { getCharbons } = useCharbonsContext();
     return getCharbons;
-}
+};
 
-export function useGetCharbonById() {
+export const useGetCharbonById = () => {
     const { getCharbons } = useCharbonsContext();
     const getCharbonById = (id: number): Charbon | undefined =>
         getCharbons().find((c) => c.id === id);
     return getCharbonById;
-}
+};
 
-export function useCreateCharbon() {
+export const useCreateCharbon = () => {
     const { addCharbon } = useCharbonsContext();
 
     const [loading, setLoading] = useState(false);
@@ -30,9 +30,9 @@ export function useCreateCharbon() {
     };
 
     return { createCharbon, loading };
-}
+};
 
-export function useDeleteCharbon() {
+export const useDeleteCharbon = () => {
     const { removeCharbon } = useCharbonsContext();
 
     const [loading, setLoading] = useState(false);
@@ -44,4 +44,4 @@ export function useDeleteCharbon() {
     };
 
     return { deleteCharbon, loading };
-}
+};

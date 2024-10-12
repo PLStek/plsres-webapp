@@ -6,19 +6,19 @@ import {
     deleteResourceService,
 } from "@/lib/services/resourceService";
 
-export function useResources() {
+export const useResources = () => {
     const { getResources } = useResourcesContext();
     return getResources;
-}
+};
 
-export function useGetResourceById() {
+export const useGetResourceById = () => {
     const { getResources } = useResourcesContext();
     const getResourceById = (id: number) =>
         getResources().find((c) => c.id === id);
     return getResourceById;
-}
+};
 
-export function useCreateResource() {
+export const useCreateResource = () => {
     const { addResource } = useResourcesContext();
 
     const [loading, setLoading] = useState(false);
@@ -30,9 +30,9 @@ export function useCreateResource() {
     };
 
     return { createResource, loading };
-}
+};
 
-export function useDeleteResource() {
+export const useDeleteResource = () => {
     const { removeResource } = useResourcesContext();
 
     const [loading, setLoading] = useState(false);
@@ -44,4 +44,4 @@ export function useDeleteResource() {
     };
 
     return { deleteResource, loading };
-}
+};
