@@ -13,13 +13,13 @@ const ActionneursContext = createContext<ActionneursContextType | undefined>(
     undefined
 );
 
-export function ActionneursProvider({
+const ActionneursProvider = ({
     initialActionneurs,
     children,
 }: {
     initialActionneurs: Actionneur[];
     children: ReactNode;
-}) {
+}) => {
     const [actionneurs, setActionneurs] = useState(initialActionneurs || []);
 
     const getActionneurs = () => actionneurs;
@@ -39,9 +39,11 @@ export function ActionneursProvider({
             {children}
         </ActionneursContext.Provider>
     );
-}
+};
 
-export function useActionneursContext() {
+export default ActionneursProvider;
+
+export const useActionneursContext = () => {
     const context = useContext(ActionneursContext);
     if (context === undefined) {
         throw new Error(
@@ -49,4 +51,5 @@ export function useActionneursContext() {
         );
     }
     return context;
-}
+};
+

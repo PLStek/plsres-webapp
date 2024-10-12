@@ -1,15 +1,12 @@
 "use client";
 
 import CharbonCard from "./CharbonCard";
-import { useCharbons } from "../context/CharbonsContext";
+import { useGetCharbons } from "../hooks/useCharbons";
 
-export default function CharbonList() {
-    const {getCharbons} = useCharbons();
+const CharbonList = () => {
+    const getCharbons = useGetCharbons();
     const charbons = getCharbons();
 
-    if (charbons.length === 0) {
-        return <div>Loading...</div>;
-    }
     return (
         <div>
             {charbons.map((charbon) => (
@@ -17,4 +14,6 @@ export default function CharbonList() {
             ))}
         </div>
     );
-}
+};
+
+export default CharbonList;

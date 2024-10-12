@@ -11,13 +11,13 @@ type CoursesContextType = {
 
 const CoursesContext = createContext<CoursesContextType | undefined>(undefined);
 
-export function CoursesProvider({
+const CoursesProvider = ({
     initialCourses,
     children,
 }: {
     initialCourses: Course[];
     children: ReactNode;
-}) {
+}) => {
     const [courses, setCourses] = useState(initialCourses || []);
 
     const getCourses = () => courses;
@@ -33,12 +33,14 @@ export function CoursesProvider({
             {children}
         </CoursesContext.Provider>
     );
-}
+};
 
-export function useCoursesContext() {
+export default CoursesProvider;
+
+export const useCoursesContext = () => {
     const context = useContext(CoursesContext);
     if (context === undefined) {
         throw new Error("useCourses must be used within a CoursesProvider");
     }
     return context;
-}
+};

@@ -1,12 +1,12 @@
-import { getCharbonsService } from "@/lib/services/charbonService";
 import CharbonForm from "./components/CharbonForm";
+import CharbonsProvider from "./context/CharbonsContext";
+import ActionneursProvider from "./context/ActionneursContext";
+import CoursesProvider from "./context/CoursesContext";
+import ResourcesProvider from "./context/ResourcesContext";
 import CharbonList from "./components/CharbonList";
-import { getActionneursService } from "@/lib/services/actionneurService";
+import { getCharbonsService } from "@/lib/services/charbonService";
 import { getCoursesService } from "@/lib/services/courseService";
-import { CharbonsProvider } from "./context/CharbonsContext";
-import { ActionneursProvider } from "./context/ActionneursContext";
-import { CoursesProvider } from "./context/CoursesContext";
-import { ResourcesProvider } from "./context/ResourcesContext";
+import { getActionneursService } from "@/lib/services/actionneurService";
 import { getResourcesService } from "@/lib/services/resourceService";
 
 export default async function Home() {

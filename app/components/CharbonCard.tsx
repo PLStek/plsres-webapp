@@ -1,9 +1,9 @@
 import type { Charbon } from "@/lib/models/charbon";
 import { useCourses } from "../context/CoursesContext";
 
-export default async function CharbonCard({ charbon }: { charbon: Charbon }) {
-    const { getCourseById } = useCourses();
-    const course = getCourseById(charbon.courseId);
+const CharbonCard = ({ charbon }: { charbon: Charbon }) => {
+    /* const { getCourseById } = useCourses();
+    const course = getCourseById(charbon.courseId); */
 
     return (
         <div>
@@ -11,7 +11,9 @@ export default async function CharbonCard({ charbon }: { charbon: Charbon }) {
             <br />
             {charbon.description}
             <br />
-            {course?.category}
+            {/* {course?.category} */}
         </div>
     );
-}
+};
+
+export default CharbonCard;

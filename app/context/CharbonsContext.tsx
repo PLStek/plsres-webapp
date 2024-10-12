@@ -13,13 +13,13 @@ const CharbonsContext = createContext<CharbonsContextType | undefined>(
     undefined
 );
 
-export function CharbonsProvider({
+const CharbonsProvider = ({
     initialCharbons,
     children,
 }: {
     initialCharbons: Charbon[];
     children: ReactNode;
-}) {
+}) => {
     const [charbons, setCharbons] = useState(initialCharbons || []);
 
     const getCharbons = () => charbons;
@@ -35,12 +35,14 @@ export function CharbonsProvider({
             {children}
         </CharbonsContext.Provider>
     );
-}
+};
 
-export function useCharbonsContext() {
+export default CharbonsProvider;
+
+export const useCharbonsContext = () => {
     const context = useContext(CharbonsContext);
     if (context === undefined) {
         throw new Error("useCharbons must be used within a CharbonsProvider");
     }
     return context;
-}
+};

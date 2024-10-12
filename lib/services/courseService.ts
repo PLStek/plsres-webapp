@@ -1,6 +1,11 @@
 "use server";
 
-import { getCourses, postCourse, putCourse } from "../data/courseData";
+import {
+    deleteCourse,
+    getCourses,
+    postCourse,
+    putCourse,
+} from "../data/courseData";
 import { CourseCreateInput, CourseUpdateInput } from "../models/course";
 
 export const getCoursesService = async () => {
@@ -21,4 +26,8 @@ export const updateCourseService = async (
     data: CourseUpdateInput
 ) => {
     return putCourse(id, data);
+};
+
+export const deleteCourseService = async (id: number) => {
+    return deleteCourse(id);
 };

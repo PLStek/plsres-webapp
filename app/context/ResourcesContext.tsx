@@ -13,13 +13,13 @@ const ResourcesContext = createContext<ResourcesContextType | undefined>(
     undefined
 );
 
-export function ResourcesProvider({
+const ResourcesProvider = ({
     initialResources,
     children,
 }: {
     initialResources: Resource[];
     children: ReactNode;
-}) {
+}) => {
     const [resources, setResources] = useState(initialResources || []);
 
     const getResources = () => resources;
@@ -39,12 +39,14 @@ export function ResourcesProvider({
             {children}
         </ResourcesContext.Provider>
     );
-}
+};
 
-export function useResourcesContext() {
+export default ResourcesProvider;
+
+export const useResourcesContext = () => {
     const context = useContext(ResourcesContext);
     if (context === undefined) {
         throw new Error("useResources must be used within a ResourcesProvider");
     }
     return context;
-}
+};
