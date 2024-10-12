@@ -1,6 +1,6 @@
 "use client";
 
-import { CharbonCreateInput } from "@/lib/models/charbon";
+import { CharbonCreateInput } from "@lib/models/charbon";
 import { useCreateCharbon } from "../hooks/useCharbons";
 import { useGetCourses } from "../hooks/useCourses";
 import { useGetActionneurs } from "../hooks/useActionneurs";

@@ -4,10 +4,10 @@ import ActionneursProvider from "./context/ActionneursContext";
 import CoursesProvider from "./context/CoursesContext";
 import ResourcesProvider from "./context/ResourcesContext";
 import CharbonList from "./components/CharbonList";
-import { getCharbonsService } from "@/lib/services/charbonService";
-import { getCoursesService } from "@/lib/services/courseService";
-import { getActionneursService } from "@/lib/services/actionneurService";
-import { getResourcesService } from "@/lib/services/resourceService";
+import { getCharbonsService } from "@lib/services/charbonService";
+import { getCoursesService } from "@lib/services/courseService";
+import { getActionneursService } from "@lib/services/actionneurService";
+import { getResourcesService } from "@lib/services/resourceService";
 
 export default async function Home() {
     const charbons = await getCharbonsService();

@@ -3,8 +3,8 @@ import { useActionneursContext } from "../context/ActionneursContext";
 import {
     createActionneurService,
     deleteActionneurService,
-} from "@/lib/services/actionneurService";
-import { ActionneurCreateInput } from "@/lib/models/actionneur";
+} from "@lib/services/actionneurService";
+import { ActionneurCreateInput } from "@lib/models/actionneur";
 
 export const useGetActionneurs = () => {
     const { getActionneurs } = useActionneursContext();

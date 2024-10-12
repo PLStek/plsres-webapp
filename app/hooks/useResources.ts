@@ -1,10 +1,10 @@
-import { ResourceCreateInput } from "@/lib/models/resource";
+import { ResourceCreateInput } from "@lib/models/resource";
 import { useResourcesContext } from "../context/ResourcesContext";
 import { useState } from "react";
 import {
     createResourceService,
     deleteResourceService,
-} from "@/lib/services/resourceService";
+} from "@lib/services/resourceService";
 
 export const useResources = () => {
     const { getResources } = useResourcesContext();

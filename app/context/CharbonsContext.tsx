@@ -1,6 +1,6 @@
 "use client";
 
-import { Charbon } from "@/lib/models/charbon";
+import { Charbon } from "@lib/models/charbon";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type CharbonsContextType = {

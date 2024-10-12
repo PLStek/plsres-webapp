@@ -1,6 +1,6 @@
 "use client";
 
-import { Course } from "@/lib/models/course";
+import { Course } from "@lib/models/course";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type CoursesContextType = {

@@ -1,5 +1,5 @@
 import { Prisma, Actionneur } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@lib/prisma";
 
 export const getActionneurs = async () => {
     return prisma.actionneur.findMany();

@@ -1,6 +1,6 @@
 "use client";
 
-import { Actionneur } from "@/lib/models/actionneur";
+import { Actionneur } from "@lib/models/actionneur";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type ActionneursContextType = {

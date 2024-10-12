@@ -1,6 +1,6 @@
 "use client";
 
-import { Resource } from "@/lib/models/resource";
+import { Resource } from "@lib/models/resource";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type ResourcesContextType = {

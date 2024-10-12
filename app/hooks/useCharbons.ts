@@ -1,9 +1,9 @@
 import { useCharbonsContext } from "../context/CharbonsContext";
-import { Charbon, CharbonCreateInput } from "@/lib/models/charbon";
+import { Charbon, CharbonCreateInput } from "@lib/models/charbon";
 import {
     createCharbonService,
     deleteCharbonService,
-} from "@/lib/services/charbonService";
+} from "@lib/services/charbonService";
 import { useState } from "react";
 
 export const useGetCharbons = () => {
