@@ -1,7 +1,7 @@
 "use client";
 
 import CharbonCard from "./CharbonCard";
-import { useGetCharbons } from "../hooks/useCharbons";
+import { useGetCharbons } from "@app/hooks/useCharbons";
 
 const CharbonList = () => {
     const getCharbons = useGetCharbons();

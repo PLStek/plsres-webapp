@@ -1,5 +1,5 @@
 import type { Charbon } from "@lib/models/charbon";
-import { useGetCourseById } from "../hooks/useCourses";
+import { useGetCourseById } from "@app/hooks/useCourses";
 
 const CharbonCard = ({ charbon }: { charbon: Charbon }) => {
     const getCourseById = useGetCourseById();

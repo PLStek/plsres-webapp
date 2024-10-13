@@ -1,10 +1,10 @@
 "use client";
 
 import { CharbonCreateInput } from "@lib/models/charbon";
-import { useCreateCharbon } from "../hooks/useCharbons";
-import { useGetCourses } from "../hooks/useCourses";
-import { useGetActionneurs } from "../hooks/useActionneurs";
-import Loading from "./loading/Loading";
+import { useCreateCharbon } from "@app/hooks/useCharbons";
+import { useGetCourses } from "@app/hooks/useCourses";
+import { useGetActionneurs } from "@app/hooks/useActionneurs";
+import Loading from "../Loading";
 
 const CharbonForm = () => {
     const getCourses = useGetCourses();
@@ -27,7 +27,7 @@ const CharbonForm = () => {
     const actionneurs = getActionneurs();
 
     return loading ? (
-        <Loading />
+        <Loading size={20} />
     ) : (
         <form action={submit}>
             <label htmlFor="name">Name</label>

@@ -1,0 +1,19 @@
+.wrapper {
+    @apply relative bg-white rounded-lg shadow-lg p-8  overflow-hidden;
+    height: 500px;
+    max-width: 80%;
+}
+
+@media (min-width: 1920px) {
+    .wrapper {
+        max-width: 1536px; /* Taille fixe pour les écrans plus grands que Full HD */
+    }
+}
+.charbonImage {
+    @apply absolute bottom-0 right-0;
+    width: 500px;
+    height: 500px;
+    margin-bottom: -10%;
+    margin-right: -10%;
+    transform: rotate(-40deg);
+}
