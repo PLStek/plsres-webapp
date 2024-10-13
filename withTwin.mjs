@@ -7,7 +7,7 @@ import * as url from "url";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 // The folders containing files importing twin.macro
-const includedDirs = [path.resolve(__dirname, "src")];
+const includedDirs = [path.resolve(__dirname, "app")];
 
 /** @returns {import('next').NextConfig} */
 export default function withTwin(

@@ -29,7 +29,9 @@
             "@lib/*": [
                 "./lib/*"
             ],
-
+            "@images/*": [
+                "./public/images/*"
+            ],
         }
     },
     "include": [

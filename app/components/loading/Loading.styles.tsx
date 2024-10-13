@@ -1,11 +1,15 @@
-import tw, { styled }    from "twin.macro";
+import { styled } from "twin.macro";
 
-export const CircularLoader = styled.div`
-    ${tw`border-4 border-solid border-gray-300`}
-    border-top: 16px solid #3498db;
+type CircularLoaderProps = {
+    size?: number;
+};
+
+export const CircularLoader = styled.div<CircularLoaderProps>`
+    border: ${(props) => (props.size || 120) / 8}px solid #f3f3f3;
+    border-top: ${(props) => (props.size || 120) / 8}px solid #333333;
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: ${(props) => props.size || 120}px;
+    height: ${(props) => props.size || 120}px;
     animation: spin 2s linear infinite;
 
     @keyframes spin {

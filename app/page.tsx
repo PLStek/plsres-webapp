@@ -8,6 +8,7 @@ import { getCharbonsService } from "@lib/services/charbonService";
 import { getCoursesService } from "@lib/services/courseService";
 import { getActionneursService } from "@lib/services/actionneurService";
 import { getResourcesService } from "@lib/services/resourceService";
+import WelcomeBanner from "./components/welcomeBanner/WelcomeBanner";
 
 export default async function Home() {
     const charbons = await getCharbonsService();
@@ -16,15 +17,18 @@ export default async function Home() {
     const resources = await getResourcesService();
 
     return (
-        <CharbonsProvider initialCharbons={charbons}>
-            <ActionneursProvider initialActionneurs={actionneurs}>
-                <CoursesProvider initialCourses={courses}>
-                    <ResourcesProvider initialResources={resources}>
-                        <CharbonForm />
-                        <CharbonList />
-                    </ResourcesProvider>
-                </CoursesProvider>
-            </ActionneursProvider>
-        </CharbonsProvider>
+        <>
+            <WelcomeBanner />
+            <CharbonsProvider initialCharbons={charbons}>
+                <ActionneursProvider initialActionneurs={actionneurs}>
+                    <CoursesProvider initialCourses={courses}>
+                        <ResourcesProvider initialResources={resources}>
+                            <CharbonForm />
+                            <CharbonList />
+                        </ResourcesProvider>
+                    </CoursesProvider>
+                </ActionneursProvider>
+            </CharbonsProvider>
+        </>
     );
 }

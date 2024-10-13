@@ -34,23 +34,26 @@ export const getCharbonByIdService = async (
     return charbons.find((charbon) => charbon.id === id);
 };
 
-export const createCharbonService = async (
-    data: CharbonCreateInput
-): Promise<Charbon> => {
+export const createCharbonService = async ({
+    courseId,
+    actionneurIds,
+    ...data
+}: CharbonCreateInput): Promise<Charbon> => {
     const newCharbonPostData = {
         ...data,
-        course: { connect: { id: data.courseId } },
+        course: { connect: { id: courseId } },
     };
     const newCharbon = await postCharbon(newCharbonPostData);
-    const charbonActionneursPostData = data.actionneurIds.map(
-        (actionneurId) => ({ charbonId: newCharbon.id, actionneurId })
-    );
+    const charbonActionneursPostData = actionneurIds.map((actionneurId) => ({
+        charbonId: newCharbon.id,
+        actionneurId,
+    }));
 
     await postCharbonActionneurs(charbonActionneursPostData);
 
     return {
         ...newCharbon,
-        actionneurIds: data.actionneurIds,
+        actionneurIds: actionneurIds,
     };
 };
 

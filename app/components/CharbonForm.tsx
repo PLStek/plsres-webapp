@@ -26,10 +26,9 @@ const CharbonForm = () => {
 
     const actionneurs = getActionneurs();
 
-    return (
-        loading ? <Loading>
-
-        </Loading> :(
+    return loading ? (
+        <Loading />
+    ) : (
         <form action={submit}>
             <label htmlFor="name">Name</label>
             <input type="text" name="name" />
@@ -54,7 +53,7 @@ const CharbonForm = () => {
                 ))}
             </select>
             <button>Add Charbon</button>
-        </form>)
+        </form>
     );
 };
 
