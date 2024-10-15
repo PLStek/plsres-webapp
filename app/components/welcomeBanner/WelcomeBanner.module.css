@@ -1,0 +1,7 @@
+.wrapper {
+    @apply relative rounded-2xl shadow-md p-8 overflow-hidden bg-[#f9f9f9] min-h-[500px] w-full lg:max-w-[80%] 3xl:max-w-[1536px];
+}
+
+.charbonImage {
+    @apply hidden xl:block absolute bottom-0 right-0 w-[500px] h-[500px] mb-[-10%] mr-[-10%] rotate-[-40deg];
+}

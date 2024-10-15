@@ -1,0 +1,3 @@
+.wrapper {
+    @apply relative rounded-2xl shadow-md p-8  overflow-hidden bg-[#f9f9f9] w-full lg:flex-grow;
+}
