@@ -11,11 +11,11 @@ export const useGetActionneurs = () => {
     return getActionneurs;
 };
 
-export const useGetActionneurById = () => {
+export const useGetActionneursByIds = () => {
     const { getActionneurs } = useActionneursContext();
-    const getActionneurById = (id: number) =>
-        getActionneurs().find((c) => c.id === id);
-    return getActionneurById;
+    const getActionneursByIds = (ids: number[]) =>
+        getActionneurs().filter((c) => ids.includes(c.id));
+    return getActionneursByIds;
 };
 
 export const useCreateActionneur = () => {

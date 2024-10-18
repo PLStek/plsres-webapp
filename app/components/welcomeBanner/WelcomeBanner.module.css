@@ -1,5 +1,5 @@
 .wrapper {
-    @apply relative rounded-2xl shadow-md p-8 overflow-hidden bg-[#f9f9f9] min-h-[500px] w-full lg:max-w-[80%] 3xl:max-w-[1536px];
+    @apply relative rounded-2xl shadow-sm p-8 overflow-hidden bg-[#f9f9f9] min-h-[500px];
 }
 
 .charbonImage {

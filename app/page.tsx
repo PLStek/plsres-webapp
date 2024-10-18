@@ -22,12 +22,14 @@ export default async function Home() {
                 <ActionneursProvider initialActionneurs={actionneurs}>
                     <CoursesProvider initialCourses={courses}>
                         <ResourcesProvider initialResources={resources}>
-                            <div className="flex justify-center items-center mt-10">
-                                <WelcomeBanner />
-                            </div>
-                            <div className="flex flex-col-reverse lg:flex-row mt-10 space-y-4 lg:space-y-0 lg:space-x-10 items-start w-full lg:max-w-[80%] 3xl:max-w-[1536px] mx-auto justify-center">
-                                <CharbonMine />
-                                <Sidebar />
+                            <div className="mx-auto w-full lg:max-w-[90%] 2xl:max-w-[80%] 3xl:max-w-[1536px]">
+                                <div className="flex justify-center items-center mt-10">
+                                    <WelcomeBanner />
+                                </div>
+                                <div className="flex flex-col-reverse xl:flex-row mt-10 space-y-4 xl:space-y-0 xl:space-x-10 items-start  ">
+                                    <CharbonMine />
+                                    <Sidebar />
+                                </div>
                             </div>
                         </ResourcesProvider>
                     </CoursesProvider>
