@@ -34,7 +34,7 @@ const CharbonForm = () => {
 
             <div>
                 <label htmlFor="description" className={styles.formLabel}>Description</label>
-                <input type="text" name="description" className={styles.formField} />
+                <textarea name="description" className={styles.formField} />
             </div>
 
             <div>
