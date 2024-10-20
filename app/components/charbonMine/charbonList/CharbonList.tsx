@@ -1,6 +1,6 @@
 "use client";
 
-import CharbonCard from "./charbonCard.tsx/CharbonCard";
+import CharbonCard from "./charbonCard/CharbonCard";
 import { useGetCharbons } from "@app/hooks/useCharbons";
 
 const CharbonList = () => {
