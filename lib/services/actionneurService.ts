@@ -16,12 +16,18 @@ export const getActionneursService = async (): Promise<Actionneur[]> => {
     return getActionneurs();
 };
 
-export const getActionneursFromIdsService = async (
-    ids: number[]
-): Promise<Actionneur[]> => {
+export const getActionneurByIdService = async (
+    id: number
+): Promise<Actionneur | undefined> => {
     const actionneurs = await getActionneursService();
-    const idsSet = new Set(ids);
-    return actionneurs.filter((actionneur) => idsSet.has(actionneur.id));
+    return actionneurs.find((actionneur) => (actionneur.id = id));
+};
+
+export const getActionneurByDiscordIdService = async (
+    discordId: string
+): Promise<Actionneur | undefined> => {
+    const actionneurs = await getActionneursService();
+    return actionneurs.find((actionneur) => (actionneur.discordId = discordId));
 };
 
 //TODO: Implement

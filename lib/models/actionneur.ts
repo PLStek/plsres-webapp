@@ -1,4 +1,5 @@
 type ActionneurBase = {
+    discordId: string;
     username: string;
     isAdmin: boolean;
     isActive: boolean;

@@ -23,9 +23,9 @@ model Charbon {
 }
 
 model Course {
-    id         Int    @id @default(autoincrement())
-    code       String @unique
-    name       String
+    id   Int    @id @default(autoincrement())
+    code String @unique
+    name String
 
     category CourseCategory
     charbon  Charbon[]
@@ -39,7 +39,7 @@ enum CourseCategory {
 }
 
 model Resource {
-    id        Int      @id @default(autoincrement())
+    id        Int    @id @default(autoincrement())
     name      String
     url       String
     charbonId Int
@@ -48,11 +48,12 @@ model Resource {
 }
 
 model Actionneur {
-    id       Int                 @id @default(autoincrement())
-    username String              @unique
-    isAdmin  Boolean             @default(false)
-    isActive Boolean             @default(true)
-    charbons CharbonActionneur[]
+    id        Int                 @id @default(autoincrement())
+    discordId String              @unique
+    username  String              @unique
+    isAdmin   Boolean             @default(false)
+    isActive  Boolean             @default(true)
+    charbons  CharbonActionneur[]
 }
 
 model CharbonActionneur {
