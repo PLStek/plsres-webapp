@@ -1,47 +1,49 @@
-import { useState } from "react";
-import { useActionneursContext } from "../context/ActionneursContext";
+import { ActionneursContext } from "@app/context/ActionneursContext";
+import { useContext, useState } from "react";
 import {
     createActionneurService,
     deleteActionneurService,
 } from "@lib/services/actionneur";
 import { ActionneurCreateInput } from "@lib/models/actionneur";
 
-export const useGetActionneurs = () => {
-    const { getActionneurs } = useActionneursContext();
-    return getActionneurs;
-};
+export const useActionneurs = () => {
+    const context = useContext(ActionneursContext);
 
-export const useGetActionneursByIds = () => {
-    const { getActionneurs } = useActionneursContext();
-    const getActionneursByIds = (ids: number[]) =>
-        getActionneurs().filter((c) => ids.includes(c.id));
-    return getActionneursByIds;
-};
+    if (!context) {
+        throw new Error(
+            "useActionneurs must be used within an ActionneursProvider"
+        );
+    }
 
-export const useCreateActionneur = () => {
-    const { addActionneur } = useActionneursContext();
+    const { actionneurs, addActionneur, removeActionneur } = context;
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState({
+        create: false,
+        delete: false,
+    });
+
+    const fetchActionneursByIds = (ids: number[]) =>
+        actionneurs.filter((c) => ids.includes(c.id)); //TODO: enlever fonction
+
     const createActionneur = async (newActionneur: ActionneurCreateInput) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, create: true }));
         const actionneur = await createActionneurService(newActionneur);
         addActionneur(actionneur);
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, create: false }));
     };
 
-    return { createActionneur, loading };
-};
-
-export const useDeleteActionneur = () => {
-    const { removeActionneur } = useActionneursContext();
-
-    const [loading, setLoading] = useState(false);
     const deleteActionneur = async (id: number) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, delete: true }));
         await deleteActionneurService(id);
         removeActionneur(id);
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, delete: false }));
     };
 
-    return { deleteActionneur, loading };
+    return {
+        actionneurs,
+        fetchActionneursByIds,
+        createActionneur,
+        deleteActionneur,
+        loading,
+    };
 };

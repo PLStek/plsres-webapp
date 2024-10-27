@@ -1,8 +1,8 @@
 "use client";
 
 import type { Charbon } from "@lib/models/charbon";
-import { useGetCourseById } from "@app/hooks/useCourses";
-import { useGetActionneursByIds } from "@app/hooks/useActionneurs";
+import { useCourses } from "@app/hooks/useCourses";
+import { useActionneurs } from "@app/hooks/useActionneurs";
 import {
     UserIcon,
     ClockIcon,
@@ -20,10 +20,10 @@ const CharbonCard = ({
     isFirst: boolean;
     isLast: boolean;
 }) => {
-    const getCourseById = useGetCourseById();
-    const getActionneursByIds = useGetActionneursByIds();
-    const course = getCourseById(charbon.courseId);
-    const actionneurs = getActionneursByIds(charbon.actionneurIds);
+    const {fetchCourseById} = useCourses();
+    const {fetchActionneursByIds} = useActionneurs();
+    const course = fetchCourseById(charbon.courseId);
+    const actionneurs = fetchActionneursByIds(charbon.actionneurIds);
 
     const borderTopClass = isFirst ? "rounded-t-xl" : "";
     const borderBottomClass = isLast ? "rounded-b-xl" : "border-b-0";

@@ -1,43 +1,43 @@
 import { createCourseService, deleteCourseService } from "@lib/services/course";
-import { useCoursesContext } from "../context/CoursesContext";
-import { useState } from "react";
+import { CoursesContext } from "../context/CoursesContext";
+import { useContext, useState } from "react";
 import { CourseCreateInput } from "@lib/models/course";
 
-export const useGetCourses = () => {
-    const { getCourses } = useCoursesContext();
-    return getCourses;
-};
+export const useCourses = () => {
+    const context = useContext(CoursesContext);
 
-export const useGetCourseById = () => {
-    const { getCourses } = useCoursesContext();
-    const getCourseById = (id: number) => getCourses().find((c) => c.id === id);
-    return getCourseById;
-};
+    if (!context) {
+        throw new Error("useCourses must be used within a CoursesProvider");
+    }
 
-export const useCreateCourse = () => {
-    const { addCourse } = useCoursesContext();
+    const { courses, addCourse, removeCourse } = context;
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState({
+        create: false,
+        delete: false,
+    });
+
+    const fetchCourseById = (id: number) => courses.find((c) => c.id === id);
+
     const createCourse = async (newCourse: CourseCreateInput) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, create: true }));
         const course = await createCourseService(newCourse);
         addCourse(course);
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, create: false }));
     };
 
-    return { createCourse, loading };
-};
-
-export const useDeleteCourse = () => {
-    const { removeCourse: removeCourseFromContext } = useCoursesContext();
-
-    const [loading, setLoading] = useState(false);
     const deleteCourse = async (id: number) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, delete: true }));
         await deleteCourseService(id);
-        removeCourseFromContext(id);
-        setLoading(false);
+        removeCourse(id);
+        setLoading((prev) => ({ ...prev, delete: false }));
     };
 
-    return { deleteCourse, loading };
+    return {
+        courses,
+        fetchCourseById,
+        createCourse,
+        deleteCourse,
+        loading,
+    };
 };

@@ -1,47 +1,46 @@
-import { useCharbonsContext } from "../context/CharbonsContext";
+import { useContext, useState } from "react";
+import { CharbonsContext } from "@app/context/CharbonsContext";
 import { Charbon, CharbonCreateInput } from "@lib/models/charbon";
 import {
     createCharbonService,
     deleteCharbonService,
 } from "@lib/services/charbon";
-import { useState } from "react";
 
-export const useGetCharbons = () => {
-    const { getCharbons } = useCharbonsContext();
-    return getCharbons;
-};
+export const useCharbons = () => {
+    const context = useContext(CharbonsContext);
+    if (!context) {
+        throw new Error("useCharbons must be used within a CharbonsProvider");
+    }
 
-export const useGetCharbonById = () => {
-    const { getCharbons } = useCharbonsContext();
-    const getCharbonById = (id: number): Charbon | undefined =>
-        getCharbons().find((c) => c.id === id);
-    return getCharbonById;
-};
+    const { charbons, addCharbon, removeCharbon } = context;
 
-export const useCreateCharbon = () => {
-    const { addCharbon } = useCharbonsContext();
+    const [loading, setLoading] = useState({
+        create: false,
+        delete: false,
+    });
 
-    const [loading, setLoading] = useState(false);
+    const fetchCharbonById = (id: number): Charbon | undefined =>
+        charbons.find((c) => c.id === id);
+
     const createCharbon = async (newCharbon: CharbonCreateInput) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, create: true }));
         const charbon = await createCharbonService(newCharbon);
         addCharbon(charbon);
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, create: false }));
     };
 
-    return { createCharbon, loading };
-};
-
-export const useDeleteCharbon = () => {
-    const { removeCharbon } = useCharbonsContext();
-
-    const [loading, setLoading] = useState(false);
     const deleteCharbon = async (id: number) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, delete: true }));
         await deleteCharbonService(id);
         removeCharbon(id);
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, delete: false }));
     };
 
-    return { deleteCharbon, loading };
+    return {
+        charbons,
+        fetchCharbonById,
+        createCharbon,
+        deleteCharbon,
+        loading,
+    };
 };

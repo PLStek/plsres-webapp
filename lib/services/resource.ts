@@ -6,7 +6,7 @@ import {
     getResources,
     postResource,
     putResource,
-} from "../data/resourcesData";
+} from "../data/resources";
 import { ResourceCreateInput, ResourceUpdateInput } from "../models/resource";
 
 export const getResourcesService = async (): Promise<Resource[]> => {

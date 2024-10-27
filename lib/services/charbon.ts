@@ -5,7 +5,7 @@ import {
     getCharbons,
     postCharbon,
     putCharbon,
-} from "../data/charbonData";
+} from "../data/charbon";
 import {
     Charbon,
     CharbonCreateInput,
@@ -14,7 +14,7 @@ import {
 import {
     deleteCharbonActionneurByCharbonIds,
     postCharbonActionneurs,
-} from "../data/charbonActionneurData";
+} from "../data/charbonActionneur";
 
 export const getCharbonsService = async (): Promise<Charbon[]> => {
     const charbons = await getCharbons();

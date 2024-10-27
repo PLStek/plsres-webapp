@@ -5,7 +5,7 @@ import {
     getCourses,
     postCourse,
     putCourse,
-} from "../data/courseData";
+} from "../data/course";
 import { CourseCreateInput, CourseUpdateInput } from "../models/course";
 
 export const getCoursesService = async () => {

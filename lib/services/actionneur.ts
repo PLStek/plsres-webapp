@@ -5,7 +5,7 @@ import {
     getActionneurs,
     postActionneur,
     putActionneur,
-} from "../data/actionneurData";
+} from "../data/actionneur";
 import {
     Actionneur,
     ActionneurCreateInput,

@@ -1,47 +1,47 @@
 import { ResourceCreateInput } from "@lib/models/resource";
-import { useResourcesContext } from "../context/ResourcesContext";
-import { useState } from "react";
+import { ResourcesContext } from "../context/ResourcesContext";
+import { useContext, useState } from "react";
 import {
     createResourceService,
     deleteResourceService,
 } from "@lib/services/resource";
 
 export const useResources = () => {
-    const { getResources } = useResourcesContext();
-    return getResources;
-};
+    const context = useContext(ResourcesContext);
 
-export const useGetResourceById = () => {
-    const { getResources } = useResourcesContext();
-    const getResourceById = (id: number) =>
-        getResources().find((c) => c.id === id);
-    return getResourceById;
-};
+    if (!context) {
+        throw new Error("useResources must be used within a ResourcesProvider");
+    }
 
-export const useCreateResource = () => {
-    const { addResource } = useResourcesContext();
+    const { resources, addResource, removeResource } = context;
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState({
+        create: false,
+        delete: false,
+    });
+
+    const fetchResourceById = (id: number) =>
+        resources.find((c) => c.id === id);
+
     const createResource = async (newResource: ResourceCreateInput) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, create: true }));
         const resource = await createResourceService(newResource);
         addResource(resource);
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, create: false }));
     };
 
-    return { createResource, loading };
-};
-
-export const useDeleteResource = () => {
-    const { removeResource } = useResourcesContext();
-
-    const [loading, setLoading] = useState(false);
     const deleteResource = async (id: number) => {
-        setLoading(true);
+        setLoading((prev) => ({ ...prev, delete: true }));
         await deleteResourceService(id);
         removeResource(id);
-        setLoading(false);
+        setLoading((prev) => ({ ...prev, delete: false }));
     };
 
-    return { deleteResource, loading };
+    return {
+        resources,
+        fetchResourceById,
+        createResource,
+        deleteResource,
+        loading,
+    };
 };
