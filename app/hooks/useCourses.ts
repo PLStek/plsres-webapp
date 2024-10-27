@@ -1,7 +1,4 @@
-import {
-    createCourseService,
-    deleteCourseService,
-} from "@lib/services/courseService";
+import { createCourseService, deleteCourseService } from "@lib/services/course";
 import { useCoursesContext } from "../context/CoursesContext";
 import { useState } from "react";
 import { CourseCreateInput } from "@lib/models/course";

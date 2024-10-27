@@ -17,10 +17,10 @@ const CharbonsProvider = ({
     initialCharbons,
     children,
 }: {
-    initialCharbons: Charbon[];
+    initialCharbons?: Charbon[];
     children: ReactNode;
 }) => {
-    const [charbons, setCharbons] = useState(initialCharbons || []);
+    const [charbons, setCharbons] = useState(initialCharbons ?? []);
 
     const getCharbons = () => charbons;
     const addCharbon = (newCharbon: Charbon) =>

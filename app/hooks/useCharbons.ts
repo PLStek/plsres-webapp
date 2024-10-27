@@ -3,7 +3,7 @@ import { Charbon, CharbonCreateInput } from "@lib/models/charbon";
 import {
     createCharbonService,
     deleteCharbonService,
-} from "@lib/services/charbonService";
+} from "@lib/services/charbon";
 import { useState } from "react";
 
 export const useGetCharbons = () => {

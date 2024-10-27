@@ -17,10 +17,10 @@ const ResourcesProvider = ({
     initialResources,
     children,
 }: {
-    initialResources: Resource[];
+    initialResources?: Resource[];
     children: ReactNode;
 }) => {
-    const [resources, setResources] = useState(initialResources || []);
+    const [resources, setResources] = useState(initialResources ?? []);
 
     const getResources = () => resources;
     const addResource = (newResource: Resource) =>

@@ -1,19 +1,20 @@
 "use server";
 
-import { AuthResponse, Payload } from "@lib/models/auth";
+import { AuthData } from "@lib/models/auth";
 import {
     getActionneurByDiscordIdService,
     getActionneurByIdService,
-} from "./actionneurService";
+} from "./actionneur";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
-import { Actionneur } from "@lib/models/actionneur";
+import {
+    checkDiscordUserGuild,
+    getDiscordAccessToken,
+    getDiscordUser,
+    revokeDiscordAccessToken,
+} from "./discord";
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-const REDIRECT_URI = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
-const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
-const GUILD_ID = process.env.DISCORD_GUILD_ID;
-const SECRET_KEY = process.env.SECRET_KEY;
+const SECRET_KEY = process.env.TOKEN_SECRET;
 
 //TODO: meilleur typage et vérifications
 export const generateToken = async (code: string) => {
@@ -23,6 +24,7 @@ export const generateToken = async (code: string) => {
     const actionneur = await getActionneurByDiscordIdService(id); //TODO: désactiver le cache pour cette requete
     const token = createToken(actionneur?.isAdmin ?? false, actionneur?.id);
     setToken(token);
+    await revokeDiscordAccessToken(token);
 };
 
 export const authenticate = () => {
@@ -47,55 +49,6 @@ export const checkActionneur = async (checkAdmin: boolean) => {
     }
 };
 
-const getDiscordAccessToken = async (code: string) => {
-    if (!CLIENT_ID || !REDIRECT_URI || !CLIENT_SECRET) {
-        //TODO: gérer variables d'env proprement
-        throw new Error("Variables d'environnement manquantes");
-    }
-
-    const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-            code,
-            grant_type: "authorization_code",
-            redirect_uri: REDIRECT_URI,
-        }),
-    });
-
-    const tokenData = await tokenResponse.json();
-    //TODO: validate data and throw
-    return tokenData?.access_token;
-};
-
-const getDiscordUser = async (accessToken: string) => {
-    const response = await fetch("https://discord.com/api/users/@me", {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    });
-    const user = response.json();
-    //TODO: validation
-    return user;
-};
-
-const checkDiscordUserGuild = async (accessToken: string) => {
-    const response = await fetch("https://discord.com/api/users/@me/guilds", {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    });
-
-    const guilds = await response.json();
-    if (!guilds.some((guild) => guild.id === GUILD_ID)) {
-        throw new Error("User is not in the required guild");
-    }
-};
-
 const createToken = (isAdmin: boolean, actionneurId?: number): string => {
     if (!SECRET_KEY) {
         throw new Error("Variables d'environnement manquantes");
@@ -103,7 +56,7 @@ const createToken = (isAdmin: boolean, actionneurId?: number): string => {
 
     const actionneurExp = Math.floor(Date.now() / 1000) + 3600 * 48;
 
-    const payload: Payload = {
+    const payload: AuthData = {
         actionneurId,
         isAdmin,
         actionneurExp,
@@ -113,7 +66,7 @@ const createToken = (isAdmin: boolean, actionneurId?: number): string => {
     return token;
 };
 
-export const decodeToken = (token: string): Payload => {
+const decodeToken = (token: string): AuthData => {
     if (!SECRET_KEY) {
         throw new Error("Variables d'environnement manquantes");
     }
@@ -123,7 +76,6 @@ export const decodeToken = (token: string): Payload => {
             token,
             SECRET_KEY
         ) as JwtPayload;
-        if (!isAdmin || !actionneurExp) throw new Error("Invalid token");
         return { actionneurId, isAdmin, actionneurExp };
     } catch {
         throw new Error("Invalid token");

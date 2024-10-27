@@ -4,7 +4,7 @@ import { useState } from "react";
 import {
     createResourceService,
     deleteResourceService,
-} from "@lib/services/resourceService";
+} from "@lib/services/resource";
 
 export const useResources = () => {
     const { getResources } = useResourcesContext();

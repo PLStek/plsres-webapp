@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { getCharbonsService } from "@lib/services/charbonService";
-import { getActionneursService } from "@lib/services/actionneurService";
-import { getCoursesService } from "@lib/services/courseService";
-import { getResourcesService } from "@lib/services/resourceService";
+import { getCharbonsService } from "@lib/services/charbon";
+import { getActionneursService } from "@lib/services/actionneur";
+import { getCoursesService } from "@lib/services/course";
+import { getResourcesService } from "@lib/services/resource";
 import CharbonsProvider from "./context/CharbonsContext";
 import ActionneursProvider from "./context/ActionneursContext";
 import CoursesProvider from "./context/CoursesContext";

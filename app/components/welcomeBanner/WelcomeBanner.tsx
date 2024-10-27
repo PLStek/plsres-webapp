@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import styles from "./WelcomeBanner.module.css";
-import { loginService } from "@lib/services/authService";
+import { authenticate, generateToken } from "@lib/services/auth";
 
 const WelcomeBanner = () => {
     const open = () => {
@@ -18,16 +18,28 @@ const WelcomeBanner = () => {
 
         const authWindow = window.open(authUrl);
 
-        window.addEventListener("message", (event) => {
+        const handleAuthMessage = async (event: MessageEvent) => {
             if (event.origin !== window.location.origin) return;
 
             const { code } = event.data;
             if (code) {
+                window.removeEventListener("message", handleAuthMessage);
                 authWindow?.close();
-                loginService(code);
+                await generateToken(code);
+                console.log(authenticate())
             }
-        });
-        //TODO: case where the popup is closed before or is never closed
+        };
+
+        window.addEventListener("message", handleAuthMessage);
+
+        const checkPopupClosed = setInterval(() => {
+            if (authWindow && authWindow.closed) {
+                clearInterval(checkPopupClosed);
+                window.removeEventListener("message", handleAuthMessage);
+            }
+        }, 1000);
+
+        //TODO: case where the popup is never closed
     };
 
     return (

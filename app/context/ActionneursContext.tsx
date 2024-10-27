@@ -17,10 +17,10 @@ const ActionneursProvider = ({
     initialActionneurs,
     children,
 }: {
-    initialActionneurs: Actionneur[];
+    initialActionneurs?: Actionneur[];
     children: ReactNode;
 }) => {
-    const [actionneurs, setActionneurs] = useState(initialActionneurs || []);
+    const [actionneurs, setActionneurs] = useState(initialActionneurs ?? []);
 
     const getActionneurs = () => actionneurs;
     const addActionneur = (newActionneur: Actionneur) =>

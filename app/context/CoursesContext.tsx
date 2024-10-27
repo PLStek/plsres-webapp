@@ -15,10 +15,10 @@ const CoursesProvider = ({
     initialCourses,
     children,
 }: {
-    initialCourses: Course[];
+    initialCourses?: Course[];
     children: ReactNode;
 }) => {
-    const [courses, setCourses] = useState(initialCourses || []);
+    const [courses, setCourses] = useState(initialCourses ?? []);
 
     const getCourses = () => courses;
     const addCourse = (newCourse: Course) =>
