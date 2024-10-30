@@ -48,12 +48,14 @@ model Resource {
 }
 
 model Actionneur {
-    id        Int                 @id @default(autoincrement())
-    discordId String              @unique
-    username  String              @unique
-    isAdmin   Boolean             @default(false)
-    isActive  Boolean             @default(true)
-    charbons  CharbonActionneur[]
+    id         Int     @id @default(autoincrement())
+    discordId  String  @unique
+    username   String  @unique
+    isAdmin    Boolean @default(false)
+    isActive   Boolean @default(true)
+    secretHash String
+
+    charbons CharbonActionneur[]
 }
 
 model CharbonActionneur {
@@ -64,4 +66,12 @@ model CharbonActionneur {
     actionneurId Int
 
     @@id([charbonId, actionneurId])
+}
+
+model RevokedToken {
+    id        Int      @id @default(autoincrement())
+    token     String   @unique
+    expiresAt DateTime
+
+    @@index([expiresAt])
 }

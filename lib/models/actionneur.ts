@@ -9,6 +9,8 @@ export type Actionneur = ActionneurBase & {
     id: number;
 };
 
-export type ActionneurCreateInput = ActionneurBase;
+export type ActionneurCreateInput = ActionneurBase & {
+    secret: number;
+};
 
 export type ActionneurUpdateInput = Partial<ActionneurBase>;

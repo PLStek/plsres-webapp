@@ -9,6 +9,8 @@ import CharbonsProvider from "./context/CharbonsContext";
 import ActionneursProvider from "./context/ActionneursContext";
 import CoursesProvider from "./context/CoursesContext";
 import ResourcesProvider from "./context/ResourcesContext";
+import AuthProvider from "./context/AuthContext";
+import { authenticate } from "@lib/services/auth";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -35,22 +37,25 @@ export default async function RootLayout({
     const actionneurs = await getActionneursService();
     const courses = await getCoursesService();
     const resources = await getResourcesService();
+    const authData = authenticate();
 
     return (
-        <CharbonsProvider initialCharbons={charbons}>
-            <ActionneursProvider initialActionneurs={actionneurs}>
-                <CoursesProvider initialCourses={courses}>
-                    <ResourcesProvider initialResources={resources}>
-                        <html lang="fr">
-                            <body
-                                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-                            >
-                                {children}
-                            </body>
-                        </html>
-                    </ResourcesProvider>
-                </CoursesProvider>
-            </ActionneursProvider>
-        </CharbonsProvider>
+        <AuthProvider initialAuthData={authData}>
+            <CharbonsProvider initialCharbons={charbons}>
+                <ActionneursProvider initialActionneurs={actionneurs}>
+                    <CoursesProvider initialCourses={courses}>
+                        <ResourcesProvider initialResources={resources}>
+                            <html lang="fr">
+                                <body
+                                    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                                >
+                                    {children}
+                                </body>
+                            </html>
+                        </ResourcesProvider>
+                    </CoursesProvider>
+                </ActionneursProvider>
+            </CharbonsProvider>
+        </AuthProvider>
     );
 }

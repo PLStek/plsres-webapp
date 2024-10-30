@@ -1,45 +1,104 @@
 "use server";
 
-import { AuthData } from "@lib/models/auth";
-import {
-    getActionneurByDiscordIdService,
-    getActionneurByIdService,
-} from "./actionneur";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { cookies } from "next/headers";
+import { getActionneurByIdService } from "./actionneur";
 import {
     checkDiscordUserGuild,
     getDiscordAccessToken,
     getDiscordUser,
     revokeDiscordAccessToken,
 } from "./discord";
-
-const SECRET_KEY = process.env.TOKEN_SECRET;
+import { deleteExpiredTokens, postRevokedToken } from "@lib/data/auth";
+import { getActionneurById } from "@lib/data/actionneur";
+import { getCookie, removeTokenCookie, setCookie } from "@lib/utils/cookies";
+import {
+    createActionneurToken,
+    createUserToken,
+    decodeActionneurToken,
+    decodeToken,
+} from "@lib/utils/token";
+import { verifySecret } from "@lib/utils/encryption";
 
 //TODO: meilleur typage et vérifications
-export const generateToken = async (code: string) => {
+export const connect = async (code: string) => {
     const accessToken = await getDiscordAccessToken(code);
     await checkDiscordUserGuild(accessToken);
     const { id } = await getDiscordUser(accessToken);
-    const actionneur = await getActionneurByDiscordIdService(id); //TODO: désactiver le cache pour cette requete
-    const token = createToken(actionneur?.isAdmin ?? false, actionneur?.id);
-    setToken(token);
+    const actionneur = await getActionneurByIdService(id);
+    const token = createUserToken(actionneur?.isAdmin ?? false, actionneur?.id);
+    setCookie("user_token", token);
     await revokeDiscordAccessToken(token);
 };
 
+export const connectActionneur = async (secret: number) => {
+    const userToken = getCookie("user_token");
+    if (!userToken) {
+        throw new Error("Couldn't find authentication token");
+    }
+    const { actionneurId } = decodeToken(userToken);
+    if (!actionneurId) {
+        throw new Error("User isn't an actionneur");
+    }
+
+    const actionneur = await getActionneurById(actionneurId);
+    if (!actionneur) {
+        //TODO: revoke ou refresh le user token + faire pareil si il n'est pas admin
+        throw new Error("User isn't an actionneur");
+    }
+
+    verifySecret(secret, actionneur.secretHash);
+    const actionneurToken = createActionneurToken(actionneurId);
+    setCookie("actionneur_token", actionneurToken);
+};
+
+export const disconnect = async () => {
+    const userToken = getCookie("user_token");
+    const actionneurToken = getCookie("actionneur_token");
+    if (userToken) {
+        removeTokenCookie("user_token");
+        revokeToken(userToken);
+    }
+    if (actionneurToken) {
+        removeTokenCookie("actionneur_token");
+        revokeToken(actionneurToken);
+    }
+};
+
 export const authenticate = () => {
-    const token = getToken();
+    const token = getCookie("user_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
     }
     return decodeToken(token);
 };
 
-export const checkActionneur = async (checkAdmin: boolean) => {
-    const { actionneurId } = authenticate();
+/* export const authenticateActionneur = async () => {
+    const token = getCookie("actionneur_token");
+    if (!token) {
+        throw new Error("Couldn't find authentication token");
+    }
+
+    const { actionneurId } = decodeActionneurToken(token);
     if (!actionneurId) {
+        removeTokenCookie("actionneur_token");
         throw new Error("User isn't an actionneur");
     }
+
+    const actionneur = await getActionneurByIdService(actionneurId);
+    if (!actionneur || !actionneur.isActive) {
+        removeTokenCookie("actionneur_token");
+        throw new Error("User isn't an actionneur");
+    }
+    return;
+}; */
+
+export const checkActionneur = async (checkAdmin: boolean) => {
+    const token = getCookie("actionneur_token");
+    if (!token) {
+        throw new Error("Couldn't find authentication token");
+    }
+    const { actionneurId } = decodeActionneurToken(token);
+    if (!actionneurId) throw new Error("User isn't an actionneur");
+
     const actionneur = await getActionneurByIdService(actionneurId);
     if (!actionneur || !actionneur.isActive) {
         throw new Error("User isn't an actionneur");
@@ -49,48 +108,13 @@ export const checkActionneur = async (checkAdmin: boolean) => {
     }
 };
 
-const createToken = (isAdmin: boolean, actionneurId?: number): string => {
-    if (!SECRET_KEY) {
-        throw new Error("Variables d'environnement manquantes");
-    }
-
-    const actionneurExp = Math.floor(Date.now() / 1000) + 3600 * 48;
-
-    const payload: AuthData = {
-        actionneurId,
-        isAdmin,
-        actionneurExp,
-    };
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "30d" });
-
-    return token;
+export const cleanExpiredTokens = async () => {
+    const { count } = await deleteExpiredTokens();
+    console.log("Cleaned ", count, " expired tokens");
 };
 
-const decodeToken = (token: string): AuthData => {
-    if (!SECRET_KEY) {
-        throw new Error("Variables d'environnement manquantes");
-    }
-
-    try {
-        const { actionneurId, isAdmin, actionneurExp } = jwt.verify(
-            token,
-            SECRET_KEY
-        ) as JwtPayload;
-        return { actionneurId, isAdmin, actionneurExp };
-    } catch {
-        throw new Error("Invalid token");
-    }
+export const revokeToken = async (token: string) => {
+    const { exp } = decodeToken(token);
+    const expiresAt = new Date(exp);
+    await postRevokedToken({ token, expiresAt });
 };
-
-const getToken = () => cookies().get("token")?.value;
-
-const setToken = (token: string) =>
-    cookies().set({
-        name: "token",
-        value: token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-        maxAge: 3600 * 24 * 30,
-    });

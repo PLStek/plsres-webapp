@@ -5,6 +5,14 @@ export const getActionneurs = async () => {
     return prisma.actionneur.findMany();
 };
 
+export const getActionneurById = async (id: number) => {
+    return prisma.actionneur.findUnique({ where: { id } });
+};
+
+export const getActionneurByDiscordId = async (discordId: string) => {
+    return prisma.actionneur.findUnique({ where: { discordId } });
+};
+
 export const postActionneur = async (
     data: Prisma.ActionneurCreateInput
 ): Promise<Actionneur> => {

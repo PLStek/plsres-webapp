@@ -4,9 +4,14 @@ import React from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import styles from "./WelcomeBanner.module.css";
-import { authenticate, generateToken } from "@lib/services/auth";
+import { authenticate, connect } from "@lib/services/auth";
+import { useAuth } from "@app/hooks/useAuth";
 
 const WelcomeBanner = () => {
+
+    const {isVerified, isActionneur, isAdmin} = useAuth();
+    console.log("isVerified", isVerified, "isActionneur", isActionneur, "isAdmin", isAdmin)
+
     const open = () => {
         const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
         const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
@@ -25,7 +30,7 @@ const WelcomeBanner = () => {
             if (code) {
                 window.removeEventListener("message", handleAuthMessage);
                 authWindow?.close();
-                await generateToken(code);
+                await connect(code);
                 console.log(authenticate())
             }
         };
