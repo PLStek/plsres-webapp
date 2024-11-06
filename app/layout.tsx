@@ -37,7 +37,8 @@ export default async function RootLayout({
     const actionneurs = await getActionneursService();
     const courses = await getCoursesService();
     const resources = await getResourcesService();
-    const authData = authenticate();
+    const authData = await authenticate();
+    console.log(authData)
 
     return (
         <AuthProvider initialAuthData={authData}>

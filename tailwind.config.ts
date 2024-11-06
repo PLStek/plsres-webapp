@@ -16,6 +16,9 @@ const config: Config = {
             screens: {
                 "3xl": "1920px",
             },
+            backdropBlur: {
+                xs: "2px",
+            },
         },
     },
     plugins: [],

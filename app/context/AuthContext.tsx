@@ -4,7 +4,7 @@ import { AuthData } from "@lib/models/auth";
 import { createContext, ReactNode, useState } from "react";
 
 type AuthContextType = {
-    authData: AuthData | undefined;
+    authData: AuthData;
     setAuthData: (authData: AuthData) => void;
 };
 
@@ -16,7 +16,7 @@ const AuthProvider = ({
     initialAuthData,
     children,
 }: {
-    initialAuthData?: AuthData;
+    initialAuthData: AuthData;
     children: ReactNode;
 }) => {
     const [authData, setAuthData] = useState(initialAuthData);

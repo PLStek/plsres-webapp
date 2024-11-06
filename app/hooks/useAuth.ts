@@ -1,8 +1,10 @@
 import { AuthContext } from "@app/context/AuthContext";
-import { authenticate, connect } from "@lib/services/auth";
-import { revokeDiscordAccessToken } from "@lib/services/discord";
+import { authenticate } from "@lib/services/auth";
 import { useContext, useState } from "react";
-
+import {
+    connect as connectService,
+    disconnect as disconnectService,
+} from "@lib/services/auth";
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
@@ -12,22 +14,25 @@ export const useAuth = () => {
     const { authData, setAuthData } = context;
 
     const [loading, setLoading] = useState(false);
-    const isVerified = !!authData;
-    const isActionneur = !!(authData && authData.actionneurId);
-    const isAdmin = !!(authData && authData.isAdmin);
+    const isVerified = authData.isVerified;
+    const isActionneur = !!authData.actionneurId;
+    const isAdmin = authData.isAdmin;
 
-    const auth = async (code: string) => {
+    const connect = async (code: string) => {
         setLoading(true);
-        await connect(code);
-        const authData = authenticate();
+        await connectService(code);
+        const authData = await authenticate();
         setAuthData(authData);
         setLoading(false);
     };
 
     const disconnect = async () => {
+        setLoading(true);
+        await disconnectService();
+        const authData = await authenticate();
+        setAuthData(authData);
         setLoading(false);
-        await revokeDiscordAccessToken();
     };
 
-    return { auth, isVerified, isActionneur, isAdmin, loading };
+    return { connect, disconnect, isVerified, isActionneur, isAdmin, loading };
 };

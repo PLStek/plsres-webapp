@@ -7,7 +7,11 @@ import {
     getDiscordUser,
     revokeDiscordAccessToken,
 } from "./discord";
-import { deleteExpiredTokens, postRevokedToken } from "@lib/data/auth";
+import {
+    deleteExpiredTokens,
+    getRevokedToken,
+    postRevokedToken,
+} from "@lib/data/auth";
 import { getActionneurById } from "@lib/data/actionneur";
 import { getCookie, removeTokenCookie, setCookie } from "@lib/utils/cookies";
 import {
@@ -17,6 +21,8 @@ import {
     decodeToken,
 } from "@lib/utils/token";
 import { verifySecret } from "@lib/utils/encryption";
+import { cookies } from "next/headers";
+import { AuthData } from "@lib/models/auth";
 
 //TODO: meilleur typage et vérifications
 export const connect = async (code: string) => {
@@ -53,6 +59,7 @@ export const connectActionneur = async (secret: number) => {
 export const disconnect = async () => {
     const userToken = getCookie("user_token");
     const actionneurToken = getCookie("actionneur_token");
+    console.log(cookies().getAll());
     if (userToken) {
         removeTokenCookie("user_token");
         revokeToken(userToken);
@@ -63,12 +70,28 @@ export const disconnect = async () => {
     }
 };
 
-export const authenticate = () => {
+export const authenticate = async (): Promise<AuthData> => {
     const token = getCookie("user_token");
     if (!token) {
-        throw new Error("Couldn't find authentication token");
+        return {
+            isVerified: false,
+            actionneurId: undefined,
+            isAdmin: false,
+            exp: 0,
+        };
     }
-    return decodeToken(token);
+    const revokedToken = await getRevokedToken(token);
+    if (revokedToken) {
+        removeTokenCookie("user_token");
+        return {
+            isVerified: false,
+            actionneurId: undefined,
+            isAdmin: false,
+            exp: 0,
+        };
+    }
+    const data = decodeToken(token); //TODO: cas ou le token a juste expiré
+    return { isVerified: true, ...data };
 };
 
 /* export const authenticateActionneur = async () => {

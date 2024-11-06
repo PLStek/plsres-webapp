@@ -12,7 +12,7 @@ import {
 import clsx from "clsx";
 
 const CharbonCard = ({
-    charbon,
+    charbon, //TODO: replace by charbonid and check rerenders
     isFirst,
     isLast,
 }: {

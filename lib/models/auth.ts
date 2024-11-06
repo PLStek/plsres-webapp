@@ -10,6 +10,7 @@ export type RevokedTokenCreateInput = RevokedToken & {
 };
 
 export type AuthData = {
+    isVerified: boolean;
     actionneurId: number | undefined;
     isAdmin: boolean;
     exp: number;

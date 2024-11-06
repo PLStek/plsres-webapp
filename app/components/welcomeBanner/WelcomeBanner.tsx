@@ -1,51 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import styles from "./WelcomeBanner.module.css";
-import { authenticate, connect } from "@lib/services/auth";
 import { useAuth } from "@app/hooks/useAuth";
+import VerificationModal from "../VerificationModal";
 
 const WelcomeBanner = () => {
+    const { disconnect, isVerified, isActionneur, isAdmin } = useAuth();
 
-    const {isVerified, isActionneur, isAdmin} = useAuth();
-    console.log("isVerified", isVerified, "isActionneur", isActionneur, "isAdmin", isAdmin)
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const open = () => {
-        const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-        const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
-        if (!clientId || !redirectUri) return;
-
-        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-            redirectUri
-        )}&response_type=code&scope=identify%20guilds`;
-
-        const authWindow = window.open(authUrl);
-
-        const handleAuthMessage = async (event: MessageEvent) => {
-            if (event.origin !== window.location.origin) return;
-
-            const { code } = event.data;
-            if (code) {
-                window.removeEventListener("message", handleAuthMessage);
-                authWindow?.close();
-                await connect(code);
-                console.log(authenticate())
-            }
-        };
-
-        window.addEventListener("message", handleAuthMessage);
-
-        const checkPopupClosed = setInterval(() => {
-            if (authWindow && authWindow.closed) {
-                clearInterval(checkPopupClosed);
-                window.removeEventListener("message", handleAuthMessage);
-            }
-        }, 1000);
-
-        //TODO: case where the popup is never closed
-    };
+    console.log(
+        "isVerified",
+        isVerified,
+        "isActionneur",
+        isActionneur,
+        "isAdmin",
+        isAdmin
+    );
 
     return (
         <div className={styles.wrapper}>
@@ -73,7 +47,16 @@ const WelcomeBanner = () => {
                     className="rounded-lg"
                 />
             </div>
-            <button onClick={() => open()}>Open</button>
+            {!isVerified && (
+                <button onClick={() => setIsModalOpen(true)}>Connect</button>
+            )}
+            {isVerified && (
+                <button onClick={() => disconnect()}>Disconnect</button>
+            )}
+            <VerificationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 };

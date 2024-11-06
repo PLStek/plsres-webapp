@@ -27,7 +27,7 @@ export const createActionneurToken = (actionneurId: number): string => {
     return token;
 };
 
-export const decodeToken = (token: string): AuthData => {
+export const decodeToken = (token: string) => {
     if (!SECRET_KEY) {
         throw new Error("Variables d'environnement manquantes");
     }
