@@ -12,14 +12,19 @@ export type RevokedTokenCreateInput = RevokedToken & {
 export type AuthData = {
     isVerified: boolean;
     actionneurId: number | undefined;
+    isActionneurAuthentified: boolean;
     isAdmin: boolean;
+    discordId: string | undefined;
     exp: number;
 };
 
-export type TokenPayload = {
+export type UserTokenPayload = {
     actionneurId: number | undefined;
     isAdmin: boolean;
+    discordId: string;
     exp: number;
 };
 
 export type CookieType = "user_token" | "actionneur_token";
+
+export type AccessLevel = "none" | "verified" | "actionneur" | "admin";

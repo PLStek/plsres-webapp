@@ -21,7 +21,7 @@ const CharbonForm = () => {
                 Number
             ),
         };
-        createCharbon(charbon);
+        await createCharbon(charbon);
     };
 
 

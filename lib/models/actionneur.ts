@@ -1,16 +1,24 @@
 type ActionneurBase = {
     discordId: string;
     username: string;
-    isAdmin: boolean;
-    isActive: boolean;
 };
 
 export type Actionneur = ActionneurBase & {
+    isActive: boolean;
+    isAdmin: boolean;
     id: number;
 };
 
-export type ActionneurCreateInput = ActionneurBase & {
+export type ActionneurCreateInput = {
+    invitationToken: string;
+    username: string;
     secret: number;
 };
 
 export type ActionneurUpdateInput = Partial<ActionneurBase>;
+
+export type Invitation = {
+    token: string;
+    discordId: string;
+    expiresAt: Date;
+};

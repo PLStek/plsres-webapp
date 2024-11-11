@@ -58,6 +58,13 @@ model Actionneur {
     charbons CharbonActionneur[]
 }
 
+model Invitation {
+    id Int @id @default(autoincrement())
+    token String @unique
+    discordId String
+    expiresAt DateTime
+}
+
 model CharbonActionneur {
     charbon   Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
     charbonId Int

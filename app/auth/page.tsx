@@ -1,11 +1,14 @@
-"use client"
+"use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 const Auth = () => {
+    const searchParams = useSearchParams();
+
+    //TODO: voir si on peut enlever le useEffect
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
+        const code = searchParams.get("code");
 
         if (code) {
             window.opener.postMessage({ code }, window.location.origin);
@@ -15,7 +18,7 @@ const Auth = () => {
             window.close();
         }
     }, []);
-    
+
     return <div>coucou</div>;
 };
 

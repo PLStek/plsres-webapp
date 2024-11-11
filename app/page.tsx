@@ -1,10 +1,12 @@
 import WelcomeBanner from "./components/welcomeBanner/WelcomeBanner";
 import CharbonMine from "./components/charbonMine/CharbonMine";
 import Sidebar from "./components/sidebar/Sidebar";
+import InvitationModal from "./components/invitationModal/InvitationModal";
 
-export default async function Home() {
+export default function Home() {
     return (
         <div className="mx-auto w-full lg:max-w-[90%] 2xl:max-w-[80%] 3xl:max-w-[1536px]">
+            <InvitationModal />
             <div className="flex justify-center items-center mt-10">
                 <WelcomeBanner />
             </div>

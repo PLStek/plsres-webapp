@@ -10,40 +10,6 @@ const VerificationModal = ({
 }) => {
     const { connect } = useAuth();
 
-    const open = () => {
-        const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-        const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
-        if (!clientId || !redirectUri) return;
-
-        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-            redirectUri
-        )}&response_type=code&scope=identify%20guilds`;
-
-        const authWindow = window.open(authUrl);
-
-        const handleAuthMessage = async (event: MessageEvent) => {
-            if (event.origin !== window.location.origin) return;
-
-            const { code } = event.data;
-            if (code) {
-                window.removeEventListener("message", handleAuthMessage);
-                authWindow?.close();
-                await connect(code);
-            }
-        };
-
-        window.addEventListener("message", handleAuthMessage);
-
-        const checkPopupClosed = setInterval(() => {
-            if (authWindow && authWindow.closed) {
-                clearInterval(checkPopupClosed);
-                window.removeEventListener("message", handleAuthMessage);
-            }
-        }, 1000);
-
-        //TODO: case where the popup is never closed
-    };
-
     return (
         //TODO: review html here
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -80,7 +46,7 @@ const VerificationModal = ({
                     que nous puissions vérifier que vous êtes membr/e du pôle
                     UTBM.{" "}
                     <a
-                        onClick={() => open()}
+                        onClick={() => connect(onClose)}
                         className="underline cursor-pointer"
                     >
                         Lier votre compte discord au site.

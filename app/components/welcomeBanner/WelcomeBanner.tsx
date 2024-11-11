@@ -6,11 +6,14 @@ import charbonImage from "@images/charbon.svg";
 import styles from "./WelcomeBanner.module.css";
 import { useAuth } from "@app/hooks/useAuth";
 import VerificationModal from "../VerificationModal";
+import AdminModal from "../AdminModal";
 
 const WelcomeBanner = () => {
     const { disconnect, isVerified, isActionneur, isAdmin } = useAuth();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isVerificationModalOpen, setIsVerificationModalOpen] =
+        useState(false);
+    const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
     console.log(
         "isVerified",
@@ -48,14 +51,24 @@ const WelcomeBanner = () => {
                 />
             </div>
             {!isVerified && (
-                <button onClick={() => setIsModalOpen(true)}>Connect</button>
+                <button onClick={() => setIsVerificationModalOpen(true)}>
+                    Connect
+                </button>
             )}
             {isVerified && (
                 <button onClick={() => disconnect()}>Disconnect</button>
             )}
+            {isAdmin && (
+                <button onClick={() => setIsAdminModalOpen(true)}>Admin</button>
+            )}
+
             <VerificationModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                isOpen={isVerificationModalOpen}
+                onClose={() => setIsVerificationModalOpen(false)}
+            />
+            <AdminModal
+                isOpen={isAdminModalOpen}
+                onClose={() => setIsAdminModalOpen(false)}
             />
         </div>
     );

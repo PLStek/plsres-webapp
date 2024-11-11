@@ -1,17 +1,19 @@
-import { AuthData } from "@lib/models/auth";
+import { UserTokenPayload } from "@lib/models/auth";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { removeTokenCookie } from "./cookies";
 
 const SECRET_KEY = process.env.TOKEN_SECRET;
 
 export const createUserToken = (
     isAdmin: boolean,
+    discordId: string,
     actionneurId?: number
 ): string => {
     if (!SECRET_KEY) {
         throw new Error("Variables d'environnement manquantes");
     }
 
-    const token = jwt.sign({ actionneurId, isAdmin }, SECRET_KEY, {
+    const token = jwt.sign({ actionneurId, isAdmin, discordId }, SECRET_KEY, {
         expiresIn: "30d",
     });
 
@@ -27,19 +29,20 @@ export const createActionneurToken = (actionneurId: number): string => {
     return token;
 };
 
-export const decodeToken = (token: string) => {
+export const decodeToken = (token: string): UserTokenPayload => {
     if (!SECRET_KEY) {
         throw new Error("Variables d'environnement manquantes");
     }
 
     try {
-        const { actionneurId, isAdmin, exp } = jwt.verify(
+        const { actionneurId, isAdmin, discordId, exp } = jwt.verify(
             token,
             SECRET_KEY
         ) as JwtPayload;
         if (!exp) throw new Error("Invalid token");
-        return { actionneurId, isAdmin, exp };
+        return { actionneurId, isAdmin, discordId, exp };
     } catch {
+        removeTokenCookie("user_token");
         throw new Error("Invalid token");
     }
 };
@@ -56,6 +59,7 @@ export const decodeActionneurToken = (token: string) => {
         if (!exp || !actionneurId) throw new Error("Invalid token");
         return { exp, actionneurId };
     } catch {
+        removeTokenCookie("actionneur_token");
         throw new Error("Invalid token");
     }
 };

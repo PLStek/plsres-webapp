@@ -12,7 +12,10 @@ import {
     getRevokedToken,
     postRevokedToken,
 } from "@lib/data/auth";
-import { getActionneurById } from "@lib/data/actionneur";
+import {
+    getActionneurByDiscordId,
+    getActionneurById,
+} from "@lib/data/actionneur";
 import { getCookie, removeTokenCookie, setCookie } from "@lib/utils/cookies";
 import {
     createActionneurToken,
@@ -22,15 +25,19 @@ import {
 } from "@lib/utils/token";
 import { verifySecret } from "@lib/utils/encryption";
 import { cookies } from "next/headers";
-import { AuthData } from "@lib/models/auth";
+import { AccessLevel, AuthData } from "@lib/models/auth";
 
 //TODO: meilleur typage et vérifications
 export const connect = async (code: string) => {
     const accessToken = await getDiscordAccessToken(code);
     await checkDiscordUserGuild(accessToken);
-    const { id } = await getDiscordUser(accessToken);
-    const actionneur = await getActionneurByIdService(id);
-    const token = createUserToken(actionneur?.isAdmin ?? false, actionneur?.id);
+    const { id: discordId } = await getDiscordUser(accessToken);
+    const actionneur = await getActionneurByDiscordId(discordId);
+    const token = createUserToken(
+        actionneur?.isAdmin ?? false,
+        discordId,
+        actionneur?.id
+    );
     setCookie("user_token", token);
     await revokeDiscordAccessToken(token);
 };
@@ -71,48 +78,48 @@ export const disconnect = async () => {
 };
 
 export const authenticate = async (): Promise<AuthData> => {
-    const token = getCookie("user_token");
-    if (!token) {
+    const userToken = getCookie("user_token");
+    if (!userToken) {
         return {
             isVerified: false,
             actionneurId: undefined,
+            isActionneurAuthentified: false,
             isAdmin: false,
+            discordId: undefined,
             exp: 0,
         };
     }
-    const revokedToken = await getRevokedToken(token);
+    const revokedToken = await getRevokedToken(userToken);
     if (revokedToken) {
         removeTokenCookie("user_token");
         return {
             isVerified: false,
             actionneurId: undefined,
+            isActionneurAuthentified: false,
             isAdmin: false,
+            discordId: undefined,
             exp: 0,
         };
     }
-    const data = decodeToken(token); //TODO: cas ou le token a juste expiré
-    return { isVerified: true, ...data };
+    const payload = decodeToken(userToken); //TODO: cas ou le token a juste expiré
+    const actionneurToken = getCookie("actionneur_token");
+
+    let isActionneurAuthentified = false;
+    if (actionneurToken) {
+        decodeActionneurToken(actionneurToken);
+        isActionneurAuthentified = true;
+    }
+
+    return { isVerified: true, isActionneurAuthentified, ...payload };
 };
 
-/* export const authenticateActionneur = async () => {
-    const token = getCookie("actionneur_token");
+export const checkAuth = async () => {
+    const token = getCookie("user_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
     }
-
-    const { actionneurId } = decodeActionneurToken(token);
-    if (!actionneurId) {
-        removeTokenCookie("actionneur_token");
-        throw new Error("User isn't an actionneur");
-    }
-
-    const actionneur = await getActionneurByIdService(actionneurId);
-    if (!actionneur || !actionneur.isActive) {
-        removeTokenCookie("actionneur_token");
-        throw new Error("User isn't an actionneur");
-    }
-    return;
-}; */
+    decodeToken(token);
+};
 
 export const checkActionneur = async (checkAdmin: boolean) => {
     const token = getCookie("actionneur_token");
@@ -141,3 +148,22 @@ export const revokeToken = async (token: string) => {
     const expiresAt = new Date(exp);
     await postRevokedToken({ token, expiresAt });
 };
+
+export const withAuth =
+    (accesLevel: AccessLevel) =>
+    async (fn: Function) =>
+    async (...args: unknown[]) => {
+        try {
+            if (accesLevel !== "none") {
+                await checkAuth();
+                if (accesLevel === "actionneur" || accesLevel === "admin") {
+                    await checkActionneur(accesLevel === "admin");
+                }
+            }
+        } catch (e) {
+            return {
+                error: e instanceof Error ? e.message : "Erreur inconnue",
+            };
+        }
+        return fn(...args);
+    };

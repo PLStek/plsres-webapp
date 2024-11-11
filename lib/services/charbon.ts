@@ -15,6 +15,7 @@ import {
     deleteCharbonActionneurByCharbonIds,
     postCharbonActionneurs,
 } from "../data/charbonActionneur";
+import { withAuth } from "./auth";
 
 export const getCharbonsService = async (): Promise<Charbon[]> => {
     const charbons = await getCharbons();
@@ -34,53 +35,56 @@ export const getCharbonByIdService = async (
     return charbons.find((charbon) => charbon.id === id);
 };
 
-export const createCharbonService = async ({
-    courseId,
-    actionneurIds,
-    ...data
-}: CharbonCreateInput): Promise<Charbon> => {
-    const newCharbonPostData = {
-        ...data,
-        course: { connect: { id: courseId } },
-    };
-    const newCharbon = await postCharbon(newCharbonPostData);
-    const charbonActionneursPostData = actionneurIds.map((actionneurId) => ({
-        charbonId: newCharbon.id,
-        actionneurId,
-    }));
+export const createCharbonService = withAuth("actionneur")(
+    async ({
+        courseId,
+        actionneurIds,
+        ...data
+    }: CharbonCreateInput): Promise<Charbon> => {
+        const newCharbonPostData = {
+            ...data,
+            course: { connect: { id: courseId } },
+        };
+        const newCharbon = await postCharbon(newCharbonPostData);
+        const charbonActionneursPostData = actionneurIds.map(
+            (actionneurId) => ({
+                charbonId: newCharbon.id,
+                actionneurId,
+            })
+        );
 
-    await postCharbonActionneurs(charbonActionneursPostData);
+        await postCharbonActionneurs(charbonActionneursPostData);
 
-    return {
-        ...newCharbon,
-        actionneurIds: actionneurIds,
-    };
-};
-
-export const updateCharbonService = async (
-    id: number,
-    data: CharbonUpdateInput
-): Promise<Charbon> => {
-    const newCharbonPutData = data.courseId
-        ? { ...data, course: { connect: { id: data.courseId } } }
-        : data;
-
-    const updatedCharbon = await putCharbon(id, newCharbonPutData);
-    if (data.actionneurIds) {
-        await deleteCharbonActionneurByCharbonIds([id]);
+        return {
+            ...newCharbon,
+            actionneurIds: actionneurIds,
+        };
     }
+);
 
-    return {
-        ...updatedCharbon,
-        actionneurIds: data.actionneurIds,
-    };
-};
+export const updateCharbonService = withAuth("actionneur")(
+    async (id: number, data: CharbonUpdateInput): Promise<Charbon> => {
+        const newCharbonPutData = data.courseId
+            ? { ...data, course: { connect: { id: data.courseId } } }
+            : data;
 
-export const deleteCharbonService = async (
-    id: number
-): Promise<Charbon | undefined> => {
-    const charbon = await getCharbonByIdService(id);
-    await deleteCharbonActionneurByCharbonIds([id]);
-    await deleteCharbon(id);
-    return charbon;
-};
+        const updatedCharbon = await putCharbon(id, newCharbonPutData);
+        if (data.actionneurIds) {
+            await deleteCharbonActionneurByCharbonIds([id]);
+        }
+
+        return {
+            ...updatedCharbon,
+            actionneurIds: data.actionneurIds,
+        };
+    }
+);
+
+export const deleteCharbonService = withAuth("actionneur")(
+    async (id: number): Promise<Charbon | undefined> => {
+        const charbon = await getCharbonByIdService(id);
+        await deleteCharbonActionneurByCharbonIds([id]);
+        await deleteCharbon(id);
+        return charbon;
+    }
+);

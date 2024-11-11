@@ -12,6 +12,9 @@ import {
     ActionneurCreateInput,
     ActionneurUpdateInput,
 } from "../models/actionneur";
+import { withAuth } from "./auth";
+import { deleteInvitation } from "@lib/data/invitation";
+import { checkActionneurInvitationToken } from "./invitation";
 
 export const getActionneursService = async (): Promise<Actionneur[]> => {
     return getActionneurs();
@@ -29,21 +32,27 @@ export const getCurrentActionneurService = async (): Promise<Actionneur> => {
     return getActionneursService().then((actionneurs) => actionneurs[0]);
 };
 
-export const createActionneurService = async ({
-    secret,
-    ...data
-}: ActionneurCreateInput) => {
-    const secretHash = await hashSecret(secret);
-    return postActionneur({ ...data, secretHash });
-};
+export const createActionneurService = withAuth("admin")(
+    async ({ invitationToken, username, secret }: ActionneurCreateInput) => {
+        const { discordId, id: invitationId } =
+            await checkActionneurInvitationToken(invitationToken);
+        const secretHash = await hashSecret(secret);
+        const actionneur = await postActionneur({
+            username,
+            discordId,
+            secretHash,
+        });
+        deleteInvitation(invitationId);
+        return actionneur;
+    }
+);
 
-export const updateActionneurService = async (
-    id: number,
-    data: ActionneurUpdateInput
-) => {
-    return putActionneur(id, data);
-};
+export const updateActionneurService = withAuth("admin")(
+    async (id: number, data: ActionneurUpdateInput) => {
+        return putActionneur(id, data);
+    }
+);
 
-export const deleteActionneurService = async (id: number) => {
+export const deleteActionneurService = withAuth("admin")(async (id: number) => {
     return deleteActionneur(id);
-};
+});
