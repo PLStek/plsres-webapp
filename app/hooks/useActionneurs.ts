@@ -1,9 +1,6 @@
 import { ActionneursContext } from "@app/context/ActionneursContext";
 import { useContext, useState } from "react";
-import {
-    createActionneurService,
-    deleteActionneurService,
-} from "@lib/services/actionneur";
+import { createActionneurAction, deleteActionneurAction } from "@lib/actions";
 import { ActionneurCreateInput } from "@lib/models/actionneur";
 
 export const useActionneurs = () => {
@@ -27,14 +24,14 @@ export const useActionneurs = () => {
 
     const createActionneur = async (newActionneur: ActionneurCreateInput) => {
         setLoading((prev) => ({ ...prev, create: true }));
-        const actionneur = await createActionneurService(newActionneur);
+        const actionneur = await createActionneurAction(newActionneur);
         addActionneur(actionneur);
         setLoading((prev) => ({ ...prev, create: false }));
     };
 
     const deleteActionneur = async (id: number) => {
         setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteActionneurService(id);
+        await deleteActionneurAction(id);
         removeActionneur(id);
         setLoading((prev) => ({ ...prev, delete: false }));
     };

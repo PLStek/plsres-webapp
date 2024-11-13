@@ -1,12 +1,12 @@
 import { AuthContext } from "@app/context/AuthContext";
-import { authenticate } from "@lib/services/auth";
 import { useContext, useState } from "react";
 import {
-    connect as connectService,
-    connectActionneur as connectActionneurService,
-    disconnect as disconnectService,
-} from "@lib/services/auth";
-import { generateActionneurInvitationLink } from "@lib/services/auth";
+    connectAction,
+    authenticateAction,
+    connectActionneurAction,
+    disconnectAction,
+    createActionneurInviteAction,
+} from "@lib/actions";
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -41,8 +41,8 @@ export const useAuth = () => {
                 window.removeEventListener("message", handleAuthMessage);
                 authWindow?.close();
                 setLoading(true);
-                await connectService(code);
-                const authData = await authenticate();
+                await connectAction(code);
+                const authData = await authenticateAction();
                 setAuthData(authData);
                 setLoading(false);
                 callback?.();
@@ -63,16 +63,16 @@ export const useAuth = () => {
 
     const connectActionneur = async (secret: number) => {
         setLoading(true);
-        await connectActionneurService(secret);
-        const authData = await authenticate();
+        await connectActionneurAction(secret);
+        const authData = await authenticateAction();
         setAuthData(authData);
         setLoading(false);
     };
 
     const disconnect = async () => {
         setLoading(true);
-        await disconnectService();
-        const authData = await authenticate();
+        await disconnectAction();
+        const authData = await authenticateAction();
         setAuthData(authData);
         setLoading(false);
     };
@@ -81,7 +81,7 @@ export const useAuth = () => {
         connect,
         connectActionneur,
         disconnect,
-        generateActionneurInvitationLink, //TODO: remove from here if invitation cache is implemented
+        createActionneurInviteAction, //TODO: remove from here if invitation cache is implemented
         isVerified,
         isActionneur,
         isAdmin,

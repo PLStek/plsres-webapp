@@ -1,4 +1,4 @@
-import { createCourseService, deleteCourseService } from "@lib/services/course";
+import { createCourseAction, deleteCourseAction } from "@lib/actions";
 import { CoursesContext } from "../context/CoursesContext";
 import { useContext, useState } from "react";
 import { CourseCreateInput } from "@lib/models/course";
@@ -21,14 +21,14 @@ export const useCourses = () => {
 
     const createCourse = async (newCourse: CourseCreateInput) => {
         setLoading((prev) => ({ ...prev, create: true }));
-        const course = await createCourseService(newCourse);
+        const course = await createCourseAction(newCourse);
         addCourse(course);
         setLoading((prev) => ({ ...prev, create: false }));
     };
 
     const deleteCourse = async (id: number) => {
         setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteCourseService(id);
+        await deleteCourseAction(id);
         removeCourse(id);
         setLoading((prev) => ({ ...prev, delete: false }));
     };

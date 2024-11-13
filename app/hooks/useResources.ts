@@ -1,10 +1,7 @@
 import { ResourceCreateInput } from "@lib/models/resource";
 import { ResourcesContext } from "../context/ResourcesContext";
 import { useContext, useState } from "react";
-import {
-    createResourceService,
-    deleteResourceService,
-} from "@lib/services/resource";
+import { createResourceAction, deleteResourceAction } from "@lib/actions";
 
 export const useResources = () => {
     const context = useContext(ResourcesContext);
@@ -25,14 +22,14 @@ export const useResources = () => {
 
     const createResource = async (newResource: ResourceCreateInput) => {
         setLoading((prev) => ({ ...prev, create: true }));
-        const resource = await createResourceService(newResource);
+        const resource = await createResourceAction(newResource);
         addResource(resource);
         setLoading((prev) => ({ ...prev, create: false }));
     };
 
     const deleteResource = async (id: number) => {
         setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteResourceService(id);
+        await deleteResourceAction(id);
         removeResource(id);
         setLoading((prev) => ({ ...prev, delete: false }));
     };

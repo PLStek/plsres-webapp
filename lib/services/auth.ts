@@ -1,11 +1,9 @@
-"use server";
-
 import { getActionneurByIdService } from "./actionneur";
 import {
-    checkDiscordUserGuild,
-    getDiscordAccessToken,
-    getDiscordUser,
-    revokeDiscordAccessToken,
+    checkDiscordUserGuildService,
+    getDiscordAccessTokenService,
+    getDiscordUserService,
+    revokeDiscordAccessTokenService,
 } from "./discord";
 import {
     deleteExpiredTokens,
@@ -25,13 +23,13 @@ import {
 } from "@lib/utils/token";
 import { verifySecret } from "@lib/utils/encryption";
 import { cookies } from "next/headers";
-import { AccessLevel, AuthData } from "@lib/models/auth";
+import { AuthData } from "@lib/models/auth";
 
 //TODO: meilleur typage et vérifications
-export const connect = async (code: string) => {
-    const accessToken = await getDiscordAccessToken(code);
-    await checkDiscordUserGuild(accessToken);
-    const { id: discordId } = await getDiscordUser(accessToken);
+export const connectService = async (code: string) => {
+    const accessToken = await getDiscordAccessTokenService(code);
+    await checkDiscordUserGuildService(accessToken);
+    const { id: discordId } = await getDiscordUserService(accessToken);
     const actionneur = await getActionneurByDiscordId(discordId);
     const token = createUserToken(
         actionneur?.isAdmin ?? false,
@@ -39,10 +37,10 @@ export const connect = async (code: string) => {
         actionneur?.id
     );
     setCookie("user_token", token);
-    await revokeDiscordAccessToken(token);
+    await revokeDiscordAccessTokenService(token);
 };
 
-export const connectActionneur = async (secret: number) => {
+export const connectActionneurService = async (secret: number) => {
     const userToken = getCookie("user_token");
     if (!userToken) {
         throw new Error("Couldn't find authentication token");
@@ -63,21 +61,21 @@ export const connectActionneur = async (secret: number) => {
     setCookie("actionneur_token", actionneurToken);
 };
 
-export const disconnect = async () => {
+export const disconnectService = async () => {
     const userToken = getCookie("user_token");
     const actionneurToken = getCookie("actionneur_token");
     console.log(cookies().getAll());
     if (userToken) {
         removeTokenCookie("user_token");
-        revokeToken(userToken);
+        revokeTokenService(userToken);
     }
     if (actionneurToken) {
         removeTokenCookie("actionneur_token");
-        revokeToken(actionneurToken);
+        revokeTokenService(actionneurToken);
     }
 };
 
-export const authenticate = async (): Promise<AuthData> => {
+export const authenticateService = async (): Promise<AuthData> => {
     const userToken = getCookie("user_token");
     if (!userToken) {
         return {
@@ -113,7 +111,7 @@ export const authenticate = async (): Promise<AuthData> => {
     return { isVerified: true, isActionneurAuthentified, ...payload };
 };
 
-export const checkAuth = async () => {
+export const checkAuthService = async () => {
     const token = getCookie("user_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
@@ -121,7 +119,7 @@ export const checkAuth = async () => {
     decodeToken(token);
 };
 
-export const checkActionneur = async (checkAdmin: boolean) => {
+export const checkActionneurService = async (checkAdmin: boolean) => {
     const token = getCookie("actionneur_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
@@ -138,32 +136,13 @@ export const checkActionneur = async (checkAdmin: boolean) => {
     }
 };
 
-export const cleanExpiredTokens = async () => {
+export const cleanExpiredTokensService = async () => {
     const { count } = await deleteExpiredTokens();
     console.log("Cleaned ", count, " expired tokens");
 };
 
-export const revokeToken = async (token: string) => {
+export const revokeTokenService = async (token: string) => {
     const { exp } = decodeToken(token);
     const expiresAt = new Date(exp);
     await postRevokedToken({ token, expiresAt });
 };
-
-export const withAuth =
-    (accesLevel: AccessLevel) =>
-    async (fn: Function) =>
-    async (...args: unknown[]) => {
-        try {
-            if (accesLevel !== "none") {
-                await checkAuth();
-                if (accesLevel === "actionneur" || accesLevel === "admin") {
-                    await checkActionneur(accesLevel === "admin");
-                }
-            }
-        } catch (e) {
-            return {
-                error: e instanceof Error ? e.message : "Erreur inconnue",
-            };
-        }
-        return fn(...args);
-    };

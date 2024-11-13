@@ -1,11 +1,9 @@
-"use server";
-
 const CLIENT_ID = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
-export const getDiscordAccessToken = async (code: string) => {
+export const getDiscordAccessTokenService = async (code: string) => {
     if (!CLIENT_ID || !REDIRECT_URI || !CLIENT_SECRET) {
         //TODO: gérer variables d'env proprement
         throw new Error("Variables d'environnement manquantes");
@@ -30,7 +28,7 @@ export const getDiscordAccessToken = async (code: string) => {
     return tokenData?.access_token;
 };
 
-export const revokeDiscordAccessToken = async (accessToken: string) => {
+export const revokeDiscordAccessTokenService = async (accessToken: string) => {
     await fetch("https://discord.com/api/oauth2/token/revoke", {
         method: "POST",
         headers: {
@@ -43,7 +41,7 @@ export const revokeDiscordAccessToken = async (accessToken: string) => {
     });
 };
 
-export const getDiscordUser = async (accessToken: string) => {
+export const getDiscordUserService = async (accessToken: string) => {
     const response = await fetch("https://discord.com/api/users/@me", {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -54,7 +52,7 @@ export const getDiscordUser = async (accessToken: string) => {
     return user;
 };
 
-export const checkDiscordUserGuild = async (accessToken: string) => {
+export const checkDiscordUserGuildService = async (accessToken: string) => {
     const response = await fetch("https://discord.com/api/users/@me/guilds", {
         headers: {
             Authorization: `Bearer ${accessToken}`,

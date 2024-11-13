@@ -1,10 +1,7 @@
 import { useContext, useState } from "react";
 import { CharbonsContext } from "@app/context/CharbonsContext";
 import { Charbon, CharbonCreateInput } from "@lib/models/charbon";
-import {
-    createCharbonService,
-    deleteCharbonService,
-} from "@lib/services/charbon";
+import { createCharbonAction, deleteCharbonAction } from "@lib/actions";
 
 export const useCharbons = () => {
     const context = useContext(CharbonsContext);
@@ -24,14 +21,14 @@ export const useCharbons = () => {
 
     const createCharbon = async (newCharbon: CharbonCreateInput) => {
         setLoading((prev) => ({ ...prev, create: true }));
-        const charbon = await createCharbonService(newCharbon);
+        const charbon = await createCharbonAction(newCharbon);
         addCharbon(charbon);
         setLoading((prev) => ({ ...prev, create: false }));
     };
 
     const deleteCharbon = async (id: number) => {
         setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteCharbonService(id);
+        await deleteCharbonAction(id);
         removeCharbon(id);
         setLoading((prev) => ({ ...prev, delete: false }));
     };

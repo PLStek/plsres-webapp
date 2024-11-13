@@ -27,4 +27,4 @@ export type UserTokenPayload = {
 
 export type CookieType = "user_token" | "actionneur_token";
 
-export type AccessLevel = "none" | "verified" | "actionneur" | "admin";
+export type AccessLevel = "guest" | "verified" | "actionneur" | "admin";

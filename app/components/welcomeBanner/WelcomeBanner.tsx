@@ -15,14 +15,14 @@ const WelcomeBanner = () => {
         useState(false);
     const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
-    console.log(
+    /* console.log(
         "isVerified",
         isVerified,
         "isActionneur",
         isActionneur,
         "isAdmin",
         isAdmin
-    );
+    ); */
 
     return (
         <div className={styles.wrapper}>

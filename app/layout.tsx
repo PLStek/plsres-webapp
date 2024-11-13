@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { getCharbonsService } from "@lib/services/charbon";
-import { getActionneursService } from "@lib/services/actionneur";
-import { getCoursesService } from "@lib/services/course";
-import { getResourcesService } from "@lib/services/resource";
+import {
+    getCharbonsAction,
+    getActionneursAction,
+    getCoursesAction,
+    getResourcesAction,
+    authenticateAction,
+} from "@lib/actions";
 import CharbonsProvider from "./context/CharbonsContext";
 import ActionneursProvider from "./context/ActionneursContext";
 import CoursesProvider from "./context/CoursesContext";
 import ResourcesProvider from "./context/ResourcesContext";
 import AuthProvider from "./context/AuthContext";
-import { authenticate } from "@lib/services/auth";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -33,13 +35,12 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const charbons = await getCharbonsService();
-    const actionneurs = await getActionneursService();
-    const courses = await getCoursesService();
-    const resources = await getResourcesService();
-    const authData = await authenticate();
+    const charbons = await getCharbonsAction();
+    const actionneurs = await getActionneursAction();
+    const courses = await getCoursesAction();
+    const resources = await getResourcesAction();
+    const authData = await authenticateAction();
     console.log(authData);
-
 
     return (
         <AuthProvider initialAuthData={authData}>
