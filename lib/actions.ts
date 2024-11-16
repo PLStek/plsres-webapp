@@ -33,10 +33,11 @@ import { generateActionneurInvitationLink } from "./services/invitation";
 import {
     createResourceService,
     deleteResourceService,
-    getResourcesByIdsService,
+    getResourceByIdService,
     getResourcesService,
     updateResourceService,
-} from "./services/resource";
+} from "./services/resource/resource";
+import { getResourceFileService } from "./services/resource/resourceFile";
 
 export const getActionneursAction = withAuth("guest", getActionneursService);
 export const getActionneurByIdAction = withAuth(
@@ -89,10 +90,8 @@ export const updateCourseAction = withAuth("admin", updateCourseService);
 export const deleteCourseAction = withAuth("admin", deleteCourseService);
 
 export const getResourcesAction = withAuth("guest", getResourcesService);
-export const getResourcesByIdsAction = withAuth(
-    "guest",
-    getResourcesByIdsService
-);
+export const getResourceByIdAction = withAuth("guest", getResourceByIdService);
+
 export const createResourceAction = withAuth(
     "actionneur",
     createResourceService

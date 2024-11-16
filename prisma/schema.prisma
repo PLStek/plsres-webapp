@@ -41,8 +41,8 @@ enum CourseCategory {
 model Resource {
     id        Int    @id @default(autoincrement())
     name      String
-    url       String
     charbonId Int
+    extension String
 
     charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
 }

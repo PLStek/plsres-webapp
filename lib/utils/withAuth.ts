@@ -11,10 +11,10 @@ export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
     ): Promise<ReturnType<Fn> | { error: string }> => {
         try {
             if (accessLevel !== "guest") {
-                if (accessLevel === "actionneur") {
-                    await checkActionneurService(false);
-                } else {
+                if (accessLevel === "verified") {
                     await checkAuthService();
+                } else {
+                    await checkActionneurService(accessLevel === "admin");
                 }
             }
             return await fn(...args);
