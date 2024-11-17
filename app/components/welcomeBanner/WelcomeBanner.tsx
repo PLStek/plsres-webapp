@@ -9,7 +9,7 @@ import VerificationModal from "../VerificationModal";
 import AdminModal from "../AdminModal";
 
 const WelcomeBanner = () => {
-    const { disconnect, isVerified, isActionneur, isAdmin } = useAuth();
+    const { disconnect, isVerified, isAdmin } = useAuth();
 
     const [isVerificationModalOpen, setIsVerificationModalOpen] =
         useState(false);

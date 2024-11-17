@@ -4,7 +4,7 @@ import {
     getDiscordAccessTokenService,
     getDiscordUserService,
     revokeDiscordAccessTokenService,
-} from "./discord";
+} from "./discord/auth";
 import {
     deleteExpiredTokens,
     getRevokedToken,
@@ -120,7 +120,7 @@ export const checkAuthService = async () => {
 };
 
 export const checkActionneurService = async (checkAdmin: boolean) => {
-    const token = getCookie("actionneur_token");
+    /* const token = getCookie("actionneur_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
     }
@@ -134,6 +134,12 @@ export const checkActionneurService = async (checkAdmin: boolean) => {
     if (checkAdmin && !actionneur.isAdmin) {
         throw new Error("User isn't admin");
     }
+    return actionneur; */
+    const token = getCookie("user_token");
+    if (!token) {
+        throw new Error("Couldn't find authentication token");
+    }
+    return decodeToken(token);
 };
 
 export const cleanExpiredTokensService = async () => {

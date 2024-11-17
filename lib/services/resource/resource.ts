@@ -1,12 +1,16 @@
 import { Resource } from "@prisma/client";
 import {
     deleteResource,
+    deleteResourcesByCharbonId,
+    getResourceByCharbonId,
     getResources,
     postResource,
+    postResources,
     putResource,
 } from "../../data/resources";
 import {
     ResourceCreateInput,
+    ResourceCreateInputForCharbon,
     ResourceUpdateInput,
 } from "../../models/resource";
 import {
@@ -50,6 +54,42 @@ export const createResourceService = async (
     }
 };
 
+export const createResourcesForCharbonService = async (
+    charbonId: number,
+    data: ResourceCreateInputForCharbon[]
+): Promise<Resource[]> => {
+    const newResourcesData = data.map((resource) => {
+        const extension = resource.file.name.split(".").pop() || "";
+        return {
+            ...resource,
+            charbonId,
+            charbon: { connect: { id: charbonId } },
+            extension,
+        };
+    });
+    await postResources(newResourcesData);
+    const newResources = await getResourceByCharbonId(charbonId);
+
+    const fileMap = new Map(
+        data.map((resource) => [resource.name, resource.file])
+    );
+
+    const fileUploadPromises = newResources.map(async (resource) => {
+        const file = fileMap.get(resource.name);
+        if (!file) throw new Error("File not found");
+        await uploadResourceFileService(charbonId, resource.id, file);
+        return resource;
+    });
+
+    try {
+        return Promise.all(fileUploadPromises);
+    } catch (error) {
+        await deleteResourcesByCharbonId(charbonId);
+        console.error(error);
+        throw new Error("Failed to save the files");
+    }
+};
+
 export const updateResourceService = async (
     id: number,
     data: ResourceUpdateInput
@@ -69,6 +109,19 @@ export const deleteResourceService = async (id: number) => {
     deleteResourceFileService(resource.charbonId, id);
 
     return deleteResource(id);
+};
+
+export const deleteResourcesByCharbonIdService = async (id: number) => {
+    const resources = await getResourceByCharbonId(id);
+    if (!resources) return;
+
+    const deletePromises = resources.map((resource) =>
+        deleteResourceFileService(resource.charbonId, resource.id)
+    );
+
+    await Promise.all(deletePromises);
+
+    return deleteResourcesByCharbonId(id);
 };
 
 //TODO: delete multiple resources

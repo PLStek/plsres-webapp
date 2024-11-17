@@ -13,7 +13,7 @@ const AdminModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const { generateActionneurInvitationLink, isAdmin } = useAuth();
+    const { createActionneurInviteAction, isAdmin } = useAuth();
 
     const [generatedLink, setGeneratedLink] = useState<string | undefined>(
         undefined
@@ -23,9 +23,9 @@ const AdminModal = ({
 
     const submit = async (formData: FormData) => {
         const discordId = formData.get("discordId") as string;
-        const newLink = await generateActionneurInvitationLink(discordId);
+        const newLink = await createActionneurInviteAction(discordId);
         setGeneratedLink(newLink);
-        await navigator.clipboard.writeText(newLink);
+        /* await navigator.clipboard.writeText(newLink); */
     };
 
     if (!isAdmin) return null;

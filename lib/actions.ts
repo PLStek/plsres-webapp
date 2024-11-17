@@ -37,7 +37,6 @@ import {
     getResourcesService,
     updateResourceService,
 } from "./services/resource/resource";
-import { getResourceFileService } from "./services/resource/resourceFile";
 
 export const getActionneursAction = withAuth("guest", getActionneursService);
 export const getActionneurByIdAction = withAuth(

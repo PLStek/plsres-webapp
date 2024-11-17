@@ -1,6 +1,5 @@
 import { generateResourceFilePath } from "@lib/utils/files";
 import { mkdir, readFile, unlink, writeFile } from "fs/promises";
-import { getResourceByIdService } from "./resource";
 
 export const uploadResourceFileService = async (
     charbonId: number,

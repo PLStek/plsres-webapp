@@ -7,12 +7,17 @@ import {
 import {
     Charbon,
     CharbonCreateInput,
+    CharbonCreateResponse,
     CharbonUpdateInput,
 } from "../models/charbon";
 import {
     deleteCharbonActionneurByCharbonIds,
     postCharbonActionneurs,
 } from "../data/charbonActionneur";
+import {
+    createResourcesForCharbonService,
+    deleteResourcesByCharbonIdService,
+} from "./resource/resource";
 
 export const getCharbonsService = async (): Promise<Charbon[]> => {
     const charbons = await getCharbons();
@@ -35,8 +40,9 @@ export const getCharbonByIdService = async (
 export const createCharbonService = async ({
     courseId,
     actionneurIds,
+    resources,
     ...data
-}: CharbonCreateInput): Promise<Charbon> => {
+}: CharbonCreateInput): Promise<CharbonCreateResponse> => {
     const newCharbonPostData = {
         ...data,
         course: { connect: { id: courseId } },
@@ -49,9 +55,18 @@ export const createCharbonService = async ({
 
     await postCharbonActionneurs(charbonActionneursPostData);
 
+    const newResources = await createResourcesForCharbonService(
+        newCharbon.id,
+        resources.map((resource) => ({
+            ...resource,
+            charbonId: newCharbon.id,
+        }))
+    );
+
     return {
         ...newCharbon,
         actionneurIds: actionneurIds,
+        resources: newResources,
     };
 };
 
@@ -79,6 +94,7 @@ export const deleteCharbonService = async (
 ): Promise<Charbon | undefined> => {
     const charbon = await getCharbonByIdService(id);
     await deleteCharbonActionneurByCharbonIds([id]);
+    await deleteResourcesByCharbonIdService(id);
     await deleteCharbon(id);
     return charbon;
 };

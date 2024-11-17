@@ -1,10 +1,12 @@
 import { AccessLevel } from "@lib/models/auth";
 import { checkAuthService, checkActionneurService } from "../services/auth";
+import { sendLogMessage } from "@lib/services/discord/webhook";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
     accessLevel: AccessLevel,
-    fn: Fn
+    fn: Fn,
+    operation?: string
 ): Fn {
     return (async (
         ...args: Parameters<Fn>
@@ -14,7 +16,10 @@ export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
                 if (accessLevel === "verified") {
                     await checkAuthService();
                 } else {
-                    await checkActionneurService(accessLevel === "admin");
+                    const { discordId } = await checkActionneurService(
+                        accessLevel === "admin"
+                    );
+                    await sendLogMessage(fn.name, discordId);
                 }
             }
             return await fn(...args);

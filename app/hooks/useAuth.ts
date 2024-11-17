@@ -81,7 +81,7 @@ export const useAuth = () => {
         connect,
         connectActionneur,
         disconnect,
-        createActionneurInviteAction, //TODO: remove from here if invitation cache is implemented
+        createActionneurInviteAction,
         isVerified,
         isActionneur,
         isAdmin,

@@ -21,7 +21,7 @@ export const useCharbons = () => {
 
     const createCharbon = async (newCharbon: CharbonCreateInput) => {
         setLoading((prev) => ({ ...prev, create: true }));
-        const charbon = await createCharbonAction(newCharbon);
+        const { resources, ...charbon } = await createCharbonAction(newCharbon);
         addCharbon(charbon);
         setLoading((prev) => ({ ...prev, create: false }));
     };

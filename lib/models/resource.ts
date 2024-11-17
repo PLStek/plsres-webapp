@@ -8,6 +8,11 @@ export type Resource = ResourceBase & {
     extension: string;
 };
 
+export type ResourceCreateInputForCharbon = {
+    name: string;
+    file: File;
+};
+
 export type ResourceCreateInput = ResourceBase & {
     file: File;
 };
