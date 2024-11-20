@@ -5,8 +5,7 @@ import { sendLogMessage } from "@lib/services/discord/webhook";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
     accessLevel: AccessLevel,
-    fn: Fn,
-    operation?: string
+    fn: Fn
 ): Fn {
     return (async (
         ...args: Parameters<Fn>

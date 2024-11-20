@@ -13,6 +13,8 @@ import ActionneursProvider from "./context/ActionneursContext";
 import CoursesProvider from "./context/CoursesContext";
 import ResourcesProvider from "./context/ResourcesContext";
 import AuthProvider from "./context/AuthContext";
+import '../lib/discord';
+
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -40,8 +42,9 @@ export default async function RootLayout({
     const courses = await getCoursesAction();
     const resources = await getResourcesAction();
     const authData = await authenticateAction();
-    console.log(authData);
 
+  
+    
     return (
         <AuthProvider initialAuthData={authData}>
             <CharbonsProvider initialCharbons={charbons}>
