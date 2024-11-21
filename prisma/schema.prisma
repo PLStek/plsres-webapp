@@ -8,24 +8,38 @@ datasource db {
 }
 
 model Charbon {
-    id          Int      @id @default(autoincrement())
-    name        String
-    description String
-    timestamp   DateTime
-    replayUrl   String?
-    courseId    Int
+    id             Int      @id @default(autoincrement())
+    name           String
+    description    String
+    timestamp      DateTime
+    replayUrl      String?
+    courseId       Int
+    discordEventId String
 
     resources   Resource[]
     actionneurs CharbonActionneur[]
     course      Course              @relation(fields: [courseId], references: [id], onDelete: Restrict)
+    discordUsers CharbonDiscordUser[]
 
     @@index([courseId], name: "courseId")
 }
 
+model CharbonDiscordUser {
+    id        Int     @id @default(autoincrement())
+    charbonId Int
+    discordId String
+
+    charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
+
+    @@index([charbonId], name: "charbonId")
+}
+
 model Course {
-    id   Int    @id @default(autoincrement())
-    code String @unique
-    name String
+    id                       Int    @id @default(autoincrement())
+    code                     String @unique
+    name                     String
+    discordResourceChannelId String
+    discordVoiceChannelId    String
 
     category CourseCategory
     charbon  Charbon[]
@@ -59,8 +73,8 @@ model Actionneur {
 }
 
 model Invitation {
-    id Int @id @default(autoincrement())
-    token String @unique
+    id        Int      @id @default(autoincrement())
+    token     String   @unique
     discordId String
     expiresAt DateTime
 }
