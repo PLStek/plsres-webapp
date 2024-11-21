@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -11,12 +13,23 @@ const Modal = ({
     onClose: () => void;
 }) => {
     const [showContent, setShowContent] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
     const [isMouseDownInside, setIsMouseDownInside] = useState(false);
 
     const handleClose = useCallback(() => {
         setShowContent(false);
         setTimeout(onClose, 200);
     }, [onClose]);
+
+    useEffect(() => {
+        setIsMounted(true);
+
+        if (isOpen) {
+            setShowContent(true);
+        } else {
+            setShowContent(false);
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -26,15 +39,16 @@ const Modal = ({
         };
 
         if (isOpen) {
-            setShowContent(true);
             document.addEventListener("keydown", handleKeyDown);
-        } else {
-            setShowContent(false);
-            document.removeEventListener("keydown", handleKeyDown);
         }
 
-        return () => document.removeEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
     }, [isOpen, handleClose]);
+
+    // If not mounted, don't render (avoids SSR `document` issues)
+    if (!isMounted) return null;
 
     if (!isOpen && !showContent) return null;
 

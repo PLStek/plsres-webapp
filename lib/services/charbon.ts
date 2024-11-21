@@ -7,17 +7,13 @@ import {
 import {
     Charbon,
     CharbonCreateInput,
-    CharbonCreateResponse,
     CharbonUpdateInput,
 } from "../models/charbon";
 import {
     deleteCharbonActionneurByCharbonIds,
     postCharbonActionneurs,
 } from "../data/charbonActionneur";
-import {
-    createResourcesForCharbonService,
-    deleteResourcesByCharbonIdService,
-} from "./resource/resource";
+import { deleteResourcesByCharbonIdService } from "./resource/resource";
 
 export const getCharbonsService = async (): Promise<Charbon[]> => {
     const charbons = await getCharbons();
@@ -37,36 +33,35 @@ export const getCharbonByIdService = async (
     return charbons.find((charbon) => charbon.id === id);
 };
 
-export const createCharbonService = async ({
+export const createCharbonDraftService = async ({
     courseId,
-    actionneurIds,
-    resources,
+    actionneurId,
     ...data
-}: CharbonCreateInput): Promise<CharbonCreateResponse> => {
+}: CharbonCreateInput): Promise<Charbon> => {
     const newCharbonPostData = {
         ...data,
         course: { connect: { id: courseId } },
     };
     const newCharbon = await postCharbon(newCharbonPostData);
-    const charbonActionneursPostData = actionneurIds.map((actionneurId) => ({
+    const charbonActionneursPostData = {
         charbonId: newCharbon.id,
         actionneurId,
-    }));
+    };
 
-    await postCharbonActionneurs(charbonActionneursPostData);
+    await postCharbonActionneurs([charbonActionneursPostData]);
 
-    const newResources = await createResourcesForCharbonService(
+    /* const newResources = await createResourcesForCharbonService(
         newCharbon.id,
         resources.map((resource) => ({
             ...resource,
             charbonId: newCharbon.id,
         }))
-    );
+    ); */ //TODO: delete
 
     return {
         ...newCharbon,
-        actionneurIds: actionneurIds,
-        resources: newResources,
+        actionneurIds: [actionneurId],
+        // resources: newResources,
     };
 };
 
@@ -85,7 +80,7 @@ export const updateCharbonService = async (
 
     return {
         ...updatedCharbon,
-        actionneurIds: data.actionneurIds,
+        actionneurIds: data.actionneurIds ?? [], //TODO: update actionneurs
     };
 };
 

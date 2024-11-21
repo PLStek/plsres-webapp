@@ -4,15 +4,26 @@ import {
     postCourse,
     putCourse,
 } from "../data/course";
-import { CourseCreateInput, CourseUpdateInput } from "../models/course";
+import { Course, CourseCreateInput, CourseUpdateInput } from "../models/course";
 
-export const getCoursesService = async () => {
+export const getCoursesService = async (): Promise<Course[]> => {
     return getCourses();
 };
 
-export const getCourseByIdService = async (id: number) => {
+export const getCourseByIdService = async (
+    id: number
+): Promise<Course | undefined> => {
     const courses = await getCourses();
     return courses.find((course) => course.id === id);
+};
+
+export const getCourseByDiscordVoiceChannelIdService = async (
+    discordVoiceChannelId: string
+): Promise<Course | undefined> => {
+    const courses = await getCourses();
+    return courses.find(
+        (course) => course.discordVoiceChannelId === discordVoiceChannelId
+    );
 };
 
 export const createCourseService = async (data: CourseCreateInput) => {

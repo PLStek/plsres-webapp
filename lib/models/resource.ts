@@ -8,10 +8,10 @@ export type Resource = ResourceBase & {
     extension: string;
 };
 
-export type ResourceCreateInputForCharbon = {
+/* export type ResourceCreateInputForCharbon = {
     name: string;
     file: File;
-};
+}; */ //TODO: delete
 
 export type ResourceCreateInput = ResourceBase & {
     file: File;

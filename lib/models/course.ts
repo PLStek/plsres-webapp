@@ -4,6 +4,8 @@ type CourseBase = {
     code: string;
     name: string;
     category: CourseCategory;
+    discordResourceChannelId: string;
+    discordVoiceChannelId: string;
 };
 
 export type Course = CourseBase & {

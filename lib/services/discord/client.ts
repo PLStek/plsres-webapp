@@ -1,9 +1,8 @@
 import { discordClient } from "@lib/discord";
+import { guildScheduledEventCreate } from "./events/guildScheduledEventCreate";
+import { voiceStateUpdate } from "./events/voiceStateUpdate";
 
 export const initDiscordClient = async () => {
-    if (discordClient.isReady()) {
-        return;
-    }
     await discordClient.login(process.env.DISCORD_BOT_TOKEN);
 
     discordClient.on("ready", () => {
@@ -17,6 +16,10 @@ export const initDiscordClient = async () => {
             message.reply("Pong!");
         }
     });
+
+    discordClient.on("guildScheduledEventCreate", guildScheduledEventCreate);
+
+    discordClient.on("voiceStateUpdate", voiceStateUpdate);
 };
 
 export const stopDiscordClient = async () => {

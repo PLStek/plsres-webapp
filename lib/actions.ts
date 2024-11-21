@@ -16,7 +16,7 @@ import {
     disconnectService,
 } from "./services/auth";
 import {
-    createCharbonService,
+    createCharbonDraftService,
     deleteCharbonService,
     getCharbonByIdService,
     getCharbonsService,
@@ -78,7 +78,10 @@ export const authenticateAction = withAuth("guest", authenticateService);
 
 export const getCharbonsAction = withAuth("guest", getCharbonsService);
 export const getCharbonByIdAction = withAuth("guest", getCharbonByIdService);
-export const createCharbonAction = withAuth("actionneur", createCharbonService);
+export const createCharbonAction = withAuth(
+    "actionneur",
+    createCharbonDraftService
+); //TODO: remove
 export const updateCharbonAction = withAuth("actionneur", updateCharbonService);
 export const deleteCharbonAction = withAuth("actionneur", deleteCharbonService);
 

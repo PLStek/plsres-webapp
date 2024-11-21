@@ -3,13 +3,14 @@
 import { useAuth } from "@app/hooks/useAuth";
 import Modal from "../Modal";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
-
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 //TODO: revoir wording et style
 const InvitationModal = () => {
     const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
     const invitationToken = searchParams.get("invitation");
 
     const { isVerified, isActionneur } = useAuth();
@@ -28,7 +29,13 @@ const InvitationModal = () => {
     return (
         //TODO: review html here
         invitationToken && (
-            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+            <Modal
+                isOpen={isOpen}
+                onClose={() => {
+                    setIsOpen(false);
+                    router.replace(pathname);
+                }}
+            >
                 {step === 1 && <Step1 />}
                 {step === 2 && <Step2 invitationToken={invitationToken!} />}
                 {step === 3 && <div>Step 3</div>}

@@ -13,6 +13,7 @@ export const discordClient: Client =
     new Client({
         intents: [
             GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildScheduledEvents,
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
         ],
@@ -23,14 +24,16 @@ if (process.env.NODE_ENV !== "production") {
     globalForDiscord.discordClient = discordClient;
 }
 
-await initDiscordClient();
+if (!discordClient.isReady()) {
+    await initDiscordClient();
 
-const shutdown = async () => {
-    await stopDiscordClient();
-    process.exit(0);
-};
+    const shutdown = async () => {
+        await stopDiscordClient();
+        process.exit(0);
+    };
 
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+}
 
 export default discordClient;
