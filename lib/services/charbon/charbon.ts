@@ -3,19 +3,20 @@ import {
     getCharbons,
     postCharbon,
     putCharbon,
-} from "../data/charbon";
+} from "../../data/charbon";
 import {
     Charbon,
     CharbonCreateInput,
     CharbonUpdateInput,
-} from "../models/charbon";
+} from "../../models/charbon";
 import {
     deleteCharbonActionneurByCharbonIds,
     postCharbonActionneurs,
-} from "../data/charbonActionneur";
-import { deleteResourcesByCharbonIdService } from "./resource/resource";
+} from "../../data/charbonActionneur";
+import { deleteResourcesByCharbonIdService } from "../resource/resource";
+import { deleteCharbonAttendeesByCharbonIdService } from "./charbonAttendee";
 
-export const getCharbonsService = async (): Promise<Charbon[]> => {
+export const getAllCharbonsService = async (): Promise<Charbon[]> => {
     const charbons = await getCharbons();
 
     const charbonsWithActionneurs = charbons.map((charbon) => ({
@@ -26,14 +27,33 @@ export const getCharbonsService = async (): Promise<Charbon[]> => {
     return charbonsWithActionneurs;
 };
 
+export const getPublicCharbonsService = async (): Promise<Charbon[]> => {
+    const charbons = await getAllCharbonsService();
+    return charbons.filter((charbon) => !charbon.isDraft);
+};
+
 export const getCharbonByIdService = async (
     id: number
 ): Promise<Charbon | undefined> => {
-    const charbons = await getCharbonsService();
+    const charbons = await getAllCharbonsService();
     return charbons.find((charbon) => charbon.id === id);
 };
 
-export const createCharbonDraftService = async ({
+export const getCharbonByDiscordEventIdService = async (
+    discordEventId: string
+): Promise<Charbon | undefined> => {
+    const charbons = await getAllCharbonsService();
+    return charbons.find(
+        (charbon) => charbon.discordEventId === discordEventId
+    );
+};
+
+export const getOngoingCharbonsService = async (): Promise<Charbon[]> => {
+    const charbons = await getAllCharbonsService();
+    return charbons.filter((charbon) => charbon.status === "ONGOING");
+};
+
+export const createCharbonService = async ({
     courseId,
     actionneurId,
     ...data
@@ -84,12 +104,25 @@ export const updateCharbonService = async (
     };
 };
 
+export const startCharbonService = async (id: number): Promise<Charbon> => {
+    return updateCharbonService(id, { status: "ONGOING" });
+};
+
+export const finishCharbonService = async (id: number): Promise<Charbon> => {
+    return updateCharbonService(id, { status: "FINISHED" });
+};
+
 export const deleteCharbonService = async (
     id: number
 ): Promise<Charbon | undefined> => {
     const charbon = await getCharbonByIdService(id);
-    await deleteCharbonActionneurByCharbonIds([id]);
-    await deleteResourcesByCharbonIdService(id);
+
+    //TODO: Voir si on peut plutot le faire avec un cascade delete et juste update le cache
+    await Promise.all([
+        deleteCharbonActionneurByCharbonIds([id]),
+        deleteCharbonAttendeesByCharbonIdService(id),
+        deleteResourcesByCharbonIdService(id),
+    ]);
     await deleteCharbon(id);
     return charbon;
 };

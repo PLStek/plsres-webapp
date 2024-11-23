@@ -7,33 +7,40 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum CharbonStatus {
+    SCHEDULED
+    ONGOING
+    FINISHED
+}
+
 model Charbon {
-    id             Int      @id @default(autoincrement())
-    draft          Boolean  @default(true)
-    ongoing        Boolean  @default(false)
+    id             Int           @id @default(autoincrement())
+    status         CharbonStatus @default(SCHEDULED)
+    isDraft        Boolean       @default(true)
     name           String
     description    String
     timestamp      DateTime
-    replayUrl      String?  @unique
+    replayUrl      String?       @unique
     courseId       Int
-    discordEventId String   @unique
+    discordEventId String        @unique
 
-    resources    Resource[]
-    actionneurs  CharbonActionneur[]
-    course       Course               @relation(fields: [courseId], references: [id], onDelete: Restrict)
-    discordUsers CharbonDiscordUser[]
+    resources   Resource[]
+    actionneurs CharbonActionneur[]
+    course      Course              @relation(fields: [courseId], references: [id], onDelete: Restrict)
+    attendees   CharbonAttendee[]
 
     @@index([courseId], name: "courseId")
 }
 
-model CharbonDiscordUser {
+model CharbonAttendee {
     id        Int    @id @default(autoincrement())
     charbonId Int
-    discordId String
+    discordUserId String
 
     charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
 
     @@index([charbonId], name: "charbonId")
+    @@unique([charbonId, discordUserId])
 }
 
 model Course {

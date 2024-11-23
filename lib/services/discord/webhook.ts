@@ -1,6 +1,6 @@
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
-export const sendLogMessage = async (operation: string, userId: string) => {
+export const sendLogMessage = (operation: string, userId: string) => {
     if (!WEBHOOK_URL) {
         throw new Error("Missing Discord Webhook URL");
     }
@@ -32,12 +32,11 @@ export const sendLogMessage = async (operation: string, userId: string) => {
         ],
     };
 
-    const res = await fetch(WEBHOOK_URL, {
+    fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(message),
     });
-    console.log("Log message sent", res);
 };

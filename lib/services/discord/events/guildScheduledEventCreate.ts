@@ -1,35 +1,17 @@
-import { ChannelType, GuildScheduledEvent } from "discord.js";
+import { GuildScheduledEvent } from "discord.js";
 import { getCourseByDiscordVoiceChannelIdService } from "../../course";
 import { getActionneurByDiscordId } from "@lib/data/actionneur";
-import { Charbon, CharbonCreateInput } from "@lib/models/charbon";
-import { createCharbonDraftService } from "../../charbon";
-import discordClient from "@lib/discord";
-
-const FEEDBACK_CHANNEL_ID = process.env.DISCORD_COMMUNICATION_CHANNEL_ID;
+import { Charbon } from "@lib/models/charbon";
+import { createCharbonService } from "../../charbon/charbon";
+import { sendFeedback } from "../utils/sendFeedback";
 const WEBAPP_URL = process.env.NEXT_PUBLIC_WEBAPP_URL;
 
-const sendFeedback = async (message: string) => {
-    if (!FEEDBACK_CHANNEL_ID) {
-        throw new Error(
-            "Missing environment variable DISCORD_COMMUNICATION_CHANNEL_ID"
-        );
-    }
-
-    const feedbackChannel = await discordClient.channels.fetch(
-        FEEDBACK_CHANNEL_ID
-    );
-    if (!feedbackChannel || feedbackChannel.type !== ChannelType.GuildText) {
-        return;
-    }
-    await feedbackChannel.send(message);
-};
-
-const buildEventMessage = (charbon: Charbon) => {
+const buildEventMessage = (charbon: Charbon, creatorId: string) => {
     if (!WEBAPP_URL) {
         throw new Error("Missing environment variable NEXT_PUBLIC_WEBAPP_URL");
     }
     const charbonUrl = `${WEBAPP_URL}?charbon=${charbon.id}`;
-    return `Un charbon a été créé : ${charbon.name} - [Voir le charbon](${charbonUrl})`;
+    return `<@${creatorId}>, le charbon [${charbon.name}](${charbonUrl}) a été ajouté en brouillon ! Merci de finaliser sa création en cliquant sur ce lien.`;
 };
 
 export const guildScheduledEventCreate = async (event: GuildScheduledEvent) => {
@@ -48,7 +30,7 @@ export const guildScheduledEventCreate = async (event: GuildScheduledEvent) => {
         return;
     }
 
-    const newCharbonPostData: CharbonCreateInput = {
+    const newCharbonPostData = {
         courseId: course.id,
         actionneurId: actionneur.id,
         description: event.description ?? "",
@@ -56,7 +38,7 @@ export const guildScheduledEventCreate = async (event: GuildScheduledEvent) => {
         timestamp: startAt,
         discordEventId: event.id,
     };
-    const newCharbon = await createCharbonDraftService(newCharbonPostData);
-    const message = buildEventMessage(newCharbon);
+    const newCharbon = await createCharbonService(newCharbonPostData);
+    const message = buildEventMessage(newCharbon, creatorId);
     await sendFeedback(message);
 };

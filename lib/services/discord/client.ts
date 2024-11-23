@@ -1,6 +1,7 @@
 import { discordClient } from "@lib/discord";
 import { guildScheduledEventCreate } from "./events/guildScheduledEventCreate";
 import { voiceStateUpdate } from "./events/voiceStateUpdate";
+import { guildScheduledEventUpdate } from "./events/guildScheduledEventUpdate";
 
 export const initDiscordClient = async () => {
     await discordClient.login(process.env.DISCORD_BOT_TOKEN);
@@ -18,7 +19,7 @@ export const initDiscordClient = async () => {
     });
 
     discordClient.on("guildScheduledEventCreate", guildScheduledEventCreate);
-
+    discordClient.on("guildScheduledEventUpdate", guildScheduledEventUpdate);
     discordClient.on("voiceStateUpdate", voiceStateUpdate);
 };
 

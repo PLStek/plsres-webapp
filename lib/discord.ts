@@ -16,6 +16,7 @@ export const discordClient: Client =
             GatewayIntentBits.GuildScheduledEvents,
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildVoiceStates,
         ],
         partials: [Partials.Message, Partials.Channel],
     });

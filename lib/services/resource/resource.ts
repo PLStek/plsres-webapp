@@ -5,12 +5,10 @@ import {
     getResourceByCharbonId,
     getResources,
     postResource,
-    postResources,
     putResource,
 } from "../../data/resources";
 import {
     ResourceCreateInput,
-    ResourceCreateInputForCharbon,
     ResourceUpdateInput,
 } from "../../models/resource";
 import {
@@ -54,7 +52,7 @@ export const createResourceService = async (
     }
 };
 
-export const createResourcesForCharbonService = async (
+/* export const createResourcesForCharbonService = async (
     charbonId: number,
     data: ResourceCreateInputForCharbon[]
 ): Promise<Resource[]> => {
@@ -62,7 +60,6 @@ export const createResourcesForCharbonService = async (
         const extension = resource.file.name.split(".").pop() || "";
         return {
             ...resource,
-            charbonId,
             charbon: { connect: { id: charbonId } },
             extension,
         };
@@ -88,7 +85,7 @@ export const createResourcesForCharbonService = async (
         console.error(error);
         throw new Error("Failed to save the files");
     }
-};
+}; */
 
 export const updateResourceService = async (
     id: number,

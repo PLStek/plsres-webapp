@@ -24,6 +24,14 @@ export const getActionneurByIdService = async (
     return actionneurs.find((actionneur) => (actionneur.id = id));
 };
 
+export const getActionneursByIdsService = async (
+    ids: number[]
+): Promise<Actionneur[]> => {
+    const actionneurs = await getActionneursService();
+    const idsSet = new Set(ids);
+    return actionneurs.filter((actionneur) => idsSet.has(actionneur.id));
+};
+
 //TODO: Implement
 export const getCurrentActionneurService = async (): Promise<Actionneur> => {
     return getActionneursService().then((actionneurs) => actionneurs[0]);

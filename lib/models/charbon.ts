@@ -1,4 +1,4 @@
-import { Resource } from "./resource";
+export type CharbonStatus = "SCHEDULED" | "ONGOING" | "FINISHED";
 
 type CharbonBase = {
     name: string;
@@ -12,21 +12,21 @@ export type Charbon = CharbonBase & {
     id: number;
     courseId: number;
     actionneurIds: number[];
+    status: CharbonStatus;
+    isDraft: boolean;
 };
 
 export type CharbonCreateInput = CharbonBase & {
     courseId: number;
     actionneurId: number;
-};
-
-export type CharbonCreateResponse = Charbon & {
-    resources: Resource[];
+    status?: CharbonStatus;
 };
 
 export type CharbonUpdateInput = Partial<
     CharbonBase & {
-        draft: boolean;
         courseId: number;
         actionneurIds: number[];
+        status: CharbonStatus;
+        isDraft: boolean;
     }
 >;

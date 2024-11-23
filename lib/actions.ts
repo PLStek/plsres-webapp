@@ -16,12 +16,12 @@ import {
     disconnectService,
 } from "./services/auth";
 import {
-    createCharbonDraftService,
+    createCharbonService,
     deleteCharbonService,
     getCharbonByIdService,
-    getCharbonsService,
+    getPublicCharbonsService,
     updateCharbonService,
-} from "./services/charbon";
+} from "./services/charbon/charbon";
 import {
     createCourseService,
     deleteCourseService,
@@ -76,12 +76,12 @@ export const connectActionneurAction = withAuth(
 export const disconnectAction = withAuth("verified", disconnectService);
 export const authenticateAction = withAuth("guest", authenticateService);
 
-export const getCharbonsAction = withAuth("guest", getCharbonsService);
-export const getCharbonByIdAction = withAuth("guest", getCharbonByIdService);
-export const createCharbonAction = withAuth(
+export const getCharbonsAction = withAuth("guest", getPublicCharbonsService);
+export const getCharbonByIdAction = withAuth(
     "actionneur",
-    createCharbonDraftService
-); //TODO: remove
+    getCharbonByIdService
+);
+export const createCharbonAction = withAuth("actionneur", createCharbonService); //TODO: remove
 export const updateCharbonAction = withAuth("actionneur", updateCharbonService);
 export const deleteCharbonAction = withAuth("actionneur", deleteCharbonService);
 
