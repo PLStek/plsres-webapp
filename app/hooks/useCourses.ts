@@ -1,43 +1,56 @@
 import { createCourseAction, deleteCourseAction } from "@lib/actions";
-import { CoursesContext } from "../context/CoursesContext";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { CourseCreateInput } from "@lib/models/course";
+import { useCourseContext } from "@app/context/CourseContext";
 
-export const useCourses = () => {
-    const context = useContext(CoursesContext);
+export const useCoursesQuery = () => {
+    const { courses } = useCourseContext();
+    return [courses] as const;
+};
 
-    if (!context) {
-        throw new Error("useCourses must be used within a CoursesProvider");
-    }
+export const useCourseByIdQuery = (id: number) => {
+    const { courses } = useCourseContext();
+    const course = courses.find((c) => c.id === id);
+    return [course] as const;
+};
 
-    const { courses, addCourse, removeCourse } = context;
+export const useCreateCourseMutation = () => {
+    const { addCourse } = useCourseContext();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const [loading, setLoading] = useState({
-        create: false,
-        delete: false,
-    });
-
-    const fetchCourseById = (id: number) => courses.find((c) => c.id === id);
-
-    const createCourse = async (newCourse: CourseCreateInput) => {
-        setLoading((prev) => ({ ...prev, create: true }));
-        const course = await createCourseAction(newCourse);
-        addCourse(course);
-        setLoading((prev) => ({ ...prev, create: false }));
+    const mutate = async (newCourse: CourseCreateInput) => {
+        try {
+            const course = await createCourseAction(newCourse);
+            addCourse(course);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const deleteCourse = async (id: number) => {
-        setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteCourseAction(id);
-        removeCourse(id);
-        setLoading((prev) => ({ ...prev, delete: false }));
+    return [mutate, loading, error] as const;
+};
+
+export const useDeleteCourseMutation = () => {
+    const { removeCourse } = useCourseContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (id: number) => {
+        try {
+            setLoading(true);
+            await deleteCourseAction(id);
+            removeCourse(id);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    return {
-        courses,
-        fetchCourseById,
-        createCourse,
-        deleteCourse,
-        loading,
-    };
+    return [mutate, loading, error] as const;
 };

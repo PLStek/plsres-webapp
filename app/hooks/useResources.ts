@@ -1,44 +1,56 @@
 import { ResourceCreateInput } from "@lib/models/resource";
-import { ResourcesContext } from "../context/ResourcesContext";
-import { useContext, useState } from "react";
+import { useResourceContext } from "../context/ResourceContext";
+import { useState } from "react";
 import { createResourceAction, deleteResourceAction } from "@lib/actions";
 
-export const useResources = () => {
-    const context = useContext(ResourcesContext);
+export const useResourcesQuery = () => {
+    const { resources } = useResourceContext();
+    return [resources] as const;
+};
 
-    if (!context) {
-        throw new Error("useResources must be used within a ResourcesProvider");
-    }
+export const useResourceByIdQuery = (id: number) => {
+    const { resources } = useResourceContext();
+    const resource = resources.find((c) => c.id === id);
+    return [resource] as const;
+};
 
-    const { resources, addResource, removeResource } = context;
+export const useCreateResourceMutation = () => {
+    const { addResource } = useResourceContext();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const [loading, setLoading] = useState({
-        create: false,
-        delete: false,
-    });
-
-    const fetchResourceById = (id: number) =>
-        resources.find((c) => c.id === id);
-
-    const createResource = async (newResource: ResourceCreateInput) => {
-        setLoading((prev) => ({ ...prev, create: true }));
-        const resource = await createResourceAction(newResource);
-        addResource(resource);
-        setLoading((prev) => ({ ...prev, create: false }));
+    const mutate = async (newResource: ResourceCreateInput) => {
+        try {
+            const resource = await createResourceAction(newResource);
+            addResource(resource);
+            setError(null); //TODO: voir si besoin des setErrors ici (partout)
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const deleteResource = async (id: number) => {
-        setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteResourceAction(id);
-        removeResource(id);
-        setLoading((prev) => ({ ...prev, delete: false }));
+    return [mutate, loading, error] as const;
+};
+
+export const useDeleteResourceMutation = () => {
+    const { removeResource } = useResourceContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (id: number) => {
+        try {
+            setLoading(true);
+            await deleteResourceAction(id);
+            removeResource(id);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    return {
-        resources,
-        fetchResourceById,
-        createResource,
-        deleteResource,
-        loading,
-    };
+    return [mutate, loading, error] as const;
 };

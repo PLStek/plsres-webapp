@@ -8,13 +8,12 @@ import {
     getResourcesAction,
     authenticateAction,
 } from "@lib/actions";
-import CharbonsProvider from "./context/CharbonsContext";
-import ActionneursProvider from "./context/ActionneursContext";
-import CoursesProvider from "./context/CoursesContext";
-import ResourcesProvider from "./context/ResourcesContext";
+import CharbonProvider from "./context/CharbonContext";
+import ActionneurProvider from "./context/ActionneurContext";
+import CourseProvider from "./context/CourseContext";
+import ResourceProvider from "./context/ResourceContext";
 import AuthProvider from "./context/AuthContext";
-import '../lib/discord';
-
+import "../lib/discord";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -43,14 +42,12 @@ export default async function RootLayout({
     const resources = await getResourcesAction();
     const authData = await authenticateAction();
 
-  
-    
     return (
         <AuthProvider initialAuthData={authData}>
-            <CharbonsProvider initialCharbons={charbons}>
-                <ActionneursProvider initialActionneurs={actionneurs}>
-                    <CoursesProvider initialCourses={courses}>
-                        <ResourcesProvider initialResources={resources}>
+            <CharbonProvider initialCharbons={charbons}>
+                <ActionneurProvider initialActionneurs={actionneurs}>
+                    <CourseProvider initialCourses={courses}>
+                        <ResourceProvider initialResources={resources}>
                             <html lang="fr">
                                 <body
                                     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -58,10 +55,10 @@ export default async function RootLayout({
                                     {children}
                                 </body>
                             </html>
-                        </ResourcesProvider>
-                    </CoursesProvider>
-                </ActionneursProvider>
-            </CharbonsProvider>
+                        </ResourceProvider>
+                    </CourseProvider>
+                </ActionneurProvider>
+            </CharbonProvider>
         </AuthProvider>
     );
 }

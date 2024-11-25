@@ -1,19 +1,19 @@
 "use client";
 
 import { Resource } from "@lib/models/resource";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
-type ResourcesContextType = {
+type ResourceContextType = {
     resources: Resource[];
     addResource: (newResource: Resource) => void;
     removeResource: (id: number) => void;
 };
 
-export const ResourcesContext = createContext<ResourcesContextType | undefined>(
+export const ResourceContext = createContext<ResourceContextType | undefined>(
     undefined
 );
 
-const ResourcesProvider = ({
+const ResourceProvider = ({
     initialResources,
     children,
 }: {
@@ -28,7 +28,7 @@ const ResourcesProvider = ({
         setResources(resources.filter((c) => c.id !== id));
 
     return (
-        <ResourcesContext.Provider
+        <ResourceContext.Provider
             value={{
                 resources,
                 addResource,
@@ -36,8 +36,16 @@ const ResourcesProvider = ({
             }}
         >
             {children}
-        </ResourcesContext.Provider>
+        </ResourceContext.Provider>
     );
 };
 
-export default ResourcesProvider;
+export default ResourceProvider;
+
+export const useResourceContext = () => {
+    const context = useContext(ResourceContext);
+    if (context === undefined) {
+        throw new Error("useResources must be used within a ResourceProvider");
+    }
+    return context;
+};

@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { CharbonsContext } from "@app/context/CharbonsContext";
+import { useEffect, useState } from "react";
+import { useCharbonContext } from "@app/context/CharbonContext";
 import { Charbon, CharbonCreateInput } from "@lib/models/charbon";
 import {
     createCharbonAction,
@@ -7,51 +7,80 @@ import {
     getCharbonByIdAction,
 } from "@lib/actions";
 
-export const useCharbons = () => {
-    const context = useContext(CharbonsContext);
-    if (!context) {
-        throw new Error("useCharbons must be used within a CharbonsProvider");
-    }
+export const useCharbonsQuery = () => {
+    const { charbons } = useCharbonContext();
+    return [charbons];
+};
 
-    const { charbons, addCharbon, removeCharbon } = context;
+//TODO: refactor pour éviter la confusion avec l'action réservée aux actionneurs
+export const useCharbonByIdQuery = (id: number, useCache: boolean = true) => {
+    const { charbons } = useCharbonContext();
+    const [data, setData] = useState<Charbon | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const [loading, setLoading] = useState({
-        create: false,
-        delete: false,
-    });
-
-    const fetchCharbonById = async (
-        id: number,
-        useCache: boolean = true
-    ): Promise<Charbon | undefined> => {
-        if (useCache) {
-            const charbon = charbons.find((c) => c.id === id);
-            if (charbon) {
-                return charbon;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (useCache) {
+                    const charbon = charbons.find((c) => c.id === id);
+                    if (charbon) {
+                        setData(charbon);
+                    }
+                }
+                const charbon = await getCharbonByIdAction(id); //Réservé aux actionneurs
+                setData(charbon ?? null);
+                setError(null);
+            } catch (err) {
+                setError(err as Error);
+            } finally {
+                setLoading(false);
             }
+        };
+        fetchData();
+    }, [id, charbons, useCache]);
+
+    return [data, loading, error] as const;
+};
+
+export const useCreateCharbonMutation = () => {
+    const { addCharbon } = useCharbonContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (newCharbon: CharbonCreateInput) => {
+        try {
+            setLoading(true);
+            const charbon = await createCharbonAction(newCharbon);
+            addCharbon(charbon);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
         }
-        return getCharbonByIdAction(id);
     };
 
-    const createCharbon = async (newCharbon: CharbonCreateInput) => {
-        setLoading((prev) => ({ ...prev, create: true }));
-        const charbon = await createCharbonAction(newCharbon);
-        addCharbon(charbon);
-        setLoading((prev) => ({ ...prev, create: false }));
+    return [mutate, loading, error] as const;
+};
+
+export const useDeleteCharbonMutation = () => {
+    const { removeCharbon } = useCharbonContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (id: number) => {
+        try {
+            setLoading(true);
+            await deleteCharbonAction(id);
+            removeCharbon(id);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const deleteCharbon = async (id: number) => {
-        setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteCharbonAction(id);
-        removeCharbon(id);
-        setLoading((prev) => ({ ...prev, delete: false }));
-    };
-
-    return {
-        charbons,
-        fetchCharbonById,
-        createCharbon,
-        deleteCharbon,
-        loading,
-    };
+    return [mutate, loading, error] as const;
 };

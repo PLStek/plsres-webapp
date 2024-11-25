@@ -47,10 +47,7 @@ const Modal = ({
         };
     }, [isOpen, handleClose]);
 
-    // If not mounted, don't render (avoids SSR `document` issues)
-    if (!isMounted) return null;
-
-    if (!isOpen && !showContent) return null;
+    if (!isMounted || (!isOpen && !showContent)) return null;
 
     return createPortal(
         <div

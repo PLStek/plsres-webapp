@@ -1,4 +1,4 @@
-import { useAuth } from "@app/hooks/useAuth";
+import { useConnect } from "@app/hooks/useAuth";
 import Modal from "./Modal";
 
 const VerificationModal = ({
@@ -8,7 +8,7 @@ const VerificationModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const { connect } = useAuth();
+    const [connect, loading, error] = useConnect();
 
     return (
         //TODO: review html here

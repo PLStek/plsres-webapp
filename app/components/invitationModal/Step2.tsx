@@ -1,15 +1,17 @@
-import { useActionneurs } from "@app/hooks/useActionneurs";
-import { useAuth } from "@app/hooks/useAuth";
+import { useCreateActionneurMutation } from "@app/hooks/useActionneurs";
+import { useConnectActionneur } from "@app/hooks/useAuth";
 
 const Step2 = ({ invitationToken }: { invitationToken: string }) => {
-
-    const {createActionneur} = useActionneurs();
-    const {connectActionneur} = useAuth();
+    const [createActionneur, loadingCreate, errorCreate] =
+        useCreateActionneurMutation();
+    const [connectActionneur, loadingConnect, errorConnect] =
+        useConnectActionneur();
+    //TODO: implement loading & error
 
     const submit = async (formData: FormData) => {
         const username = formData.get("username") as string;
         const secret = Number(formData.get("secret"));
-        await createActionneur({username, secret, invitationToken});
+        await createActionneur({ username, secret, invitationToken });
         await connectActionneur(secret);
     };
 

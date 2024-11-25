@@ -1,9 +1,7 @@
-import { useGetCourses } from "../hooks/useCourses";
+import { useCoursesQuery } from "@app/hooks/useCourses";
 
 const CourseSelect = () => {
-    const getCourses = useGetCourses();
-
-    const courses = getCourses();
+    const [courses] = useCoursesQuery();
 
     return (
         <select name="courseId">

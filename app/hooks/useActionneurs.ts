@@ -1,46 +1,81 @@
-import { ActionneursContext } from "@app/context/ActionneursContext";
-import { useContext, useState } from "react";
+import { useActionneurContext } from "@app/context/ActionneurContext";
 import { createActionneurAction, deleteActionneurAction } from "@lib/actions";
 import { ActionneurCreateInput } from "@lib/models/actionneur";
 
-export const useActionneurs = () => {
-    const context = useContext(ActionneursContext);
+import { useState, useEffect } from "react";
+import { Actionneur } from "@lib/models/actionneur";
 
-    if (!context) {
-        throw new Error(
-            "useActionneurs must be used within an ActionneursProvider"
-        );
-    }
+export const useActionneursQuery = () => {
+    const { actionneurs } = useActionneurContext();
+    //TODO: add option to not use cache
+    return [actionneurs];
+};
 
-    const { actionneurs, addActionneur, removeActionneur } = context;
+export const useActionneursByIdsQuery = (ids: number[]) => {
+    const { actionneurs } = useActionneurContext();
+    const [data, setData] = useState<Actionneur[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const [loading, setLoading] = useState({
-        create: false,
-        delete: false,
-    });
+    useEffect(() => {
+        const fetchData = () => {
+            try {
+                const result = actionneurs.filter((c) => ids.includes(c.id));
+                setData(result); //TODO: fetch data from server if some ids are not in the context & do the same for other hooks
+                setError(null);
+            } catch (err) {
+                setError(err as Error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const fetchActionneursByIds = (ids: number[]) =>
-        actionneurs.filter((c) => ids.includes(c.id)); //TODO: enlever fonction
+        if (ids.length > 0) {
+            fetchData();
+        }
+    }, [ids, actionneurs]);
 
-    const createActionneur = async (newActionneur: ActionneurCreateInput) => {
-        setLoading((prev) => ({ ...prev, create: true }));
-        const actionneur = await createActionneurAction(newActionneur);
-        addActionneur(actionneur);
-        setLoading((prev) => ({ ...prev, create: false }));
+    return [data, loading, error] as const;
+};
+
+export const useCreateActionneurMutation = () => {
+    const { addActionneur } = useActionneurContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (newActionneur: ActionneurCreateInput) => {
+        try {
+            setLoading(true);
+            const actionneur = await createActionneurAction(newActionneur);
+            addActionneur(actionneur);
+            setError(null);
+        } catch (error) {
+            setError(error as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const deleteActionneur = async (id: number) => {
-        setLoading((prev) => ({ ...prev, delete: true }));
-        await deleteActionneurAction(id);
-        removeActionneur(id);
-        setLoading((prev) => ({ ...prev, delete: false }));
+    return [mutate, loading, error] as const;
+};
+
+export const useDeleteActionneurMutation = () => {
+    const { removeActionneur } = useActionneurContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (id: number) => {
+        try {
+            setLoading(true);
+            await deleteActionneurAction(id);
+            removeActionneur(id);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    return {
-        actionneurs,
-        fetchActionneursByIds,
-        createActionneur,
-        deleteActionneur,
-        loading,
-    };
+    return [mutate, loading, error] as const;
 };

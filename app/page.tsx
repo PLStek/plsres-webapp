@@ -3,13 +3,13 @@ import CharbonMine from "./components/charbonMine/CharbonMine";
 import Sidebar from "./components/sidebar/Sidebar";
 import InvitationModal from "./components/invitationModal/InvitationModal";
 import Toolbar from "./components/toolbar/Toolbar";
-import EditCharbonModal from "./components/editCharbonModal/EditCharbonModal";
+import EditCharbonModalWrapper from "./components/editCharbonModal/EditCharbonModalWrapper";
 
 export default function Home() {
     return (
         <div className="mx-auto w-full lg:max-w-[90%] 2xl:max-w-[80%] 3xl:max-w-[1536px]">
             <InvitationModal />
-            <EditCharbonModal />
+            <EditCharbonModalWrapper />
             <div className="flex justify-center items-center mt-10">
                 <WelcomeBanner />
             </div>

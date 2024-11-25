@@ -1,17 +1,17 @@
 "use client";
 
 import { CharbonCreateInput } from "@lib/models/charbon";
-import { useCharbons } from "@app/hooks/useCharbons";
-import { useCourses } from "@app/hooks/useCourses";
-import { useActionneurs } from "@app/hooks/useActionneurs";
 import styles from "./CharbonForm.module.css";
+import { useCoursesQuery } from "@app/hooks/useCourses";
+import { useActionneursQuery } from "@app/hooks/useActionneurs";
+import { useCreateCharbonMutation } from "@app/hooks/useCharbons";
 
 const CharbonForm = () => {
-    const { courses } = useCourses();
-    const { actionneurs } = useActionneurs();
-    const { createCharbon, loading } = useCharbons();
+    const [courses] = useCoursesQuery();
+    const [actionneurs] = useActionneursQuery();
+    const [createCharbon, loading] = useCreateCharbonMutation();
 
-    const submit = async (formData: FormData) => {
+   /*  const submit = async (formData: FormData) => {
         const charbon: CharbonCreateInput = {
             name: formData.get("name") as string,
             description: formData.get("description") as string,
@@ -22,11 +22,11 @@ const CharbonForm = () => {
             ),
         };
         await createCharbon(charbon);
-    };
+    }; */
 
 
     return (
-        <form action={submit} className={styles.formContainer}>
+        <form /* action={submit} */ className={styles.formContainer}>
             <div>
                 <label htmlFor="name" className={styles.formLabel}>
                     Name
@@ -85,7 +85,7 @@ const CharbonForm = () => {
             <div>
                 <button
                     type="submit"
-                    disabled={loading.create}
+                    disabled={loading}
                     className={`${styles.submitButton} ${
                         loading && styles.submitButtonDisabled
                     }`}

@@ -1,19 +1,19 @@
 "use client";
 
 import { Course } from "@lib/models/course";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
-type CoursesContextType = {
+type CourseContextType = {
     courses: Course[];
     addCourse: (newCourse: Course) => void;
     removeCourse: (id: number) => void;
 };
 
-export const CoursesContext = createContext<CoursesContextType | undefined>(
+export const CourseContext = createContext<CourseContextType | undefined>(
     undefined
 );
 
-const CoursesProvider = ({
+const CourseProvider = ({
     initialCourses,
     children,
 }: {
@@ -28,10 +28,18 @@ const CoursesProvider = ({
         setCourses(courses.filter((c) => c.id !== id));
 
     return (
-        <CoursesContext.Provider value={{ courses, addCourse, removeCourse }}>
+        <CourseContext.Provider value={{ courses, addCourse, removeCourse }}>
             {children}
-        </CoursesContext.Provider>
+        </CourseContext.Provider>
     );
 };
 
-export default CoursesProvider;
+export default CourseProvider;
+
+export const useCourseContext = () => {
+    const context = useContext(CourseContext);
+    if (context === undefined) {
+        throw new Error("useCourses must be used within a CourseProvider");
+    }
+    return context;
+};

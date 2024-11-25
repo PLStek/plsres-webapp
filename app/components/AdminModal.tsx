@@ -1,8 +1,11 @@
 "use client";
 
-import { useAuth } from "@app/hooks/useAuth";
 import Modal from "./Modal";
-import { useActionneurs } from "@app/hooks/useActionneurs";
+import {
+    useActionneursQuery,
+    useDeleteActionneurMutation,
+} from "@app/hooks/useActionneurs";
+import { useCreateActionneurInviteMutation, useIsAdmin } from "@app/hooks/useAuth";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
@@ -13,17 +16,19 @@ const AdminModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const { createActionneurInviteAction, isAdmin } = useAuth();
+    const [createInvite] = useCreateActionneurInviteMutation();
+    const [isAdmin] = useIsAdmin();
 
     const [generatedLink, setGeneratedLink] = useState<string | undefined>(
         undefined
     );
 
-    const { actionneurs, deleteActionneur } = useActionneurs();
+    const [actionneurs] = useActionneursQuery();
+    const [deleteActionneur, loading, error] = useDeleteActionneurMutation();
 
     const submit = async (formData: FormData) => {
         const discordId = formData.get("discordId") as string;
-        const newLink = await createActionneurInviteAction(discordId);
+        const newLink = await createInvite(discordId);
         setGeneratedLink(newLink);
         /* await navigator.clipboard.writeText(newLink); */
     };

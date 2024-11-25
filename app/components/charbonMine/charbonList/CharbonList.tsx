@@ -1,10 +1,10 @@
 "use client";
 
+import { useCharbonsQuery } from "@app/hooks/useCharbons";
 import CharbonCard from "./charbonCard/CharbonCard";
-import { useCharbons } from "@app/hooks/useCharbons";
 
 const CharbonList = () => {
-    const { charbons } = useCharbons();
+    const [charbons] = useCharbonsQuery();
 
     const lastIndex = charbons.length - 1;
 

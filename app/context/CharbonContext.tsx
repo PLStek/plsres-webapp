@@ -1,19 +1,19 @@
 "use client";
 
 import { Charbon } from "@lib/models/charbon";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
-type CharbonsContextType = {
+type CharbonContextType = {
     charbons: Charbon[];
     addCharbon: (newCharbon: Charbon) => void;
     removeCharbon: (id: number) => void;
 };
 
-export const CharbonsContext = createContext<CharbonsContextType | undefined>(
-    undefined,
+export const CharbonContext = createContext<CharbonContextType | undefined>(
+    undefined
 );
 
-const CharbonsProvider = ({
+const CharbonProvider = ({
     initialCharbons,
     children,
 }: {
@@ -28,12 +28,20 @@ const CharbonsProvider = ({
         setCharbons(charbons.filter((c) => c.id !== id));
 
     return (
-        <CharbonsContext.Provider
+        <CharbonContext.Provider
             value={{ charbons, addCharbon, removeCharbon }}
         >
             {children}
-        </CharbonsContext.Provider>
+        </CharbonContext.Provider>
     );
 };
 
-export default CharbonsProvider;
+export default CharbonProvider;
+
+export const useCharbonContext = () => {
+    const context = useContext(CharbonContext);
+    if (context === undefined) {
+        throw new Error("useCharbons must be used within a CharbonProvider");
+    }
+    return context;
+};

@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthData } from "@lib/models/auth";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 type AuthContextType = {
     authData: AuthData;
@@ -29,3 +29,11 @@ const AuthProvider = ({
 };
 
 export default AuthProvider;
+
+export const useAuthContext = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within a AuthProvider");
+    }
+    return context;
+};

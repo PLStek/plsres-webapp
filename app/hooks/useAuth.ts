@@ -1,5 +1,5 @@
-import { AuthContext } from "@app/context/AuthContext";
-import { useContext, useState } from "react";
+import { useAuthContext } from "@app/context/AuthContext";
+import { useState } from "react";
 import {
     connectAction,
     authenticateAction,
@@ -8,20 +8,28 @@ import {
     createActionneurInviteAction,
 } from "@lib/actions";
 
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within a AuthProvider");
-    }
+export const useIsVerified = () => {
+    const { authData } = useAuthContext();
+    return [authData.isVerified] as const;
+};
 
-    const { authData, setAuthData } = context;
+export const useIsActionneur = () => {
+    const { authData } = useAuthContext();
+    return [!!authData.actionneurId] as const;
+};
 
+export const useIsAdmin = () => {
+    const { authData } = useAuthContext();
+    return [authData.isAdmin] as const;
+};
+
+//TODO: maybe refactor to use a single hook for auth data
+
+export const useConnect = () => {
+    const { setAuthData } = useAuthContext();
     const [loading, setLoading] = useState(false);
-    const isVerified = authData.isVerified;
-    const isActionneur = !!authData.actionneurId;
-    const isAdmin = authData.isAdmin;
+    const [error, setError] = useState<Error | null>(null);
 
-    // TODO: add error callback
     const connect = async (callback?: () => void) => {
         const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
         const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
@@ -61,30 +69,71 @@ export const useAuth = () => {
         //TODO: handle other popup closing cases
     };
 
+    return [connect, loading, error] as const;
+};
+
+export const useConnectActionneur = () => {
+    const { setAuthData } = useAuthContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
     const connectActionneur = async (secret: number) => {
-        setLoading(true);
-        await connectActionneurAction(secret);
-        const authData = await authenticateAction();
-        setAuthData(authData);
-        setLoading(false);
+        try {
+            setLoading(true);
+            await connectActionneurAction(secret);
+            const authData = await authenticateAction();
+            setAuthData(authData);
+            setLoading(false);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
+
+    return [connectActionneur, loading, error] as const;
+};
+
+export const useDisconnect = () => {
+    const { setAuthData } = useAuthContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
 
     const disconnect = async () => {
-        setLoading(true);
-        await disconnectAction();
-        const authData = await authenticateAction();
-        setAuthData(authData);
-        setLoading(false);
+        try {
+            setLoading(true);
+            await disconnectAction();
+            const authData = await authenticateAction();
+            setAuthData(authData);
+            setLoading(false);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    return {
-        connect,
-        connectActionneur,
-        disconnect,
-        createActionneurInviteAction,
-        isVerified,
-        isActionneur,
-        isAdmin,
-        loading,
+    return [disconnect, loading, error] as const;
+};
+
+export const useCreateActionneurInviteMutation = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (discordId: string) => {
+        try {
+            setLoading(true);
+            const link = await createActionneurInviteAction(discordId);
+            setError(null);
+            return link;
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     };
+
+    return [mutate, loading, error] as const;
 };

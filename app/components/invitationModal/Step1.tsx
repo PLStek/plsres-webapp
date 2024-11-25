@@ -1,7 +1,7 @@
-import { useAuth } from "@app/hooks/useAuth";
+import { useConnect } from "@app/hooks/useAuth";
 
 const Step1 = () => {
-    const { connect } = useAuth();
+    const [connect] = useConnect();
 
     return (
         <div>

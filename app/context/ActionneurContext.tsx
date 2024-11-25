@@ -1,19 +1,19 @@
 "use client";
 
 import { Actionneur } from "@lib/models/actionneur";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
-type ActionneursContextType = {
+type ActionneurContextType = {
     actionneurs: Actionneur[];
     addActionneur: (newActionneur: Actionneur) => void;
     removeActionneur: (id: number) => void;
 };
 
-export const ActionneursContext = createContext<
-    ActionneursContextType | undefined
+export const ActionneurContext = createContext<
+    ActionneurContextType | undefined
 >(undefined);
 
-const ActionneursProvider = ({
+const ActionneurProvider = ({
     initialActionneurs,
     children,
 }: {
@@ -28,7 +28,7 @@ const ActionneursProvider = ({
         setActionneurs(actionneurs.filter((c) => c.id !== id));
 
     return (
-        <ActionneursContext.Provider
+        <ActionneurContext.Provider
             value={{
                 actionneurs,
                 addActionneur,
@@ -36,8 +36,18 @@ const ActionneursProvider = ({
             }}
         >
             {children}
-        </ActionneursContext.Provider>
+        </ActionneurContext.Provider>
     );
 };
 
-export default ActionneursProvider;
+export default ActionneurProvider;
+
+export const useActionneurContext = () => {
+    const context = useContext(ActionneurContext);
+    if (context === undefined) {
+        throw new Error(
+            "useActionneurs must be used within a ActionneurProvider"
+        );
+    }
+    return context;
+};

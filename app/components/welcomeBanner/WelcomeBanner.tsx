@@ -4,25 +4,20 @@ import React, { useState } from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import styles from "./WelcomeBanner.module.css";
-import { useAuth } from "@app/hooks/useAuth";
 import VerificationModal from "../VerificationModal";
 import AdminModal from "../AdminModal";
+import { useDisconnect, useIsAdmin, useIsVerified } from "@app/hooks/useAuth";
 
 const WelcomeBanner = () => {
-    const { disconnect, isVerified, isAdmin } = useAuth();
+    const [disconnect] = useDisconnect();
+    const [isVerified] = useIsVerified();
+    const [isAdmin] = useIsAdmin();
 
     const [isVerificationModalOpen, setIsVerificationModalOpen] =
         useState(false);
     const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
-    /* console.log(
-        "isVerified",
-        isVerified,
-        "isActionneur",
-        isActionneur,
-        "isAdmin",
-        isAdmin
-    ); */
+
 
     return (
         <div className={styles.wrapper}>
