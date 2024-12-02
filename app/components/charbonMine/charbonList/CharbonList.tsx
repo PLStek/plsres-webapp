@@ -1,7 +1,7 @@
 "use client";
 
 import { useCharbonsQuery } from "@app/hooks/useCharbons";
-import CharbonCard from "./charbonCard/CharbonCard";
+import CharbonCard from "../charbonCard/CharbonCard";
 
 const CharbonList = () => {
     const [charbons] = useCharbonsQuery();

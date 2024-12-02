@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { useCharbonContext } from "@app/context/CharbonContext";
-import { Charbon, CharbonCreateInput } from "@lib/models/charbon";
+import {
+    Charbon,
+    CharbonCreateInput,
+    CharbonUpdateInput,
+} from "@lib/models/charbon";
 import {
     createCharbonAction,
     deleteCharbonAction,
     getCharbonByIdAction,
+    updateCharbonAction,
 } from "@lib/actions";
 
 export const useCharbonsQuery = () => {
@@ -53,6 +58,27 @@ export const useCreateCharbonMutation = () => {
             setLoading(true);
             const charbon = await createCharbonAction(newCharbon);
             addCharbon(charbon);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return [mutate, loading, error] as const;
+};
+
+export const useUpdateCharbonMutation = () => {
+    const { updateCharbon } = useCharbonContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const mutate = async (id: number, newCharbon: CharbonUpdateInput) => {
+        try {
+            setLoading(true);
+            const charbon = await updateCharbonAction(id, newCharbon);
+            updateCharbon(charbon);
             setError(null);
         } catch (err) {
             setError(err as Error);

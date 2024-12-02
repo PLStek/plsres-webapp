@@ -3,44 +3,39 @@ generator client {
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
-}
-
-enum CharbonStatus {
-    SCHEDULED
-    ONGOING
-    FINISHED
+    provider = "sqlite"
+    url      = "file:.//database/plsres.db"
 }
 
 model Charbon {
-    id             Int           @id @default(autoincrement())
-    status         CharbonStatus @default(SCHEDULED)
-    isDraft        Boolean       @default(true)
+    id             Int      @id @default(autoincrement())
+    status         String   @default("SCHEDULED")
+    isDraft        Boolean  @default(true)
     name           String
     description    String
     timestamp      DateTime
-    replayUrl      String?       @unique
+    replayUrl      String?  @unique
     courseId       Int
-    discordEventId String        @unique
+    discordEventId String   @unique
 
     resources   Resource[]
     actionneurs CharbonActionneur[]
     course      Course              @relation(fields: [courseId], references: [id], onDelete: Restrict)
     attendees   CharbonAttendee[]
 
-    @@index([courseId], name: "courseId")
+    @@index([courseId])
+    @@index([discordEventId])
 }
 
 model CharbonAttendee {
-    id        Int    @id @default(autoincrement())
-    charbonId Int
+    id            Int    @id @default(autoincrement())
+    charbonId     Int
     discordUserId String
 
     charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
 
-    @@index([charbonId], name: "charbonId")
     @@unique([charbonId, discordUserId])
+    @@index([charbonId])
 }
 
 model Course {
@@ -50,15 +45,8 @@ model Course {
     discordResourceChannelId String @unique
     discordVoiceChannelId    String @unique
 
-    category CourseCategory
+    category String
     charbon  Charbon[]
-}
-
-enum CourseCategory {
-    MATH
-    ELEC
-    INFO
-    MECA
 }
 
 model Resource {
@@ -68,6 +56,8 @@ model Resource {
     extension String
 
     charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
+
+    @@index([charbonId])
 }
 
 model Actionneur {
@@ -86,6 +76,8 @@ model Invitation {
     token     String   @unique
     discordId String   @unique
     expiresAt DateTime
+
+    @@index([token])
 }
 
 model CharbonActionneur {

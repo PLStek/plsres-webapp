@@ -87,20 +87,33 @@ export const createCharbonService = async ({
 
 export const updateCharbonService = async (
     id: number,
-    data: CharbonUpdateInput
+    { courseId, actionneurIds, ...data }: CharbonUpdateInput
 ): Promise<Charbon> => {
-    const newCharbonPutData = data.courseId
-        ? { ...data, course: { connect: { id: data.courseId } } }
+    const course = courseId ? { connect: { id: courseId } } : undefined;
+    const newCharbonPutData = courseId
+        ? {
+              ...data,
+              course,
+              courseId: undefined,
+          }
         : data;
 
     const updatedCharbon = await putCharbon(id, newCharbonPutData);
-    if (data.actionneurIds) {
+    if (actionneurIds) {
         await deleteCharbonActionneurByCharbonIds([id]);
+        const charbonActionneursPostData = actionneurIds.map(
+            (actionneurId) => ({
+                charbonId: id,
+                actionneurId,
+            })
+        );
+        await postCharbonActionneurs(charbonActionneursPostData);
+        //TODO: refactor to avoid deleting and reinserting (look at doc)
     }
 
     return {
         ...updatedCharbon,
-        actionneurIds: data.actionneurIds ?? [], //TODO: update actionneurs
+        actionneurIds: actionneurIds ?? [], //TODO: update actionneurs
     };
 };
 

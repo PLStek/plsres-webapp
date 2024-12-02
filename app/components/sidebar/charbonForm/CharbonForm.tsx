@@ -1,54 +1,63 @@
 "use client";
 
-import { CharbonCreateInput } from "@lib/models/charbon";
+import { Charbon, CharbonUpdateInput } from "@lib/models/charbon";
 import styles from "./CharbonForm.module.css";
 import { useCoursesQuery } from "@app/hooks/useCourses";
 import { useActionneursQuery } from "@app/hooks/useActionneurs";
-import { useCreateCharbonMutation } from "@app/hooks/useCharbons";
+import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
 
-const CharbonForm = () => {
+type CharbonFormProps = {
+    defaultCharbon: Charbon;
+};
+
+const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
     const [courses] = useCoursesQuery();
-    const [actionneurs] = useActionneursQuery();
-    const [createCharbon, loading] = useCreateCharbonMutation();
+    const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId);
 
-   /*  const submit = async (formData: FormData) => {
-        const charbon: CharbonCreateInput = {
+    const [actionneurs] = useActionneursQuery();
+    const defaultActionneurs = actionneurs.reduce((acc, actionneur) => {
+        if (defaultCharbon.actionneurIds.includes(actionneur.id)) {
+            acc.push(actionneur.id.toString());
+        }
+        return acc;
+    }, [] as string[]);
+
+    const [updateCharbon, loading] = useUpdateCharbonMutation();
+
+    const submit = async (formData: FormData) => {
+        const charbon: CharbonUpdateInput = {
             name: formData.get("name") as string,
             description: formData.get("description") as string,
-            timestamp: new Date(formData.get("timestamp") as string),
             courseId: Number(formData.get("courseId")),
             actionneurIds: Array.from(formData.getAll("actionneurIds")).map(
                 Number
             ),
         };
-        await createCharbon(charbon);
-    }; */
-
+        await updateCharbon(defaultCharbon.id, charbon);
+    };
 
     return (
-        <form /* action={submit} */ className={styles.formContainer}>
+        <form action={submit} className={styles.formContainer}>
             <div>
                 <label htmlFor="name" className={styles.formLabel}>
                     Name
                 </label>
-                <input type="text" name="name" className={styles.formField} />
+                <input
+                    type="text"
+                    name="name"
+                    className={styles.formField}
+                    defaultValue={defaultCharbon.name}
+                />
             </div>
 
             <div>
                 <label htmlFor="description" className={styles.formLabel}>
                     Description
                 </label>
-                <textarea name="description" className={styles.formField} />
-            </div>
-
-            <div>
-                <label htmlFor="timestamp" className={styles.formLabel}>
-                    Timestamp
-                </label>
-                <input
-                    type="datetime-local"
-                    name="timestamp"
+                <textarea
+                    name="description"
                     className={styles.formField}
+                    defaultValue={defaultCharbon.description}
                 />
             </div>
 
@@ -56,7 +65,14 @@ const CharbonForm = () => {
                 <label htmlFor="courseId" className={styles.formLabel}>
                     Course
                 </label>
-                <select name="courseId" className={styles.selectField}>
+                <select
+                    name="courseId"
+                    className={styles.selectField}
+                    defaultValue={defaultCourse?.id ?? ""}
+                >
+                    <option value="" disabled>
+                        UV
+                    </option>
                     {courses.map((course) => (
                         <option key={course.id} value={course.id}>
                             {course.code}
@@ -73,6 +89,7 @@ const CharbonForm = () => {
                     name="actionneurIds"
                     multiple
                     className={styles.selectField}
+                    defaultValue={defaultActionneurs}
                 >
                     {actionneurs.map((actionneur) => (
                         <option key={actionneur.id} value={actionneur.id}>

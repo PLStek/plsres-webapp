@@ -6,6 +6,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 type CharbonContextType = {
     charbons: Charbon[];
     addCharbon: (newCharbon: Charbon) => void;
+    updateCharbon: (updatedCharbon: Charbon) => void;
     removeCharbon: (id: number) => void;
 };
 
@@ -24,12 +25,18 @@ const CharbonProvider = ({
 
     const addCharbon = (newCharbon: Charbon) =>
         setCharbons([...charbons, newCharbon]);
+    const updateCharbon = (updatedCharbon: Charbon) =>
+        setCharbons(
+            charbons.map((c) =>
+                c.id === updatedCharbon.id ? updatedCharbon : c
+            )
+        );
     const removeCharbon = (id: number) =>
         setCharbons(charbons.filter((c) => c.id !== id));
 
     return (
         <CharbonContext.Provider
-            value={{ charbons, addCharbon, removeCharbon }}
+            value={{ charbons, addCharbon, updateCharbon, removeCharbon }}
         >
             {children}
         </CharbonContext.Provider>

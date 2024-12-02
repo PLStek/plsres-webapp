@@ -38,3 +38,6 @@ next-env.d.ts
 
 # upload directory
 /uploads
+
+# database
+/prisma/database
