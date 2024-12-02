@@ -12,7 +12,7 @@ const EditCharbonModalWrapper = () => {
     const [isActionneur] = useIsActionneur();
 
     const charbonId = searchParams.get("charbon");
-    const charbonIdInt = charbonId ? parseInt(charbonId) : undefined;
+    const charbonIdInt = charbonId ? parseInt(charbonId) : null;
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 

@@ -1,6 +1,7 @@
 import { hashSecret } from "@lib/utils/encryption";
 import {
     deleteActionneur,
+    getActionneurById,
     getActionneurs,
     postActionneur,
     putActionneur,
@@ -19,23 +20,14 @@ export const getActionneursService = async (): Promise<Actionneur[]> => {
 
 export const getActionneurByIdService = async (
     id: number
-): Promise<Actionneur | undefined> => {
-    const actionneurs = await getActionneursService();
-    return actionneurs.find((actionneur) => (actionneur.id = id));
-};
-
-export const getActionneursByIdsService = async (
-    ids: number[]
-): Promise<Actionneur[]> => {
-    const actionneurs = await getActionneursService();
-    const idsSet = new Set(ids);
-    return actionneurs.filter((actionneur) => idsSet.has(actionneur.id));
+): Promise<Actionneur | null> => {
+    return getActionneurById(id);
 };
 
 //TODO: Implement
-export const getCurrentActionneurService = async (): Promise<Actionneur> => {
+/* export const getCurrentActionneurService = async (): Promise<Actionneur> => {
     return getActionneursService().then((actionneurs) => actionneurs[0]);
-};
+}; */
 
 export const createActionneurService = async ({
     invitationToken,

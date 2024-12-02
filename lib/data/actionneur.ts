@@ -9,6 +9,18 @@ export const getActionneurById = async (id: number) => {
     return prisma.actionneur.findUnique({ where: { id } });
 };
 
+export const getActionneursByCharbonId = async (charbonId: number) => {
+    return prisma.actionneur.findMany({
+        where: {
+            charbons: {
+                some: {
+                    charbonId,
+                },
+            },
+        },
+    });
+};
+
 export const getActionneurByDiscordId = async (discordId: string) => {
     return prisma.actionneur.findUnique({ where: { discordId } });
 };

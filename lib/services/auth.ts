@@ -1,4 +1,3 @@
-import { getActionneurByIdService } from "./actionneur";
 import {
     checkDiscordUserGuildService,
     getDiscordAccessTokenService,
@@ -80,10 +79,10 @@ export const authenticateService = async (): Promise<AuthData> => {
     if (!userToken) {
         return {
             isVerified: false,
-            actionneurId: undefined,
+            actionneurId: null,
             isActionneurAuthentified: false,
             isAdmin: false,
-            discordId: undefined,
+            discordId: null,
             exp: 0,
         };
     }
@@ -92,10 +91,10 @@ export const authenticateService = async (): Promise<AuthData> => {
         removeTokenCookie("user_token");
         return {
             isVerified: false,
-            actionneurId: undefined,
+            actionneurId: null,
             isActionneurAuthentified: false,
             isAdmin: false,
-            discordId: undefined,
+            discordId: null,
             exp: 0,
         };
     }

@@ -17,12 +17,12 @@ export const getCharbonAttendeesByDiscordUserIdService = async (
 export const tryCreateCharbonAttendeeService = async ({
     charbonId,
     discordUserId,
-}: CharbonAttendeeCreateInput): Promise<CharbonAttendee | undefined> => {
+}: CharbonAttendeeCreateInput): Promise<CharbonAttendee | null> => {
     const userCharbons = await getCharbonAttendeesByDiscordUserIdService(
         discordUserId
     );
     if (userCharbons.map((uc) => uc.charbonId).includes(charbonId)) {
-        return;
+        return null;
     }
 
     const data = {
@@ -31,7 +31,9 @@ export const tryCreateCharbonAttendeeService = async ({
     };
     try {
         return addCharbonAttendee(data);
-    } catch {}
+    } catch {
+        return null;
+    }
 };
 
 export const deleteCharbonAttendeesByCharbonIdService = async (

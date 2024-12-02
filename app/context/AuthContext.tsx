@@ -8,8 +8,8 @@ type AuthContextType = {
     setAuthData: (authData: AuthData) => void;
 };
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-    undefined
+export const AuthContext = createContext<AuthContextType | null>(
+    null
 );
 
 const AuthProvider = ({
@@ -32,7 +32,7 @@ export default AuthProvider;
 
 export const useAuthContext = () => {
     const context = useContext(AuthContext);
-    if (context === undefined) {
+    if (context === null) {
         throw new Error("useAuth must be used within a AuthProvider");
     }
     return context;

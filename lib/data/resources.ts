@@ -5,6 +5,12 @@ export const getResources = async () => {
     return prisma.resource.findMany();
 };
 
+export const getResourceById = async (id: number) => {
+    return prisma.resource.findUnique({
+        where: { id },
+    });
+};
+
 export const getResourceByCharbonId = async (id: number) => {
     return prisma.resource.findMany({
         where: {

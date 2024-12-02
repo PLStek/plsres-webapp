@@ -11,15 +11,15 @@ export type RevokedTokenCreateInput = RevokedToken & {
 
 export type AuthData = {
     isVerified: boolean;
-    actionneurId: number | undefined;
+    actionneurId: number | null;
     isActionneurAuthentified: boolean;
     isAdmin: boolean;
-    discordId: string | undefined;
+    discordId: string | null;
     exp: number;
 };
 
 export type UserTokenPayload = {
-    actionneurId: number | undefined;
+    actionneurId: number | null;
     isAdmin: boolean;
     discordId: string;
     exp: number;

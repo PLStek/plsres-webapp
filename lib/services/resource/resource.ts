@@ -3,6 +3,7 @@ import {
     deleteResource,
     deleteResourcesByCharbonId,
     getResourceByCharbonId,
+    getResourceById,
     getResources,
     postResource,
     putResource,
@@ -22,9 +23,8 @@ export const getResourcesService = async (): Promise<Resource[]> => {
 
 export const getResourceByIdService = async (
     id: number
-): Promise<Resource | undefined> => {
-    const resource = await getResourcesService();
-    return resource.find((r) => r.id === id);
+): Promise<Resource | null> => {
+    return getResourceById(id);
 };
 
 export const createResourceService = async (

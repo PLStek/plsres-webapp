@@ -9,8 +9,8 @@ type CourseContextType = {
     removeCourse: (id: number) => void;
 };
 
-export const CourseContext = createContext<CourseContextType | undefined>(
-    undefined
+export const CourseContext = createContext<CourseContextType | null>(
+    null
 );
 
 const CourseProvider = ({
@@ -38,7 +38,7 @@ export default CourseProvider;
 
 export const useCourseContext = () => {
     const context = useContext(CourseContext);
-    if (context === undefined) {
+    if (context === null) {
         throw new Error("useCourses must be used within a CourseProvider");
     }
     return context;

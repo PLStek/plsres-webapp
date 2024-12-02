@@ -9,8 +9,8 @@ type ResourceContextType = {
     removeResource: (id: number) => void;
 };
 
-export const ResourceContext = createContext<ResourceContextType | undefined>(
-    undefined
+export const ResourceContext = createContext<ResourceContextType | null>(
+    null
 );
 
 const ResourceProvider = ({
@@ -44,7 +44,7 @@ export default ResourceProvider;
 
 export const useResourceContext = () => {
     const context = useContext(ResourceContext);
-    if (context === undefined) {
+    if (context === null) {
         throw new Error("useResources must be used within a ResourceProvider");
     }
     return context;

@@ -10,8 +10,8 @@ type CharbonContextType = {
     removeCharbon: (id: number) => void;
 };
 
-export const CharbonContext = createContext<CharbonContextType | undefined>(
-    undefined
+export const CharbonContext = createContext<CharbonContextType | null>(
+    null
 );
 
 const CharbonProvider = ({
@@ -47,7 +47,7 @@ export default CharbonProvider;
 
 export const useCharbonContext = () => {
     const context = useContext(CharbonContext);
-    if (context === undefined) {
+    if (context === null) {
         throw new Error("useCharbons must be used within a CharbonProvider");
     }
     return context;

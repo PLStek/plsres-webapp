@@ -130,6 +130,7 @@ export const useCreateActionneurInviteMutation = () => {
             return link;
         } catch (err) {
             setError(err as Error);
+            return null;
         } finally {
             setLoading(false);
         }

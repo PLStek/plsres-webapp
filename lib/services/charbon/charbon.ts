@@ -1,12 +1,16 @@
 import {
     deleteCharbon,
+    getCharbonByDiscordEventId,
+    getCharbonById,
     getCharbons,
+    getOngoingCharbons,
     postCharbon,
     putCharbon,
 } from "../../data/charbon";
 import {
     Charbon,
     CharbonCreateInput,
+    CharbonStatus,
     CharbonUpdateInput,
 } from "../../models/charbon";
 import {
@@ -15,42 +19,64 @@ import {
 } from "../../data/charbonActionneur";
 import { deleteResourcesByCharbonIdService } from "../resource/resource";
 import { deleteCharbonAttendeesByCharbonIdService } from "./charbonAttendee";
+import { Prisma } from "@prisma/client";
 
-export const getAllCharbonsService = async (): Promise<Charbon[]> => {
+const buildCharbonWithActionneurs = (
+    charbon: Prisma.PromiseReturnType<typeof getCharbonById>
+) => ({
+    ...charbon,
+    status: charbon.status as CharbonStatus,
+    actionneurIds: charbon.actionneurs.map((ca) => ca.actionneurId),
+});
+
+export const getCharbonsService = async (): Promise<Charbon[]> => {
     const charbons = await getCharbons();
-
-    const charbonsWithActionneurs = charbons.map((charbon) => ({
-        ...charbon,
-        actionneurIds: charbon.actionneurs.map((ca) => ca.actionneurId),
-    }));
-
-    return charbonsWithActionneurs;
+    return charbons.map(buildCharbonWithActionneurs);
 };
 
-export const getPublicCharbonsService = async (): Promise<Charbon[]> => {
-    const charbons = await getAllCharbonsService();
-    return charbons.filter((charbon) => !charbon.isDraft);
+export const getCharbonsGroupedByMonthService = async (): Promise<
+    Record<string, Charbon[]>
+> => {
+    const charbons = await getCharbonsService();
+    return charbons.reduce((acc, charbon) => {
+        const month = charbon.timestamp.toISOString().slice(0, 7);
+        if (!acc[month]) {
+            acc[month] = [];
+        }
+        acc[month].push(charbon);
+        return acc;
+    }, {} as Record<string, Charbon[]>);
+    //TODO: cache
+};
+
+export const getCharbonByIdWithDraftService = async (
+    id: number
+): Promise<Charbon | null> => {
+    const charbon = await getCharbonById(id);
+    if (!charbon) {
+        return null;
+    }
+    return buildCharbonWithActionneurs(charbon);
 };
 
 export const getCharbonByIdService = async (
     id: number
-): Promise<Charbon | undefined> => {
-    const charbons = await getAllCharbonsService();
-    return charbons.find((charbon) => charbon.id === id);
+): Promise<Charbon | null> => {
+    //TODO: create provider
+    const charbon = await getCharbonByIdWithDraftService(id);
+    return charbon?.isDraft ? null : charbon;
 };
 
 export const getCharbonByDiscordEventIdService = async (
     discordEventId: string
-): Promise<Charbon | undefined> => {
-    const charbons = await getAllCharbonsService();
-    return charbons.find(
-        (charbon) => charbon.discordEventId === discordEventId
-    );
+): Promise<Charbon | null> => {
+    const charbon = await getCharbonByDiscordEventId(discordEventId);
+    return buildCharbonWithActionneurs(charbon);
 };
 
 export const getOngoingCharbonsService = async (): Promise<Charbon[]> => {
-    const charbons = await getAllCharbonsService();
-    return charbons.filter((charbon) => charbon.status === "ONGOING");
+    const charbons = await getOngoingCharbons();
+    return charbons.map(buildCharbonWithActionneurs);
 };
 
 export const createCharbonService = async ({
@@ -69,19 +95,11 @@ export const createCharbonService = async ({
     };
 
     await postCharbonActionneurs([charbonActionneursPostData]);
-
-    /* const newResources = await createResourcesForCharbonService(
-        newCharbon.id,
-        resources.map((resource) => ({
-            ...resource,
-            charbonId: newCharbon.id,
-        }))
-    ); */ //TODO: delete
-
+    //TODO: use createManyAndReturn
     return {
         ...newCharbon,
+        status: newCharbon.status as CharbonStatus,
         actionneurIds: [actionneurId],
-        // resources: newResources,
     };
 };
 
@@ -108,11 +126,12 @@ export const updateCharbonService = async (
             })
         );
         await postCharbonActionneurs(charbonActionneursPostData);
-        //TODO: refactor to avoid deleting and reinserting (look at doc)
+        //TODO: refactor to avoid deleting and reinserting (look at prisma doc)
     }
 
     return {
         ...updatedCharbon,
+        status: updatedCharbon.status as CharbonStatus,
         actionneurIds: actionneurIds ?? [], //TODO: update actionneurs
     };
 };
@@ -127,7 +146,7 @@ export const finishCharbonService = async (id: number): Promise<Charbon> => {
 
 export const deleteCharbonService = async (
     id: number
-): Promise<Charbon | undefined> => {
+): Promise<Charbon | null> => {
     const charbon = await getCharbonByIdService(id);
 
     //TODO: Voir si on peut plutot le faire avec un cascade delete et juste update le cache

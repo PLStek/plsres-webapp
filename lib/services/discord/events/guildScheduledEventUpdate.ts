@@ -1,5 +1,4 @@
 import { Charbon } from "@lib/models/charbon";
-import { getActionneursByIdsService } from "@lib/services/actionneur";
 import {
     finishCharbonService,
     getCharbonByDiscordEventIdService,
@@ -11,6 +10,7 @@ import {
     PartialGuildScheduledEvent,
 } from "discord.js";
 import { sendFeedback } from "../utils/sendFeedback";
+import { getActionneursByCharbonId } from "@lib/data/actionneur";
 
 const WEBAPP_URL = process.env.NEXT_PUBLIC_WEBAPP_URL;
 
@@ -41,7 +41,7 @@ const onEventEnd = async (event: GuildScheduledEvent) => {
         return;
     }
 
-    const actionneurs = await getActionneursByIdsService(charbon.actionneurIds);
+    const actionneurs = await getActionneursByCharbonId(charbon.id);
     const actionneurDiscordIds = actionneurs.map(
         (actionneur) => actionneur.discordId
     );

@@ -9,9 +9,9 @@ type ActionneurContextType = {
     removeActionneur: (id: number) => void;
 };
 
-export const ActionneurContext = createContext<
-    ActionneurContextType | undefined
->(undefined);
+export const ActionneurContext = createContext<ActionneurContextType | null>(
+    null
+);
 
 const ActionneurProvider = ({
     initialActionneurs,
@@ -44,7 +44,7 @@ export default ActionneurProvider;
 
 export const useActionneurContext = () => {
     const context = useContext(ActionneurContext);
-    if (context === undefined) {
+    if (context === null) {
         throw new Error(
             "useActionneurs must be used within a ActionneurProvider"
         );

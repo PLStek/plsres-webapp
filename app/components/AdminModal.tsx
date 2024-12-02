@@ -19,8 +19,8 @@ const AdminModal = ({
     const [createInvite] = useCreateActionneurInviteMutation();
     const [isAdmin] = useIsAdmin();
 
-    const [generatedLink, setGeneratedLink] = useState<string | undefined>(
-        undefined
+    const [generatedLink, setGeneratedLink] = useState<string | null>(
+        null
     );
 
     const [actionneurs] = useActionneursQuery();

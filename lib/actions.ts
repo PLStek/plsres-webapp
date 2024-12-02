@@ -6,7 +6,6 @@ import {
     deleteActionneurService,
     getActionneurByIdService,
     getActionneursService,
-    getCurrentActionneurService,
     updateActionneurService,
 } from "./services/actionneur";
 import {
@@ -19,13 +18,12 @@ import {
     createCharbonService,
     deleteCharbonService,
     getCharbonByIdService,
-    getPublicCharbonsService,
+    getCharbonsGroupedByMonthService,
     updateCharbonService,
 } from "./services/charbon/charbon";
 import {
     createCourseService,
     deleteCourseService,
-    getCourseByIdService,
     getCoursesService,
     updateCourseService,
 } from "./services/course";
@@ -43,10 +41,10 @@ export const getActionneurByIdAction = withAuth(
     "guest",
     getActionneurByIdService
 );
-export const getCurrentActionneurAction = withAuth(
+/* export const getCurrentActionneurAction = withAuth(
     "actionneur",
     getCurrentActionneurService
-);
+); */
 export const createActionneurAction = withAuth(
     "guest",
     createActionneurService
@@ -76,8 +74,15 @@ export const connectActionneurAction = withAuth(
 export const disconnectAction = withAuth("verified", disconnectService);
 export const authenticateAction = withAuth("guest", authenticateService);
 
-export const getCharbonsAction = withAuth("guest", getPublicCharbonsService);
+export const getCharbonsGroupedByMonthAction = withAuth(
+    "guest",
+    getCharbonsGroupedByMonthService
+);
 export const getCharbonByIdAction = withAuth(
+    "actionneur",
+    getCharbonByIdService
+);
+export const getCharbonByIdWithDraftAction = withAuth(
     "actionneur",
     getCharbonByIdService
 );
@@ -86,7 +91,6 @@ export const updateCharbonAction = withAuth("actionneur", updateCharbonService);
 export const deleteCharbonAction = withAuth("actionneur", deleteCharbonService);
 
 export const getCoursesAction = withAuth("guest", getCoursesService);
-export const getCourseByIdAction = withAuth("guest", getCourseByIdService);
 export const createCourseAction = withAuth("admin", createCourseService);
 export const updateCourseAction = withAuth("admin", updateCourseService);
 export const deleteCourseAction = withAuth("admin", deleteCourseService);

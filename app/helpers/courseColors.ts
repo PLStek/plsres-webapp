@@ -1,6 +1,6 @@
 import { CourseCategory } from "@lib/models/course";
 
-export const getCourseTypeColor = (category: CourseCategory | undefined) => {
+export const getCourseTypeColor = (category: CourseCategory | null) => {
     switch (category) {
         case "MATH":
             return "red";
