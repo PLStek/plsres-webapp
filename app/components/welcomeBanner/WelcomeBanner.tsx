@@ -17,10 +17,8 @@ const WelcomeBanner = () => {
         useState(false);
     const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
-
-
     return (
-        <div className={styles.wrapper}>
+        <div className="relative rounded-2xl shadow-sm p-12 overflow-hidden bg-[#f9f9f9] min-h-[500px]">
             <div className="flex-1">
                 <h1 className="text-5xl flex justify-center font-bold text-gray-800 mb-12">
                     Bienvenue dans la mine du PL$tek
@@ -28,21 +26,20 @@ const WelcomeBanner = () => {
                 <h2 className="text-3xl font-semibold text-gray-800 mb-6">
                     Notre mission ? T’aider à réussir tes UE !
                 </h2>
-                <p className="text-gray-700">
+                <p className="text-gray-700 md:mr-[250px] lg:mr-[400px]">
                     L’équipe du PL$tek est ravie de t’accueillir sur son nouveau
                     site: la mine ! Ici, tu retrouveras tous nos charbons,
                     accompagnés de leurs rediffusions et de leurs ressources,
                     telles que les corrections et les notes des actionneurs.
                 </p>
             </div>
-            <div className={styles.charbonImage}>
+            <div className="hidden md:block absolute bottom-0 right-0 w-[500px] h-[500px] mb-[-150px] mr-[-125px] lg:w-[600px] lg:h-[600px] lg:mb-[-170px] lg:mr-[-150px] rotate-[-40deg]">
                 <Image
                     src={charbonImage}
                     alt="Charbon PL$tek"
-                    layout="responsive"
-                    width={300}
-                    height={300}
-                    className="rounded-lg"
+                    fill
+                    className="rounded-lg drop-shadow-[2px_2px_5px_rgba(0,0,0,0.3)] "
+
                 />
             </div>
             {!isVerified && (

@@ -1,12 +1,14 @@
-import Filters from './CharbonFilters';
-import CharbonForm from './charbonForm/CharbonForm';
-import styles from './Sidebar.module.css';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Filters from "./CharbonFilters";
 
 const Sidebar = () => {
-    return <div className={styles.wrapper}>
-        <Filters />
-    </div>;
+    return (
+        <div className="rounded-2xl shadow-sm p-8 overflow-hidden bg-[#f9f9f9] ">
+            <Filters />
+        </div>
+    );
 };
 
 export default Sidebar;
-    

@@ -2,7 +2,6 @@ import WelcomeBanner from "./components/welcomeBanner/WelcomeBanner";
 import CharbonMine from "./components/charbonMine/CharbonMine";
 import Sidebar from "./components/sidebar/Sidebar";
 import InvitationModal from "./components/invitationModal/InvitationModal";
-import Toolbar from "./components/toolbar/Toolbar";
 import EditCharbonModalWrapper from "./components/editCharbonModal/EditCharbonModalWrapper";
 
 export default function Home() {
@@ -14,9 +13,11 @@ export default function Home() {
                 <WelcomeBanner />
             </div>
             {/* <Toolbar /> */}
-            <div className="flex flex-col-reverse xl:flex-row mt-10 space-y-4 xl:space-y-0 xl:space-x-10 items-start  ">
+            <div className="flex flex-row mt-10 space-x-10 items-start  ">
                 <CharbonMine />
-                <Sidebar />
+                <div className="hidden xl:block w-[520px] sticky top-[50px]">
+                    <Sidebar />
+                </div>
             </div>
         </div>
     );
