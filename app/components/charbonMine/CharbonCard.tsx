@@ -12,7 +12,7 @@ import { useCourseByIdQuery } from "@app/hooks/useCourses";
 import { useActionneursByIdsQuery } from "@app/hooks/useActionneurs";
 
 const CharbonCard = ({
-    charbon, //TODO: replace by charbonid and check rerenders
+    charbon,
     isFirst,
     isLast,
 }: {
@@ -31,7 +31,7 @@ const CharbonCard = ({
     return (
         <div
             className={clsx(
-                "relative p-5 overflow-hidden border border-gray-400 bg-white",
+                "relative p-5 overflow-hidden border border-gray-400 bg-[#F8F8F8]",
                 borderTopClass,
                 borderBottomClass
             )}
@@ -48,7 +48,7 @@ const CharbonCard = ({
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center">
-                        <h2 className="text-xl font-bold">{charbon.name}</h2>
+                        <h2 className="text-xl font-semibold">{charbon.name}</h2>
                         <PlayCircleIcon className="h-5 w-5 ml-2" />
                     </div>
                     <p className="text-sm text-gray-600">
@@ -60,12 +60,12 @@ const CharbonCard = ({
                     className={clsx(
                         "text-xs font-semibold py-1 px-3 rounded-full",
                         {
-                            "bg-red-100 text-red-700": colorClass === "math",
-                            "bg-green-100 text-green-700":
+                            "bg-red-100 text-red-700 border border-red-400": colorClass === "math",
+                            "bg-green-100 text-green-700 border border-green-400":
                                 colorClass === "elec",
-                            "bg-yellow-100 text-yellow-700":
+                            "bg-yellow-100 text-yellow-600 border border-yellow-400":
                                 colorClass === "info",
-                            "bg-blue-100 text-blue-700": colorClass === "meca",
+                            "bg-blue-100 text-blue-700 border border-blue-400": colorClass === "meca",
                         }
                     )}
                 >

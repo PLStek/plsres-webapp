@@ -56,6 +56,7 @@ export const getCharbonByIdWithDraftService = async (
     if (!charbon) {
         return null;
     }
+    console.log(buildCharbonWithActionneurs(charbon));
     return buildCharbonWithActionneurs(charbon);
 };
 

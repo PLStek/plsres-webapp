@@ -8,9 +8,10 @@ import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
 
 type CharbonFormProps = {
     defaultCharbon: Charbon;
+    onClose: () => void;
 };
 
-const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
+const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
     const [courses] = useCoursesQuery();
     const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId);
 
@@ -32,8 +33,10 @@ const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
             actionneurIds: Array.from(formData.getAll("actionneurIds")).map(
                 Number
             ),
+            isDraft: false,
         };
         await updateCharbon(defaultCharbon.id, charbon);
+        onClose();
     };
 
     return (
@@ -99,7 +102,26 @@ const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
                 </select>
             </div>
 
-            <div>
+            <div className="flex">
+                <button
+                    type="button"
+                    disabled={loading}
+                    className={`${styles.submitButton} ${
+                        loading && styles.submitButtonDisabled
+                    }`}
+                    onClick={onClose}
+                >
+                    {loading ? "Loading..." : "Annuler"}
+                </button>
+                <button
+                    type="reset"
+                    disabled={loading}
+                    className={`${styles.submitButton} ${
+                        loading && styles.submitButtonDisabled
+                    }`}
+                >
+                    {loading ? "Loading..." : "Réinitialiser"}
+                </button>
                 <button
                     type="submit"
                     disabled={loading}
@@ -107,7 +129,11 @@ const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
                         loading && styles.submitButtonDisabled
                     }`}
                 >
-                    {loading ? "Loading..." : "Add Charbon"}
+                    {loading
+                        ? "Loading..."
+                        : defaultCharbon.isDraft
+                        ? "Publier"
+                        : "Editer"}
                 </button>
             </div>
         </form>

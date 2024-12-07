@@ -15,7 +15,7 @@ const EditCharbonModal = ({
     onClose: () => void;
 }) => {
     const [charbon, isLoading, error] = useCharbonByIdQuery(charbonId);
-
+    console.log(charbonId);
     useEffect(() => {
         if (!isLoading && !charbon) {
             onClose();
@@ -26,7 +26,7 @@ const EditCharbonModal = ({
         charbon && (
             <Modal isOpen={isOpen && !!charbon} onClose={onClose}>
                 {!isLoading ? (
-                    <CharbonForm defaultCharbon={charbon} />
+                    <CharbonForm defaultCharbon={charbon} onClose={onClose} />
                 ) : (
                     <div>Loading...</div>
                 )}

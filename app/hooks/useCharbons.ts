@@ -8,17 +8,22 @@ import {
 import {
     createCharbonAction,
     deleteCharbonAction,
-    getCharbonByIdAction,
+    getCharbonByIdWithDraftAction,
     updateCharbonAction,
 } from "@lib/actions";
 
-export const useCharbonsQuery = () => {
+export const useCharbonMonthKeysQuery = () => {
     const { charbons } = useCharbonContext();
-    return [charbons];
+    return [Object.keys(charbons).filter((key) => charbons[key].length > 0)];
 };
 
-//TODO: refactor pour éviter la confusion avec l'action réservée aux actionneurs
-export const useCharbonByIdQuery = (id: number, useCache: boolean = true) => {
+//TODO: add option to not use cache
+export const useCharbonsByMonthQuery = (monthKey: string) => {
+    const { charbons } = useCharbonContext();
+    return [charbons[monthKey]];
+};
+
+export const useCharbonByIdQuery = (id: number) => {
     const { charbons } = useCharbonContext();
     const [data, setData] = useState<Charbon | null>(null);
     const [loading, setLoading] = useState(true);
@@ -27,13 +32,7 @@ export const useCharbonByIdQuery = (id: number, useCache: boolean = true) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (useCache) {
-                    const charbon = charbons.find((c) => c.id === id);
-                    if (charbon) {
-                        setData(charbon);
-                    }
-                }
-                const charbon = await getCharbonByIdAction(id); //Réservé aux actionneurs
+                const charbon = await getCharbonByIdWithDraftAction(id); //TODO: attention: réservé aux actionneurs
                 setData(charbon ?? null);
                 setError(null);
             } catch (err) {
@@ -43,7 +42,7 @@ export const useCharbonByIdQuery = (id: number, useCache: boolean = true) => {
             }
         };
         fetchData();
-    }, [id, charbons, useCache]);
+    }, [id, charbons]);
 
     return [data, loading, error] as const;
 };

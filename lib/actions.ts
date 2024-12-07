@@ -18,6 +18,7 @@ import {
     createCharbonService,
     deleteCharbonService,
     getCharbonByIdService,
+    getCharbonByIdWithDraftService,
     getCharbonsGroupedByMonthService,
     updateCharbonService,
 } from "./services/charbon/charbon";
@@ -84,7 +85,7 @@ export const getCharbonByIdAction = withAuth(
 );
 export const getCharbonByIdWithDraftAction = withAuth(
     "actionneur",
-    getCharbonByIdService
+    getCharbonByIdWithDraftService
 );
 export const createCharbonAction = withAuth("actionneur", createCharbonService); //TODO: remove
 export const updateCharbonAction = withAuth("actionneur", updateCharbonService);

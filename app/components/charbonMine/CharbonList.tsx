@@ -1,15 +1,15 @@
 "use client";
 
-import { useCharbonsQuery } from "@app/hooks/useCharbons";
-import CharbonCard from "../charbonCard/CharbonCard";
+import { useCharbonsByMonthQuery } from "@app/hooks/useCharbons";
+import CharbonCard from "./CharbonCard";
 
-const CharbonList = () => {
-    const [charbons] = useCharbonsQuery();
+const CharbonList = ({ monthKey }: { monthKey: string }) => {
+    const [charbons] = useCharbonsByMonthQuery(monthKey);
 
     const lastIndex = charbons.length - 1;
 
     return (
-        <div className="flex flex-col w-[80%]">
+        <div className="flex flex-col">
             {charbons.map((charbon, index) => (
                 <div key={index}>
                     <CharbonCard

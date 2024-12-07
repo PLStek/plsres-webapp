@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import {
-    getCharbonsAction,
+    getCharbonsGroupedByMonthAction,
     getActionneursAction,
     getCoursesAction,
-    getResourcesAction,
     authenticateAction,
 } from "@lib/actions";
 import CharbonProvider from "./context/CharbonContext";
@@ -14,16 +12,10 @@ import CourseProvider from "./context/CourseContext";
 import ResourceProvider from "./context/ResourceContext";
 import AuthProvider from "./context/AuthContext";
 import "../lib/discord";
+import { Commissioner } from "next/font/google";
 
-const geistSans = localFont({
-    src: "./fonts/GeistVF.woff",
-    variable: "--font-geist-sans",
-    weight: "100 900",
-});
-const geistMono = localFont({
-    src: "./fonts/GeistMonoVF.woff",
-    variable: "--font-geist-mono",
-    weight: "100 900",
+const commissioner = Commissioner({
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -36,29 +28,26 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const charbons = await getCharbonsAction();
+    const charbons = await getCharbonsGroupedByMonthAction();
     const actionneurs = await getActionneursAction();
     const courses = await getCoursesAction();
-    const resources = await getResourcesAction();
     const authData = await authenticateAction();
 
     return (
-        <AuthProvider initialAuthData={authData}>
-            <CharbonProvider initialCharbons={charbons}>
-                <ActionneurProvider initialActionneurs={actionneurs}>
-                    <CourseProvider initialCourses={courses}>
-                        <ResourceProvider initialResources={resources}>
-                            <html lang="fr">
-                                <body
-                                    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-                                >
+        <html lang="fr">
+            <body className={`${commissioner.className}  antialiased`}>
+                <AuthProvider initialAuthData={authData}>
+                    <CharbonProvider initialCharbons={charbons}>
+                        <ActionneurProvider initialActionneurs={actionneurs}>
+                            <CourseProvider initialCourses={courses}>
+                                <ResourceProvider initialResources={[]}>
                                     {children}
-                                </body>
-                            </html>
-                        </ResourceProvider>
-                    </CourseProvider>
-                </ActionneurProvider>
-            </CharbonProvider>
-        </AuthProvider>
+                                </ResourceProvider>
+                            </CourseProvider>
+                        </ActionneurProvider>
+                    </CharbonProvider>
+                </AuthProvider>
+            </body>
+        </html>
     );
 }
