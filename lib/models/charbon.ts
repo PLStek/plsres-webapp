@@ -30,3 +30,14 @@ export type CharbonUpdateInput = Partial<
         isDraft: boolean;
     }
 >;
+
+export type CharbonFilters = {
+    search: string;
+    category: string;
+    course: string;
+    level: string;
+    year: string; //TODO: change to semester
+    month: string;
+    hasReplay: boolean;
+    hasResources: boolean;
+};

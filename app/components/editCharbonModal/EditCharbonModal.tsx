@@ -15,7 +15,6 @@ const EditCharbonModal = ({
     onClose: () => void;
 }) => {
     const [charbon, isLoading, error] = useCharbonByIdQuery(charbonId);
-    console.log(charbonId);
     useEffect(() => {
         if (!isLoading && !charbon) {
             onClose();

@@ -22,10 +22,10 @@ const WelcomeBanner = () => {
     return (
         <div className={styles.wrapper}>
             <div className="flex-1">
-                <h1 className="text-4xl flex justify-center font-bold text-gray-800 mb-4">
+                <h1 className="text-5xl flex justify-center font-bold text-gray-800 mb-12">
                     Bienvenue dans la mine du PL$tek
                 </h1>
-                <h2 className="text-xl font-semibold text-gray-800 mb-6">
+                <h2 className="text-3xl font-semibold text-gray-800 mb-6">
                     Notre mission ? T’aider à réussir tes UE !
                 </h2>
                 <p className="text-gray-700">

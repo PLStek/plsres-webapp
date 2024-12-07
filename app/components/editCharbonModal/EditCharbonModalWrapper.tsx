@@ -40,6 +40,7 @@ const EditCharbonModalWrapper = () => {
                 isOpen={isOpen}
                 onClose={() => {
                     setIsOpen(false);
+                    console.log("pathname", pathname);
                     router.replace(pathname);
                 }}
             />

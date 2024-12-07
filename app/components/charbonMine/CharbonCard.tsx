@@ -31,7 +31,7 @@ const CharbonCard = ({
     return (
         <div
             className={clsx(
-                "relative p-5 overflow-hidden border border-gray-400 bg-[#F8F8F8]",
+                "relative p-5 overflow-hidden border border-gray-300 bg-[#F6F6F6]",
                 borderTopClass,
                 borderBottomClass
             )}

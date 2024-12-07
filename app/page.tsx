@@ -13,7 +13,7 @@ export default function Home() {
             <div className="flex justify-center items-center mt-10">
                 <WelcomeBanner />
             </div>
-            <Toolbar />
+            {/* <Toolbar /> */}
             <div className="flex flex-col-reverse xl:flex-row mt-10 space-y-4 xl:space-y-0 xl:space-x-10 items-start  ">
                 <CharbonMine />
                 <Sidebar />

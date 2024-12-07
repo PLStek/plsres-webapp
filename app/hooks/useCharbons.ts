@@ -109,3 +109,8 @@ export const useDeleteCharbonMutation = () => {
 
     return [mutate, loading, error] as const;
 };
+
+export const useCharbonFilters = () => {
+    const { charbonFilters, setCharbonFilters } = useCharbonContext();
+    return [charbonFilters, setCharbonFilters] as const;
+};

@@ -1,13 +1,15 @@
 "use client";
 
-import { Charbon } from "@lib/models/charbon";
+import { Charbon, CharbonFilters } from "@lib/models/charbon";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type CharbonContextType = {
     charbons: Record<string, Charbon[]>;
+    charbonFilters: CharbonFilters;
     addCharbon: (newCharbon: Charbon) => void;
     updateCharbon: (updatedCharbon: Charbon) => void;
     removeCharbon: (id: number) => void;
+    setCharbonFilters: (filters: CharbonFilters) => void;
 };
 
 export const CharbonContext = createContext<CharbonContextType | null>(null);
@@ -20,6 +22,16 @@ const CharbonProvider = ({
     children: ReactNode;
 }) => {
     const [charbons, setCharbons] = useState(initialCharbons || {});
+    const [charbonFilters, setCharbonFilters] = useState<CharbonFilters>({
+        search: "",
+        category: "",
+        course: "",
+        level: "",
+        year: "",
+        month: "",
+        hasReplay: false,
+        hasResources: false,
+    });
 
     const addCharbon = (newCharbon: Charbon) => {
         const key = newCharbon.timestamp.toISOString().slice(0, 7);
@@ -56,7 +68,14 @@ const CharbonProvider = ({
 
     return (
         <CharbonContext.Provider
-            value={{ charbons, addCharbon, updateCharbon, removeCharbon }}
+            value={{
+                charbons,
+                charbonFilters,
+                addCharbon,
+                updateCharbon,
+                removeCharbon,
+                setCharbonFilters,
+            }}
         >
             {children}
         </CharbonContext.Provider>
