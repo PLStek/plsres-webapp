@@ -1,3 +1,5 @@
+import { CourseCategory } from "./course";
+
 export type CharbonStatus = "SCHEDULED" | "ONGOING" | "FINISHED";
 
 type CharbonBase = {
@@ -33,8 +35,8 @@ export type CharbonUpdateInput = Partial<
 
 export type CharbonFilters = {
     search: string;
-    category: string;
-    course: string;
+    category: CourseCategory | null;
+    courseId: number | null;
     level: string;
     year: string; //TODO: change to semester
     month: string;

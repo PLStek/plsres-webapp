@@ -51,7 +51,7 @@ const CharbonCard = ({
                         <h2 className="text-xl font-semibold">{charbon.name}</h2>
                         <PlayCircleIcon className="h-5 w-5 ml-2" />
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 whitespace-pre-line">
                         {charbon.description}
                     </p>
                 </div>

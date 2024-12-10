@@ -24,8 +24,8 @@ const CharbonProvider = ({
     const [charbons, setCharbons] = useState(initialCharbons || {});
     const [charbonFilters, setCharbonFilters] = useState<CharbonFilters>({
         search: "",
-        category: "",
-        course: "",
+        category: null,
+        courseId: null,
         level: "",
         year: "",
         month: "",

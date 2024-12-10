@@ -11,6 +11,8 @@ import {
     getCharbonByIdWithDraftAction,
     updateCharbonAction,
 } from "@lib/actions";
+import { useCourseContext } from "@app/context/CourseContext";
+import Fuse from "fuse.js";
 
 export const useCharbonMonthKeysQuery = () => {
     const { charbons } = useCharbonContext();
@@ -19,8 +21,50 @@ export const useCharbonMonthKeysQuery = () => {
 
 //TODO: add option to not use cache
 export const useCharbonsByMonthQuery = (monthKey: string) => {
-    const { charbons } = useCharbonContext();
-    return [charbons[monthKey]];
+    const { charbons, charbonFilters } = useCharbonContext();
+    const { courses } = useCourseContext();
+
+    const preFilteredCharbons = charbons[monthKey].filter((charbon) => {
+        if (
+            charbonFilters.courseId &&
+            charbon.courseId !== charbonFilters.courseId
+        ) {
+            return false;
+        }
+
+        if (!charbonFilters.courseId && charbonFilters.category) {
+            const course = courses.find(
+                (course) => course.id === charbon.courseId
+            );
+            if (!course || course.category !== charbonFilters.category) {
+                return false;
+            }
+        }
+
+        if (charbonFilters.hasReplay && !charbon.replayUrl) {
+            return false;
+        }
+
+        //TODO: for resource test, add resource count to charbon model
+
+        return true;
+    });
+
+    if (!charbonFilters.search) {
+        return [preFilteredCharbons] as const;
+    }
+
+    //TODO: look at fuse configs
+    const fuse = new Fuse(preFilteredCharbons, {
+        keys: ["name", "description"],
+        threshold: 0.3,
+    });
+
+    const filteredCharbons = fuse
+        .search(charbonFilters.search)
+        .map((result) => result.item);
+
+    return [filteredCharbons] as const;
 };
 
 export const useCharbonByIdQuery = (id: number) => {

@@ -2,6 +2,7 @@
 
 import { useCharbonMonthKeysQuery } from "@app/hooks/useCharbons";
 import CharbonList from "./CharbonList";
+import Filters from "../sidebar/CharbonFiltersSection";
 
 const CharbonMine = () => {
     const [charbonMonthKeys] = useCharbonMonthKeysQuery();
@@ -19,11 +20,16 @@ const CharbonMine = () => {
     };
 
     return (
-        <div className="relative rounded-2xl shadow-sm p-8 overflow-hidden bg-[#f9f9f9] w-full lg:flex-grow">
-            <h2 className="text-4xl flex justify-center font-bold text-gray-800 mt-4 mb-24">
+        <div className="relative rounded-t-2xl shadow-sm pt-8 overflow-hidden bg-[#f9f9f9] w-full lg:flex-grow pb-100">
+            <h2 className="text-4xl flex justify-center font-bold text-gray-800 mt-4 ">
                 La mine de charbon
             </h2>
-            <div className="flex justify-center">
+            <div className="xl:hidden flex justify-center mt-20 w-full px-12">
+                <div className="w-full md:w-[80%]">
+                    <Filters />
+                </div>
+            </div>
+            <div className="flex justify-center mt-20 ">
                 <div className="relative md:border-l-4 md:border-gray-200 md:ms-16 w-full md:w-[80%] lg:w-[75%] xl:w-[80%] 3xl:w-[75%]">
                     {charbonMonthKeys.map((key) => (
                         <div key={key}>
@@ -38,8 +44,15 @@ const CharbonMine = () => {
                             </div>
                         </div>
                     ))}
+                    <div className="absolute w-4 h-4 bg-gray-200 rounded-full md:-left-2.5 hidden md:block" />
+                    <div className=" absolute mx-4 md:mx-16">
+                        <div className="ms-8 mb-2 text-3xl font-semibold text-gray-800 -translate-y-3">
+                            Octobre 2020 - La Genèse
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div className="h-12 mb-12" />
         </div>
     );
 };

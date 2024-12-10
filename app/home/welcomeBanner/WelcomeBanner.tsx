@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
-import styles from "./WelcomeBanner.module.css";
 import VerificationModal from "../VerificationModal";
 import AdminModal from "../AdminModal";
 import { useDisconnect, useIsAdmin, useIsVerified } from "@app/hooks/useAuth";
@@ -38,7 +37,7 @@ const WelcomeBanner = () => {
                     src={charbonImage}
                     alt="Charbon PL$tek"
                     fill
-                    className="rounded-lg drop-shadow-[2px_2px_5px_rgba(0,0,0,0.3)] "
+                    className="drop-shadow-[2px_2px_5px_rgba(0,0,0,0.3)]"
 
                 />
             </div>
