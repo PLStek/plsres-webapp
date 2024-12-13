@@ -11,7 +11,7 @@ export const getResourceById = async (id: number) => {
     });
 };
 
-export const getResourceByCharbonId = async (id: number) => {
+export const getResourcesByCharbonId = async (id: number) => {
     return prisma.resource.findMany({
         where: {
             charbonId: id,

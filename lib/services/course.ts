@@ -44,7 +44,8 @@ export const getCourseByDiscordVoiceChannelIdService = async (
 };
 
 export const createCourseService = async (data: CourseCreateInput) => {
-    return postCourse(data);
+    const course = await postCourse(data);
+    return buildCourse(course);
 };
 
 export const updateCourseService = async (

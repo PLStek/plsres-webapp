@@ -12,7 +12,7 @@ export const CourseFiltersSection = () => {
         <div className="mb-4">
             <div className="flex justify-between items-center">
                 <label className="block text-sm font-medium text-gray-700">
-                    Filtres d'UV
+                    Filtres d{"'"}UV
                 </label>
                 <button
                     type="button"

@@ -15,7 +15,6 @@ import {
     disconnectService,
 } from "./services/auth";
 import {
-    createCharbonService,
     deleteCharbonService,
     getCharbonByIdService,
     getCharbonByIdWithDraftService,
@@ -32,10 +31,12 @@ import { generateActionneurInvitationLink } from "./services/invitation";
 import {
     createResourceService,
     deleteResourceService,
+    getResourcesByCharbonIdService,
     getResourceByIdService,
-    getResourcesService,
     updateResourceService,
 } from "./services/resource/resource";
+
+// Actionneur
 
 export const getActionneursAction = withAuth("guest", getActionneursService);
 export const getActionneurByIdAction = withAuth(
@@ -67,6 +68,8 @@ export const checkActionneurInviteTokenAction = withAuth(
     generateActionneurInvitationLink
 );
 
+// Auth
+
 export const connectAction = withAuth("guest", connectService);
 export const connectActionneurAction = withAuth(
     "verified",
@@ -74,6 +77,8 @@ export const connectActionneurAction = withAuth(
 );
 export const disconnectAction = withAuth("verified", disconnectService);
 export const authenticateAction = withAuth("guest", authenticateService);
+
+// Charbon
 
 export const getCharbonsGroupedByMonthAction = withAuth(
     "guest",
@@ -87,17 +92,26 @@ export const getCharbonByIdWithDraftAction = withAuth(
     "actionneur",
     getCharbonByIdWithDraftService
 );
-export const createCharbonAction = withAuth("actionneur", createCharbonService); //TODO: remove
 export const updateCharbonAction = withAuth("actionneur", updateCharbonService);
 export const deleteCharbonAction = withAuth("actionneur", deleteCharbonService);
+
+// Course
 
 export const getCoursesAction = withAuth("guest", getCoursesService);
 export const createCourseAction = withAuth("admin", createCourseService);
 export const updateCourseAction = withAuth("admin", updateCourseService);
 export const deleteCourseAction = withAuth("admin", deleteCourseService);
 
-export const getResourcesAction = withAuth("guest", getResourcesService);
-export const getResourceByIdAction = withAuth("guest", getResourceByIdService);
+// Resource
+
+export const getResourceByIdAction = withAuth(
+    "verified",
+    getResourceByIdService
+);
+export const getResourcesByCharbonIdAction = withAuth(
+    "verified",
+    getResourcesByCharbonIdService
+);
 
 export const createResourceAction = withAuth(
     "actionneur",

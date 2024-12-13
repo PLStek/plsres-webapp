@@ -28,7 +28,7 @@ export const useIsAdmin = () => {
 export const useConnect = () => {
     const { setAuthData } = useAuthContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error] = useState<Error | null>(null);
 
     const connect = async (callback?: () => void) => {
         const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;

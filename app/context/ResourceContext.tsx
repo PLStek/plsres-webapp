@@ -4,35 +4,37 @@ import { Resource } from "@lib/models/resource";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type ResourceContextType = {
-    resources: Resource[];
-    addResource: (newResource: Resource) => void;
-    removeResource: (id: number) => void;
+    resourcesByCharbonId: Record<number, Resource[]>;
+    addResources: (charbonId: number, resources: Resource[]) => void;
+    removeResources: (charbonId: number) => void;
 };
 
-export const ResourceContext = createContext<ResourceContextType | null>(
-    null
-);
+export const ResourceContext = createContext<ResourceContextType | null>(null);
 
-const ResourceProvider = ({
-    initialResources,
-    children,
-}: {
-    initialResources?: Resource[];
-    children: ReactNode;
-}) => {
-    const [resources, setResources] = useState(initialResources ?? []);
+const ResourceProvider = ({ children }: { children: ReactNode }) => {
+    const [resourcesByCharbonId, setResources] = useState<
+        Record<number, Resource[]>
+    >({});
 
-    const addResource = (newResource: Resource) =>
-        setResources([...resources, newResource]);
-    const removeResource = (id: number) =>
-        setResources(resources.filter((c) => c.id !== id));
+    const addResources = (charbonId: number, resources: Resource[]) =>
+        setResources((prev) => ({
+            ...prev,
+            [charbonId]: resources,
+        }));
+
+    const removeResources = (charbonId: number) =>
+        setResources((prev) => {
+            const updatedResources = { ...prev };
+            delete updatedResources[charbonId];
+            return updatedResources;
+        });
 
     return (
         <ResourceContext.Provider
             value={{
-                resources,
-                addResource,
-                removeResource,
+                resourcesByCharbonId,
+                addResources,
+                removeResources,
             }}
         >
             {children}

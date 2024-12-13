@@ -2,6 +2,7 @@
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
+    reactStrictMode: false,
     webpack: (config, { isServer }) => {
         if (isServer) {
             const externals = ["discord.js"];

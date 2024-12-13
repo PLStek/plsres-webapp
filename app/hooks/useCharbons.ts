@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useCharbonContext } from "@app/context/CharbonContext";
+import { Charbon, CharbonUpdateInput } from "@lib/models/charbon";
 import {
-    Charbon,
-    CharbonCreateInput,
-    CharbonUpdateInput,
-} from "@lib/models/charbon";
-import {
-    createCharbonAction,
     deleteCharbonAction,
     getCharbonByIdWithDraftAction,
     updateCharbonAction,
@@ -91,7 +86,7 @@ export const useCharbonByIdQuery = (id: number) => {
     return [data, loading, error] as const;
 };
 
-export const useCreateCharbonMutation = () => {
+/* export const useCreateCharbonMutation = () => {
     const { addCharbon } = useCharbonContext();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
@@ -111,6 +106,7 @@ export const useCreateCharbonMutation = () => {
 
     return [mutate, loading, error] as const;
 };
+ */
 
 export const useUpdateCharbonMutation = () => {
     const { updateCharbon } = useCharbonContext();

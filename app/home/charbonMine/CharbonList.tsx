@@ -1,7 +1,13 @@
 "use client";
 
 import { useCharbonsByMonthQuery } from "@app/hooks/useCharbons";
-import CharbonCard from "./CharbonCard";
+import { lazy, memo } from "react";
+
+const styles = {
+    container: "flex flex-col",
+};
+
+const CharbonCard = lazy(() => import("./charbonCard/CharbonCard"));
 
 const CharbonList = ({ monthKey }: { monthKey: string }) => {
     const [charbons] = useCharbonsByMonthQuery(monthKey);
@@ -9,7 +15,7 @@ const CharbonList = ({ monthKey }: { monthKey: string }) => {
     const lastIndex = charbons.length - 1;
 
     return (
-        <div className="flex flex-col">
+        <div className={styles.container}>
             {charbons.map((charbon, index) => (
                 <div key={index}>
                     <CharbonCard
@@ -23,4 +29,4 @@ const CharbonList = ({ monthKey }: { monthKey: string }) => {
     );
 };
 
-export default CharbonList;
+export default memo(CharbonList);

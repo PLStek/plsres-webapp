@@ -19,6 +19,9 @@ const config: Config = {
             backdropBlur: {
                 xs: "2px",
             },
+            borderWidth: {
+                5: "5px",
+            },
         },
     },
     plugins: [],

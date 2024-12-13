@@ -35,14 +35,12 @@ export default async function RootLayout({
 
     return (
         <html lang="fr">
-            <body className={`${commissioner.className}  antialiased`}>
+            <body className={`${commissioner.className} antialiased`}>
                 <AuthProvider initialAuthData={authData}>
                     <CharbonProvider initialCharbons={charbons}>
                         <ActionneurProvider initialActionneurs={actionneurs}>
                             <CourseProvider initialCourses={courses}>
-                                <ResourceProvider initialResources={[]}>
-                                    {children}
-                                </ResourceProvider>
+                                <ResourceProvider>{children}</ResourceProvider>
                             </CourseProvider>
                         </ActionneurProvider>
                     </CharbonProvider>

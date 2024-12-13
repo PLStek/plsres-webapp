@@ -1,20 +1,49 @@
-import { ResourceCreateInput } from "@lib/models/resource";
+import { Resource } from "@lib/models/resource";
 import { useResourceContext } from "../context/ResourceContext";
-import { useState } from "react";
-import { createResourceAction, deleteResourceAction } from "@lib/actions";
+import { useEffect, useState } from "react";
+import { getResourcesByCharbonIdAction } from "@lib/actions";
 
-export const useResourcesQuery = () => {
-    const { resources } = useResourceContext();
-    return [resources] as const;
-};
-
-export const useResourceByIdQuery = (id: number) => {
+/* export const useResourceByIdQuery = (id: number) => {
     const { resources } = useResourceContext();
     const resource = resources.find((c) => c.id === id);
     return [resource] as const;
+}; */
+
+export const useResourcesByCharbonIdQuery = (charbonId: number) => {
+    const { resourcesByCharbonId, addResources } = useResourceContext();
+    const [data, setData] = useState<Resource[] | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            const resource = resourcesByCharbonId[charbonId];
+            if (resource) {
+                setData(resource);
+                setLoading(false);
+                setError(null);
+                return;
+            }
+
+            try {
+                const resources = await getResourcesByCharbonIdAction(
+                    charbonId
+                );
+                addResources(charbonId, resources);
+                setData(resources);
+                setError(null);
+            } catch (err) {
+                setError(err as Error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [charbonId, resourcesByCharbonId, addResources]);
+
+    return [data, loading, error] as const;
 };
 
-export const useCreateResourceMutation = () => {
+/* export const useCreateResourceMutation = () => {
     const { addResource } = useResourceContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
@@ -53,4 +82,4 @@ export const useDeleteResourceMutation = () => {
     };
 
     return [mutate, loading, error] as const;
-};
+}; */

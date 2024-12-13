@@ -8,7 +8,7 @@ const VerificationModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const [connect, loading, error] = useConnect();
+    const [connect, ,] = useConnect();
 
     return (
         //TODO: review html here
@@ -20,9 +20,9 @@ const VerificationModal = ({
                     <strong>Pourquoi devez-vous vous vérifier ?</strong>
                     <br />
                     Certaines ressources du site sont réservés aux étudiants de
-                    l&aposUTBM pour des raisons de droits d&aposauteurs. Pour y
+                    l{"'"}UTBM pour des raisons de droits d{"'"}auteurs. Pour y
                     accéder, nous devons nous assurer que vous êtes bel et bien
-                    un étudiant de l&aposUTBM en vérifiant que vous êtes présent
+                    un étudiant de l{"'"}UTBM en vérifiant que vous êtes présent
                     sur le pôle UTBM de discord.
                 </p>
                 <br />

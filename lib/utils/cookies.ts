@@ -1,10 +1,11 @@
 import { CookieType } from "@lib/models/auth";
 import { cookies } from "next/headers";
 
-export const getCookie = (type: CookieType) => cookies().get(type)?.value;
+export const getCookie = async (type: CookieType) =>
+    (await cookies()).get(type)?.value;
 
-export const setCookie = (type: CookieType, token: string) =>
-    cookies().set({
+export const setCookie = async (type: CookieType, token: string) =>
+    (await cookies()).set({
         name: type,
         value: token,
         httpOnly: true,
@@ -14,4 +15,5 @@ export const setCookie = (type: CookieType, token: string) =>
         maxAge: type === "user_token" ? 3600 * 24 * 30 : 3600 * 12,
     });
 
-export const removeTokenCookie = (type: CookieType) => cookies().delete(type);
+export const removeTokenCookie = async (type: CookieType) =>
+    (await cookies()).delete(type);

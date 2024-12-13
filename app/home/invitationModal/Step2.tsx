@@ -2,9 +2,9 @@ import { useCreateActionneurMutation } from "@app/hooks/useActionneurs";
 import { useConnectActionneur } from "@app/hooks/useAuth";
 
 const Step2 = ({ invitationToken }: { invitationToken: string }) => {
-    const [createActionneur, loadingCreate, errorCreate] =
+    const [createActionneur, , ] =
         useCreateActionneurMutation();
-    const [connectActionneur, loadingConnect, errorConnect] =
+    const [connectActionneur, , ] =
         useConnectActionneur();
     //TODO: implement loading & error
 

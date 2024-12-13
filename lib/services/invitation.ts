@@ -24,7 +24,7 @@ export const generateActionneurInvitationLink = async (
 export const checkActionneurInvitationToken = async (
     invitationToken: string
 ) => {
-    const token = getCookie("user_token");
+    const token = await getCookie("user_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
     }

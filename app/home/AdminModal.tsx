@@ -24,7 +24,7 @@ const AdminModal = ({
     );
 
     const [actionneurs] = useActionneursQuery();
-    const [deleteActionneur, loading, error] = useDeleteActionneurMutation();
+    const [deleteActionneur, , ] = useDeleteActionneurMutation();
 
     const submit = async (formData: FormData) => {
         const discordId = formData.get("discordId") as string;

@@ -1,8 +1,8 @@
-import { Resource } from "@prisma/client";
+import { Resource } from "@lib/models/resource";
 import {
     deleteResource,
     deleteResourcesByCharbonId,
-    getResourceByCharbonId,
+    getResourcesByCharbonId,
     getResourceById,
     getResources,
     postResource,
@@ -25,6 +25,12 @@ export const getResourceByIdService = async (
     id: number
 ): Promise<Resource | null> => {
     return getResourceById(id);
+};
+
+export const getResourcesByCharbonIdService = async (
+    charbonId: number
+): Promise<Resource[]> => {
+    return getResourcesByCharbonId(charbonId);
 };
 
 export const createResourceService = async (
@@ -109,7 +115,7 @@ export const deleteResourceService = async (id: number) => {
 };
 
 export const deleteResourcesByCharbonIdService = async (id: number) => {
-    const resources = await getResourceByCharbonId(id);
+    const resources = await getResourcesByCharbonId(id);
     if (!resources) return;
 
     const deletePromises = resources.map((resource) =>

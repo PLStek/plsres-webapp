@@ -21,7 +21,6 @@ import {
     decodeToken,
 } from "@lib/utils/token";
 import { verifySecret } from "@lib/utils/encryption";
-import { cookies } from "next/headers";
 import { AuthData } from "@lib/models/auth";
 
 //TODO: meilleur typage et vérifications
@@ -40,7 +39,7 @@ export const connectService = async (code: string) => {
 };
 
 export const connectActionneurService = async (secret: number) => {
-    const userToken = getCookie("user_token");
+    const userToken = await getCookie("user_token");
     if (!userToken) {
         throw new Error("Couldn't find authentication token");
     }
@@ -61,9 +60,8 @@ export const connectActionneurService = async (secret: number) => {
 };
 
 export const disconnectService = async () => {
-    const userToken = getCookie("user_token");
-    const actionneurToken = getCookie("actionneur_token");
-    console.log(cookies().getAll());
+    const userToken = await getCookie("user_token");
+    const actionneurToken = await getCookie("actionneur_token");
     if (userToken) {
         removeTokenCookie("user_token");
         revokeTokenService(userToken);
@@ -75,7 +73,7 @@ export const disconnectService = async () => {
 };
 
 export const authenticateService = async (): Promise<AuthData> => {
-    const userToken = getCookie("user_token");
+    const userToken = await getCookie("user_token");
     if (!userToken) {
         return {
             isVerified: false,
@@ -99,7 +97,7 @@ export const authenticateService = async (): Promise<AuthData> => {
         };
     }
     const payload = decodeToken(userToken); //TODO: cas ou le token a juste expiré
-    const actionneurToken = getCookie("actionneur_token");
+    const actionneurToken = await getCookie("actionneur_token");
 
     let isActionneurAuthentified = false;
     if (actionneurToken) {
@@ -111,7 +109,7 @@ export const authenticateService = async (): Promise<AuthData> => {
 };
 
 export const checkAuthService = async () => {
-    const token = getCookie("user_token");
+    const token = await getCookie("user_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
     }
@@ -134,7 +132,8 @@ export const checkActionneurService = async (checkAdmin: boolean) => {
         throw new Error("User isn't admin");
     }
     return actionneur; */
-    const token = getCookie("user_token");
+    console.log(checkAdmin);
+    const token = await getCookie("user_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");
     }
