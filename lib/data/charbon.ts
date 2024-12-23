@@ -1,30 +1,32 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@lib/prisma";
 
+const include = {
+    actionneurs: {
+        select: {
+            actionneurId: true,
+        },
+    },
+    _count: {
+        select: {
+            resources: true,
+        },
+    },
+};
+
 export const getCharbons = async () => {
     return prisma.charbon.findMany({
-        include: {
-            actionneurs: {
-                select: {
-                    actionneurId: true,
-                },
-            },
-        },
+        include,
         where: {
             isDraft: false,
         },
     });
 };
 
+//TODO: delete
 export const getOngoingCharbons = async () => {
     return prisma.charbon.findMany({
-        include: {
-            actionneurs: {
-                select: {
-                    actionneurId: true,
-                },
-            },
-        },
+        include,
         where: {
             status: "ONGOING",
         },
@@ -35,32 +37,21 @@ export const getCharbonById = async (id: number) => {
     //TODO: check error handling
     return prisma.charbon.findUniqueOrThrow({
         where: { id },
-        include: {
-            actionneurs: {
-                select: {
-                    actionneurId: true,
-                },
-            },
-        },
+        include,
     });
 };
 
 export const getCharbonByDiscordEventId = async (discordEventId: string) => {
     return prisma.charbon.findUniqueOrThrow({
         where: { discordEventId },
-        include: {
-            actionneurs: {
-                select: {
-                    actionneurId: true,
-                },
-            },
-        },
+        include,
     });
 };
 
 export const postCharbon = async (data: Prisma.CharbonCreateInput) => {
     return prisma.charbon.create({
         data,
+        include,
     });
 };
 
@@ -71,6 +62,7 @@ export const putCharbon = async (
     return prisma.charbon.update({
         where: { id },
         data,
+        include,
     });
 };
 

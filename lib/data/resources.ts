@@ -6,7 +6,7 @@ export const getResources = async () => {
 };
 
 export const getResourceById = async (id: number) => {
-    return prisma.resource.findUnique({
+    return prisma.resource.findUniqueOrThrow({
         where: { id },
     });
 };

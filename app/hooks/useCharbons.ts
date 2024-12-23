@@ -36,11 +36,13 @@ export const useCharbonsByMonthQuery = (monthKey: string) => {
             }
         }
 
-        if (charbonFilters.hasReplay && !charbon.replayUrl) {
+        if (charbonFilters.hasReplay && !charbon.hasReplay) {
             return false;
         }
 
-        //TODO: for resource test, add resource count to charbon model
+        if (charbonFilters.hasResources && charbon.resourcesCount === 0) {
+            return false;
+        }
 
         return true;
     });

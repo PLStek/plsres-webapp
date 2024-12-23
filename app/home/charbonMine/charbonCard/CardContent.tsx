@@ -1,4 +1,3 @@
-import { PlayCircleIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
 type CardContentProps = {
@@ -34,7 +33,6 @@ const CardContent = ({
             <div>
                 <div className={styles.titleContainer}>
                     <h2 className={styles.title}>{title}</h2>
-                    <PlayCircleIcon className="h-5 w-5 ml-2" />
                 </div>
                 <p className={styles.description}>{description}</p>
             </div>

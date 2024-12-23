@@ -6,6 +6,7 @@ export type ResourceBase = {
 export type Resource = ResourceBase & {
     id: number;
     extension: string;
+    filename: string;
 };
 
 /* export type ResourceCreateInputForCharbon = {

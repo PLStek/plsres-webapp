@@ -43,6 +43,40 @@ export const useResourcesByCharbonIdQuery = (charbonId: number) => {
     return [data, loading, error] as const;
 };
 
+export const useResourceFileById = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const download = async (id: number, filename: string) => {
+        try {
+            setLoading(true);
+            const response = await fetch("/resource?id=" + id);
+            if (!response.ok) {
+                const errorData = await response.json();
+                const message = errorData?.error
+                    ? errorData.error
+                    : "An error occurred";
+                throw new Error(message);
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            setLoading(false);
+        } catch (error) {
+            setError(error as Error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    return [download, loading, error] as const;
+};
+
 /* export const useCreateResourceMutation = () => {
     const { addResource } = useResourceContext();
     const [loading, setLoading] = useState(true);

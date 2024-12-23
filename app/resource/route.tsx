@@ -7,7 +7,7 @@ import mime from "mime";
 export async function GET(request: Request) {
     const url = new URL(request.url);
     const resourceId = url.searchParams.get("id");
-    const parsedResourceId = parseInt(resourceId ?? '', 10);
+    const parsedResourceId = parseInt(resourceId ?? "", 10);
 
     if (isNaN(parsedResourceId)) {
         return NextResponse.json(
@@ -32,10 +32,7 @@ export async function GET(request: Request) {
     }
 
     try {
-        const fileBuffer = await getResourceFileService(
-            resource.id,
-            resource.charbonId
-        ); // Replace by stream ?
+        const fileBuffer = await getResourceFileService(resource.id); // Replace by stream ?
 
         const mimeType =
             mime.getType(resource.extension) || "application/octet-stream";
@@ -50,7 +47,7 @@ export async function GET(request: Request) {
     } catch (error) {
         console.error("Error downloading file:", error);
         return NextResponse.json(
-            { success: false, error: "Failed to download file" },
+            { success: false, error: "Resource file not found" },
             { status: 500 }
         );
     }

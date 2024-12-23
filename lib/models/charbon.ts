@@ -6,7 +6,6 @@ type CharbonBase = {
     name: string;
     description: string;
     timestamp: Date;
-    replayUrl?: string | null;
     discordEventId: string;
 };
 
@@ -14,6 +13,14 @@ export type Charbon = CharbonBase & {
     id: number;
     courseId: number;
     actionneurIds: number[];
+    status: CharbonStatus; //TODO: remove
+    isDraft: boolean; //TODO: remove
+    hasReplay: boolean;
+    resourcesCount: number;
+};
+
+export type FullCharbon = Charbon & {
+    replayUrl: string | null;
     status: CharbonStatus;
     isDraft: boolean;
 };
@@ -22,6 +29,7 @@ export type CharbonCreateInput = CharbonBase & {
     courseId: number;
     actionneurId: number;
     status?: CharbonStatus;
+    replayUrl?: string | null;
 };
 
 export type CharbonUpdateInput = Partial<
@@ -30,6 +38,7 @@ export type CharbonUpdateInput = Partial<
         actionneurIds: number[];
         status: CharbonStatus;
         isDraft: boolean;
+        replayUrl: string | null;
     }
 >;
 

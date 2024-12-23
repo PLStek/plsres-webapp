@@ -3,6 +3,7 @@
 import clsx from "clsx";
 import { memo, useEffect, useRef, useState } from "react";
 import CardResources from "./CardResources";
+import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
 
 const LazyCardResources = ({
     charbonId,
@@ -11,13 +12,15 @@ const LazyCardResources = ({
     charbonId: number;
     collapsed: boolean;
 }) => {
+    const [resources, loading] = useResourcesByCharbonIdQuery(charbonId);
+
     const [maxHeight, setMaxHeight] = useState("0px");
     const [opacity, setOpacity] = useState("opacity-0");
 
     const resourcesRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (resourcesRef.current) {
+        if (resourcesRef.current && !loading) {
             const height = !collapsed
                 ? `${resourcesRef.current.scrollHeight}px`
                 : "0px";
@@ -27,19 +30,20 @@ const LazyCardResources = ({
             }, 10);
             return () => clearTimeout(timeout);
         }
-    }, [collapsed]);
+    }, [collapsed, loading]);
 
     return (
         <div
             ref={resourcesRef}
             className={clsx(
-                "mt-2 overflow-hidden transition-all duration-500 ease-in-out",
+                "overflow-hidden transition-all duration-500 ease-in-out",
                 opacity
             )}
             style={{ maxHeight }}
         >
-            <hr className=" border-gray-200" />
-            <CardResources charbonId={charbonId} />
+            <div className="mt-4 mb-2">
+                <CardResources resources={resources ?? []} />
+            </div>
         </div>
     );
 };

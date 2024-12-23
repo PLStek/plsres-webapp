@@ -4,7 +4,6 @@ import {
     deleteResourcesByCharbonId,
     getResourcesByCharbonId,
     getResourceById,
-    getResources,
     postResource,
     putResource,
 } from "../../data/resources";
@@ -16,21 +15,35 @@ import {
     uploadResourceFileService,
     deleteResourceFileService,
 } from "./resourceFile";
+import { Prisma } from "@prisma/client";
 
-export const getResourcesService = async (): Promise<Resource[]> => {
-    return getResources();
-};
+/* const buildCourse = (
+    course: Prisma.PromiseReturnType<typeof getCourseById>
+) => ({
+    ...course,
+    category: course.category as CourseCategory,
+}); */
+
+const buildResource = (
+    resource: Prisma.PromiseReturnType<typeof getResourceById>
+) => ({
+    ...resource,
+    filename: `${resource.name}.${resource.extension}`,
+});
 
 export const getResourceByIdService = async (
     id: number
 ): Promise<Resource | null> => {
-    return getResourceById(id);
+    //TODO: handle error
+    const resource = await getResourceById(id);
+    return buildResource(resource);
 };
 
 export const getResourcesByCharbonIdService = async (
     charbonId: number
 ): Promise<Resource[]> => {
-    return getResourcesByCharbonId(charbonId);
+    const resources = await getResourcesByCharbonId(charbonId);
+    return resources.map(buildResource);
 };
 
 export const createResourceService = async (
@@ -45,12 +58,8 @@ export const createResourceService = async (
     const newResource = await postResource(newResourceData);
 
     try {
-        await uploadResourceFileService(
-            data.charbonId,
-            newResource.id,
-            data.file
-        );
-        return newResource;
+        await uploadResourceFileService(newResource.id, data.file);
+        return buildResource(newResource);
     } catch (error) {
         await deleteResource(newResource.id);
         console.error(error);
@@ -109,7 +118,7 @@ export const deleteResourceService = async (id: number) => {
     const resource = await getResourceByIdService(id);
     if (!resource) return;
 
-    deleteResourceFileService(resource.charbonId, id);
+    deleteResourceFileService(id);
 
     return deleteResource(id);
 };
@@ -119,7 +128,7 @@ export const deleteResourcesByCharbonIdService = async (id: number) => {
     if (!resources) return;
 
     const deletePromises = resources.map((resource) =>
-        deleteResourceFileService(resource.charbonId, resource.id)
+        deleteResourceFileService(resource.id)
     );
 
     await Promise.all(deletePromises);
