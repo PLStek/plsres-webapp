@@ -5,8 +5,8 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 type ResourceContextType = {
     resourcesByCharbonId: Record<number, Resource[]>;
-    addResources: (charbonId: number, resources: Resource[]) => void;
-    removeResources: (charbonId: number) => void;
+    setResourcesByCharbonId: (charbonId: number, resources: Resource[]) => void;
+    removeResourcesByCharbonId: (charbonId: number) => void;
 };
 
 export const ResourceContext = createContext<ResourceContextType | null>(null);
@@ -16,13 +16,13 @@ const ResourceProvider = ({ children }: { children: ReactNode }) => {
         Record<number, Resource[]>
     >({});
 
-    const addResources = (charbonId: number, resources: Resource[]) =>
+    const setResourcesByCharbonId = (charbonId: number, resources: Resource[]) =>
         setResources((prev) => ({
             ...prev,
             [charbonId]: resources,
-        }));
+        })); //TODO: more like setResources, maybe allow setting a unique resource ?
 
-    const removeResources = (charbonId: number) =>
+    const removeResourcesByCharbonId = (charbonId: number) =>
         setResources((prev) => {
             const updatedResources = { ...prev };
             delete updatedResources[charbonId];
@@ -33,8 +33,8 @@ const ResourceProvider = ({ children }: { children: ReactNode }) => {
         <ResourceContext.Provider
             value={{
                 resourcesByCharbonId,
-                addResources,
-                removeResources,
+                setResourcesByCharbonId,
+                removeResourcesByCharbonId,
             }}
         >
             {children}

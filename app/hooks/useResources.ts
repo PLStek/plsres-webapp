@@ -1,7 +1,11 @@
-import { Resource } from "@lib/models/resource";
+import { Resource, ResourceCreateInput } from "@lib/models/resource";
 import { useResourceContext } from "../context/ResourceContext";
 import { useEffect, useState } from "react";
-import { getResourcesByCharbonIdAction } from "@lib/actions";
+import {
+    createResourceAction,
+    deleteResourceAction,
+    getResourcesByCharbonIdAction,
+} from "@lib/actions";
 
 /* export const useResourceByIdQuery = (id: number) => {
     const { resources } = useResourceContext();
@@ -10,7 +14,8 @@ import { getResourcesByCharbonIdAction } from "@lib/actions";
 }; */
 
 export const useResourcesByCharbonIdQuery = (charbonId: number) => {
-    const { resourcesByCharbonId, addResources } = useResourceContext();
+    const { resourcesByCharbonId, setResourcesByCharbonId } =
+        useResourceContext();
     const [data, setData] = useState<Resource[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
@@ -28,7 +33,7 @@ export const useResourcesByCharbonIdQuery = (charbonId: number) => {
                 const resources = await getResourcesByCharbonIdAction(
                     charbonId
                 );
-                addResources(charbonId, resources);
+                setResourcesByCharbonId(charbonId, resources);
                 setData(resources);
                 setError(null);
             } catch (err) {
@@ -38,7 +43,7 @@ export const useResourcesByCharbonIdQuery = (charbonId: number) => {
             }
         };
         fetchData();
-    }, [charbonId, resourcesByCharbonId, addResources]);
+    }, [charbonId, resourcesByCharbonId, setResourcesByCharbonId]);
 
     return [data, loading, error] as const;
 };
@@ -77,15 +82,20 @@ export const useResourceFileById = () => {
     return [download, loading, error] as const;
 };
 
-/* export const useCreateResourceMutation = () => {
-    const { addResource } = useResourceContext();
+export const useCreateResourceMutation = () => {
+    const { resourcesByCharbonId, setResourcesByCharbonId } =
+        useResourceContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
     const mutate = async (newResource: ResourceCreateInput) => {
         try {
             const resource = await createResourceAction(newResource);
-            addResource(resource);
+            const charbonId = resource.charbonId;
+            setResourcesByCharbonId(charbonId, [
+                ...resourcesByCharbonId[charbonId],
+                resource,
+            ]);
             setError(null); //TODO: voir si besoin des setErrors ici (partout)
         } catch (err) {
             setError(err as Error);
@@ -98,15 +108,19 @@ export const useResourceFileById = () => {
 };
 
 export const useDeleteResourceMutation = () => {
-    const { removeResource } = useResourceContext();
+    const { resourcesByCharbonId, setResourcesByCharbonId } =
+        useResourceContext();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const mutate = async (id: number) => {
+    const mutate = async (id: number, charbonId: number) => {
         try {
             setLoading(true);
             await deleteResourceAction(id);
-            removeResource(id);
+            setResourcesByCharbonId(
+                charbonId,
+                resourcesByCharbonId[charbonId].filter((r) => r.id !== id)
+            );
             setError(null);
         } catch (err) {
             setError(err as Error);
@@ -116,4 +130,4 @@ export const useDeleteResourceMutation = () => {
     };
 
     return [mutate, loading, error] as const;
-}; */
+};

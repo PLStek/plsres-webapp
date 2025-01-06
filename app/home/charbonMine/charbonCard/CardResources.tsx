@@ -1,17 +1,21 @@
 "use client";
 
 import { memo, useState } from "react";
-import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import { useResourceFileById } from "@app/hooks/useResources";
+import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+    useDeleteResourceMutation,
+    useResourceFileById,
+} from "@app/hooks/useResources";
 import { Resource } from "@lib/models/resource";
 
 type CardResourcesProps = {
     resources: Resource[];
+    editMode?: boolean;
 };
 
-const CardResources = ({ resources }: CardResourcesProps) => {
+const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
     const [download, loading, error] = useResourceFileById();
-    console.log(error)
+    const [deleteResource] = useDeleteResourceMutation();
 
     const [checkedResources, setCheckedResources] = useState<{
         [key: number]: boolean;
@@ -27,7 +31,7 @@ const CardResources = ({ resources }: CardResourcesProps) => {
         (resource) => checkedResources[resource.id]
     );
 
-    console.log(resources.map(r => r.filename))
+    console.log(resources.map((r) => r.filename));
 
     return (
         <div className="border rounded-lg bg-[#F2F2F2]">
@@ -53,7 +57,14 @@ const CardResources = ({ resources }: CardResourcesProps) => {
                         <td className="px-6">
                             {resources?.some(
                                 (resource) => checkedResources[resource.id]
-                            ) && <ArrowDownTrayIcon className="h-5 w-5" />}
+                            ) && (
+                                <div className="flex gap-2">
+                                    <ArrowDownTrayIcon className="h-5 w-5" />
+                                    {editMode && (
+                                        <TrashIcon className="h-5 w-5" />
+                                    )}
+                                </div>
+                            )}
                         </td>
                     </tr>
                 </thead>
@@ -77,9 +88,27 @@ const CardResources = ({ resources }: CardResourcesProps) => {
                                 {resource.extension}
                             </td>
                             <td className="px-6 py-1 whitespace-nowrap">
-                                <button onClick={() => download(resource.id, resource.name)}>
-                                    <ArrowDownTrayIcon className="h-5 w-5 text-gray-500" />
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() =>
+                                            download(resource.id, resource.name)
+                                        }
+                                    >
+                                        <ArrowDownTrayIcon className="h-5 w-5 text-gray-500" />
+                                    </button>
+                                    <button
+                                        onClick={() =>
+                                            deleteResource(
+                                                resource.id,
+                                                resource.charbonId
+                                            )
+                                        }
+                                    >
+                                        {editMode && (
+                                            <TrashIcon className="h-5 w-5" />
+                                        )}
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}

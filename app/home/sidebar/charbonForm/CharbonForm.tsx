@@ -5,6 +5,8 @@ import styles from "./CharbonForm.module.css";
 import { useCoursesQuery } from "@app/hooks/useCourses";
 import { useActionneursQuery } from "@app/hooks/useActionneurs";
 import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
+import CardResources from "@app/home/charbonMine/charbonCard/CardResources";
+import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
 
 type CharbonFormProps = {
     defaultCharbon: Charbon;
@@ -13,7 +15,8 @@ type CharbonFormProps = {
 
 const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
     const [courses] = useCoursesQuery();
-    const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId);
+    const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId); //TODO: useCourseByCharbonId ?
+    const [defaultResources] = useResourcesByCharbonIdQuery(defaultCharbon.id);
 
     const [actionneurs] = useActionneursQuery();
     const defaultActionneurs = actionneurs.reduce((acc, actionneur) => {
@@ -40,11 +43,8 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
     };
 
     return (
-        <form action={submit} className={styles.formContainer}>
+        <form action={submit} className="flex flex-col gap-4">
             <div>
-                <label htmlFor="name" className={styles.formLabel}>
-                    Name
-                </label>
                 <input
                     type="text"
                     name="name"
@@ -54,20 +54,15 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
             </div>
 
             <div>
-                <label htmlFor="description" className={styles.formLabel}>
-                    Description
-                </label>
                 <textarea
                     name="description"
                     className={styles.formField}
                     defaultValue={defaultCharbon.description}
+                    rows={4}
                 />
             </div>
 
-            <div>
-                <label htmlFor="courseId" className={styles.formLabel}>
-                    Course
-                </label>
+            <div className="flex gap-4">
                 <select
                     name="courseId"
                     className={styles.selectField}
@@ -82,12 +77,7 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                         </option>
                     ))}
                 </select>
-            </div>
-
-            <div>
-                <label htmlFor="actionneurIds" className={styles.formLabel}>
-                    Actionneur IDs
-                </label>
+             
                 <select
                     name="actionneurIds"
                     multiple
@@ -100,6 +90,12 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                         </option>
                     ))}
                 </select>
+         
+            </div>
+            <div className="my-4">
+                {defaultResources && (
+                    <CardResources resources={defaultResources} editMode />
+                )}
             </div>
 
             <div className="flex">

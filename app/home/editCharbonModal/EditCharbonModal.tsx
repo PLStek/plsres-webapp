@@ -23,7 +23,7 @@ const EditCharbonModal = ({
 
     return (
         charbon && (
-            <Modal isOpen={isOpen && !!charbon} onClose={onClose}>
+            <Modal isOpen={isOpen && !!charbon} onClose={onClose} className="max-w-2xl bg-[#F6F6F6] border border-double border-gray-300">
                 {!isLoading ? (
                     <CharbonForm defaultCharbon={charbon} onClose={onClose} />
                 ) : (

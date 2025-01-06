@@ -6,10 +6,12 @@ import { createPortal } from "react-dom";
 const Modal = ({
     children,
     isOpen,
+    className = "",
     onClose,
 }: {
     children: React.ReactNode;
     isOpen: boolean;
+    className?: string;
     onClose: () => void;
 }) => {
     const [showContent, setShowContent] = useState(false);
@@ -60,9 +62,14 @@ const Modal = ({
             }}
         >
             <div
-                className={`relative w-full max-w-lg p-4 bg-white rounded-lg shadow-lg transform transition-all duration-200 ${
-                    showContent ? "scale-100 opacity-100" : "scale-95 opacity-0"
-                }`}
+                className={
+                    className +
+                    ` relative w-full max-w-lg p-4  rounded-lg shadow-lg transform transition-all duration-200 ${
+                        showContent
+                            ? "scale-100 opacity-100"
+                            : "scale-95 opacity-0"
+                    } ` 
+                }
                 onMouseDown={(e) => {
                     e.stopPropagation();
                     setIsMouseDownInside(true);
