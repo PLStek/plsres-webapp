@@ -1,7 +1,6 @@
 "use client";
 
 import { useIsVerified, useIsActionneur } from "@app/hooks/useAuth";
-import Modal from "../Modal";
 import { useEffect, useState } from "react";
 import Step1 from "./Step1";
 import Step2 from "./Step2";

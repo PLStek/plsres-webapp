@@ -15,6 +15,7 @@ import { lazy, memo, useState } from "react";
 import EditCharbonModal from "@app/home/editCharbonModal/EditCharbonModal";
 import { useIsVerified } from "@app/hooks/useAuth";
 import VerificationModal from "@app/home/VerificationModal";
+import { useDisclosure } from "@nextui-org/react";
 
 const LazyCardResources = lazy(() => import("./LazyCardResources"));
 
@@ -47,7 +48,11 @@ const CharbonCard = ({
 }) => {
     const [showResources, setShowResources] = useState(false);
     const [resourcesCollapsed, setResourcesCollapsed] = useState(true);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const {
+        isOpen: isEditModalOpen,
+        onOpen: onEditModalOpen,
+        onOpenChange: onEditModalOpenChange,
+    } = useDisclosure();
     const [isVerificationModalOpen, setIsVerificationModalOpen] =
         useState(false);
 
@@ -60,8 +65,6 @@ const CharbonCard = ({
 
     const color = (course?.category?.toLowerCase() ||
         "default") as keyof typeof styles.borderColor;
-
-    console.log(charbon.resourcesCount);
 
     return (
         <div
@@ -104,6 +107,11 @@ const CharbonCard = ({
                     isOpen={isVerificationModalOpen}
                     onClose={() => setIsVerificationModalOpen(false)}
                 />
+                <EditCharbonModal
+                    charbonId={charbon.id}
+                    isOpen={isEditModalOpen}
+                    onOpenChange={onEditModalOpenChange}
+                />
                 <div className="flex gap-1">
                     <button
                         type="button"
@@ -140,16 +148,11 @@ const CharbonCard = ({
                             type="button"
                             className={clsx(styles.chevronIcon)}
                             onClick={() => {
-                                setShowEditModal(true);
+                                onEditModalOpen();
                             }}
                             tabIndex={-1}
                         >
                             <Cog6ToothIcon />
-                            <EditCharbonModal
-                                charbonId={charbon.id}
-                                isOpen={showEditModal}
-                                onClose={() => setShowEditModal(false)}
-                            />
                         </button>
                     )}
                 </div>

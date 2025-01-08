@@ -10,10 +10,12 @@
     },
     "dependencies": {
         "@heroicons/react": "^2.1.5",
+        "@nextui-org/react": "^2.6.11",
         "@prisma/client": "^6.0.0",
         "bcrypt": "^5.1.1",
         "clsx": "^2.1.1",
         "discord.js": "^14.16.3",
+        "framer-motion": "^11.16.0",
         "fuse.js": "^7.0.0",
         "jsonwebtoken": "^9.0.2",
         "mime": "^4.0.4",

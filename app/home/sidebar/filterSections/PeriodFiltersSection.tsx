@@ -3,6 +3,7 @@ import {
     useCharbonMonthKeysQuery,
 } from "@app/hooks/useCharbons";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { Select, SelectItem } from "@nextui-org/react";
 
 export const PeriodFiltersSection = () => {
     const [monthKeys] = useCharbonMonthKeysQuery();
@@ -32,21 +33,19 @@ export const PeriodFiltersSection = () => {
                 </button>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-2">
-                <select
-                    value={filters.year}
-                    onChange={(e) =>
-                        setFilters({ ...filters, year: e.target.value })
+                <Select
+                    onChange={
+                        (e) => setFilters({ ...filters, year: e.target.value }) //TODO: use number ?
                     }
-                    className="border-gray-300 rounded-md"
+                    placeholder="Année"
+                    size="sm"
+                    selectionMode="multiple"
                 >
-                    <option value="">Tous</option>
                     {years.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
-                        </option>
+                        <SelectItem key={year}>{year}</SelectItem>
                     ))}
-                </select>
-                <select
+                </Select>
+                {/* <select
                     value={filters.month}
                     onChange={(e) =>
                         setFilters({ ...filters, month: e.target.value })
@@ -65,7 +64,28 @@ export const PeriodFiltersSection = () => {
                     <option value="10">Octobre</option>
                     <option value="11">Novembre</option>
                     <option value="12">Décembre</option>
-                </select>
+                </select> */}
+                <Select
+                    onChange={(e) =>
+                        setFilters({ ...filters, month: e.target.value })
+                    }
+                    placeholder="Mois"
+                    size="sm"
+                    selectionMode="multiple"
+                >
+                    <SelectItem key="01">Janvier</SelectItem>
+                    <SelectItem key="02">Février</SelectItem>
+                    <SelectItem key="03">Mars</SelectItem>
+                    <SelectItem key="04">Avril</SelectItem>
+                    <SelectItem key="05">Mai</SelectItem>
+                    <SelectItem key="06">Juin</SelectItem>
+                    <SelectItem key="07">Juillet</SelectItem>
+                    <SelectItem key="08">Août</SelectItem>
+                    <SelectItem key="09">Septembre</SelectItem>
+                    <SelectItem key="10">Octobre</SelectItem>
+                    <SelectItem key="11">Novembre</SelectItem>
+                    <SelectItem key="12">Décembre</SelectItem>
+                </Select>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import { useCharbonFilters } from "@app/hooks/useCharbons";
+import { Checkbox } from "@nextui-org/react";
 
 export const ResourcesFiltersSection = () => {
     const [filters, setFilters] = useCharbonFilters();
@@ -9,34 +10,22 @@ export const ResourcesFiltersSection = () => {
                 Ressources
             </label>
             <div className="mt-2 space-y-2">
-                <label className="flex items-center">
-                    <input
-                        type="checkbox"
-                        checked={filters.hasReplay}
-                        onChange={(e) =>
-                            setFilters({
-                                ...filters,
-                                hasReplay: e.target.checked,
-                            })
-                        }
-                        className="mr-2"
-                    />
+                <Checkbox
+                    isSelected={filters.hasReplay}
+                    onValueChange={(value) =>
+                        setFilters({ ...filters, hasReplay: value })
+                    }
+                >
                     Rediffusion disponible
-                </label>
-                <label className="flex items-center">
-                    <input
-                        type="checkbox"
-                        checked={filters.hasResources}
-                        onChange={(e) =>
-                            setFilters({
-                                ...filters,
-                                hasResources: e.target.checked,
-                            })
-                        }
-                        className="mr-2"
-                    />
+                </Checkbox>
+                <Checkbox
+                    isSelected={filters.hasResources}
+                    onValueChange={(value) =>
+                        setFilters({ ...filters, hasResources: value })
+                    }
+                >
                     Ressources disponibles
-                </label>
+                </Checkbox>
             </div>
         </div>
     );

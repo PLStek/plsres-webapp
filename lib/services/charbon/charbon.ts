@@ -40,7 +40,6 @@ export const getCharbonsGroupedByMonthService = async (): Promise<
             acc[month] = [];
         }
         acc[month].push(buildCharbonWithActionneurs(charbon));
-        console.log(acc[month].map((c) => c.resourcesCount));
         return acc;
     }, {} as Record<string, Charbon[]>);
     //TODO: cache

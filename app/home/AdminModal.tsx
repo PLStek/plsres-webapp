@@ -1,30 +1,31 @@
 "use client";
 
-import Modal from "./Modal";
 import {
     useActionneursQuery,
     useDeleteActionneurMutation,
 } from "@app/hooks/useActionneurs";
-import { useCreateActionneurInviteMutation, useIsAdmin } from "@app/hooks/useAuth";
+import {
+    useCreateActionneurInviteMutation,
+    useIsAdmin,
+} from "@app/hooks/useAuth";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import { useState } from "react";
 
 const AdminModal = ({
     isOpen,
-    onClose,
+    onOpenChange,
 }: {
     isOpen: boolean;
-    onClose: () => void;
+    onOpenChange: () => void;
 }) => {
     const [createInvite] = useCreateActionneurInviteMutation();
     const [isAdmin] = useIsAdmin();
 
-    const [generatedLink, setGeneratedLink] = useState<string | null>(
-        null
-    );
+    const [generatedLink, setGeneratedLink] = useState<string | null>(null);
 
     const [actionneurs] = useActionneursQuery();
-    const [deleteActionneur, , ] = useDeleteActionneurMutation();
+    const [deleteActionneur, ,] = useDeleteActionneurMutation();
 
     const submit = async (formData: FormData) => {
         const discordId = formData.get("discordId") as string;
@@ -37,31 +38,35 @@ const AdminModal = ({
 
     return (
         //TODO: séparer en plusieurs composants -> adminDashboard
-        <Modal isOpen={isOpen} onClose={onClose}>
-            <div>
-                {actionneurs.map((actionneur) => (
-                    <div key={actionneur.id} className="flex">
-                        <p className="mr-3">{actionneur.username}</p>
-                        <p className="mr-3">
-                            Admin: {actionneur.isAdmin ? "Oui" : "Non"}
-                        </p>
-                        <TrashIcon
-                            className="h-5 w-5"
-                            onClick={() => deleteActionneur(actionneur.id)}
-                        />
-                    </div>
-                ))}
-            </div>
-            {!generatedLink && (
-                <form action={submit}>
-                    <div>
-                        <label htmlFor="discordId">Discord ID</label>
-                        <input type="number" name="discordId" />
-                    </div>
-                    <button type="submit">Créer un lien dinvitation</button>
-                </form>
-            )}
-            {generatedLink && generatedLink}
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <ModalContent>
+                <ModalBody>
+                    {actionneurs.map((actionneur) => (
+                        <div key={actionneur.id} className="flex">
+                            <p className="mr-3">{actionneur.username}</p>
+                            <p className="mr-3">
+                                Admin: {actionneur.isAdmin ? "Oui" : "Non"}
+                            </p>
+                            <TrashIcon
+                                className="h-5 w-5"
+                                onClick={() => deleteActionneur(actionneur.id)}
+                            />
+                        </div>
+                    ))}
+                    {!generatedLink && (
+                        <form action={submit}>
+                            <div>
+                                <label htmlFor="discordId">Discord ID</label>
+                                <input type="number" name="discordId" />
+                            </div>
+                            <button type="submit">
+                                Créer un lien dinvitation
+                            </button>
+                        </form>
+                    )}
+                    {generatedLink && generatedLink}
+                </ModalBody>
+            </ModalContent>
         </Modal>
     );
 };

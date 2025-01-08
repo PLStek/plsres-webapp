@@ -132,7 +132,6 @@ export const checkActionneurService = async (checkAdmin: boolean) => {
         throw new Error("User isn't admin");
     }
     return actionneur; */
-    console.log(checkAdmin);
     const token = await getCookie("user_token");
     if (!token) {
         throw new Error("Couldn't find authentication token");

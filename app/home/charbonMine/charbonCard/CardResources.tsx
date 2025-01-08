@@ -31,8 +31,6 @@ const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
         (resource) => checkedResources[resource.id]
     );
 
-    console.log(resources.map((r) => r.filename));
-
     return (
         <div className="border rounded-lg bg-[#F2F2F2]">
             <table className="min-w-full divide-y divide-gray-200 ">

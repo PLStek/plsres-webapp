@@ -1,4 +1,4 @@
-import { Select } from "@app/components/Select";
+import { Select, SelectItem } from "@nextui-org/react";
 import { useCharbonFilters } from "@app/hooks/useCharbons";
 import { useCoursesQuery } from "@app/hooks/useCourses";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
@@ -30,35 +30,41 @@ export const CourseFiltersSection = () => {
             </div>
             <div className="grid grid-cols-2 gap-4 mt-2">
                 <Select
-                    value={filters.category || ""}
-                    onChange={(category) =>
+                    selectedKeys={filters.category ? [filters.category] : []}
+                    onSelectionChange={(value) =>
                         setFilters({
                             ...filters,
-                            category: category as CourseCategory | null,
+                            category: [...value][0] as CourseCategory | null,
                         })
-                    }
-                    options={[
-                        { name: "Elec", value: "ELEC" },
-                        { name: "Info", value: "INFO" },
-                        { name: "Meca", value: "MECA" },
-                        { name: "Math", value: "MATH" },
-                    ]}
+                    } //TODO: make multiple
                     placeholder="Catégorie"
-                />
+                    size="sm"
+                >
+                    <SelectItem key="ELEC">Elec</SelectItem>
+                    <SelectItem key="INFO">Info</SelectItem>
+                    <SelectItem key="MECA">Meca</SelectItem>
+                    <SelectItem key="MATH">Math</SelectItem>
+                </Select>
                 <Select
-                    value={filters.courseId || ""}
-                    onChange={(courseId) =>
+                    selectedKeys={
+                        filters.courseId ? [filters.courseId.toString()] : []
+                    }
+                    onSelectionChange={(value) => {
+                        const courseId = parseInt([...value][0] as string);
                         setFilters({
                             ...filters,
-                            courseId: courseId ? courseId : null,
-                        })
-                    }
-                    options={courses.map((course) => ({
-                        name: course.code,
-                        value: course.id,
-                    }))}
+                            courseId: isNaN(courseId) ? null : courseId,
+                        });
+                    }} //TODO: make multiple
                     placeholder="UV"
-                />
+                    size="sm"
+                >
+                    {courses.map((course) => (
+                        <SelectItem key={course.id} value={course.id}>
+                            {course.code}
+                        </SelectItem>
+                    ))}
+                </Select>
             </div>
         </div>
     );

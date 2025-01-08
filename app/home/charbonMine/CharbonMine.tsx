@@ -3,10 +3,11 @@
 import { useCharbonMonthKeysQuery } from "@app/hooks/useCharbons";
 import Filters from "../sidebar/CharbonFiltersSection";
 import { lazy, memo } from "react";
+import { Card } from "@nextui-org/react";
 
 const styles = {
     container:
-        "relative rounded-t-2xl shadow-sm pt-8 overflow-hidden bg-[#f9f9f9] w-full lg:flex-grow pb-100",
+        "relative rounded-t-2xl shadow-sm pt-8 overflow-hidden bg-[#FBFBFB] w-full lg:flex-grow pb-100",
     title: "text-4xl flex justify-center font-bold text-gray-800 mt-4",
     filterContainer: "xl:hidden flex justify-center mt-20 w-full px-12",
     filterWrapper: "w-full md:w-[80%]",
@@ -38,8 +39,8 @@ const CharbonMine = () => {
         return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     };
 
-    return (
-        <div className={styles.container}>
+    return ( 
+        <Card className="pt-8 pb-100 bg-[#fbfbfb] w-full lg:flex-grow" shadow="sm">
             <h2 className={styles.title}>La mine de charbon</h2>
             <div className={styles.filterContainer}>
                 <div className={styles.filterWrapper}>
@@ -66,7 +67,7 @@ const CharbonMine = () => {
             <div className="flex justify-center mb-12 ">
                 <div className={styles.dashedLine} />
             </div>
-        </div>
+        </Card>
     );
 };
 

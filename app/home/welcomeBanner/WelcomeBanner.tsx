@@ -1,23 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import VerificationModal from "../VerificationModal";
 import AdminModal from "../AdminModal";
 import { useDisconnect, useIsAdmin, useIsVerified } from "@app/hooks/useAuth";
+import { Card, useDisclosure } from "@nextui-org/react";
 
 const WelcomeBanner = () => {
     const [disconnect] = useDisconnect();
     const [isVerified] = useIsVerified();
     const [isAdmin] = useIsAdmin();
 
-    const [isVerificationModalOpen, setIsVerificationModalOpen] =
-        useState(false);
-    const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+    const {
+        isOpen: isVerificationModalOpen,
+        onOpen: onVerificationModalOpen,
+        onOpenChange: onVerificationModalOpenChange,
+    } = useDisclosure();
+
+    const {
+        isOpen: isAdminModalOpen,
+        onOpen: onAdminModalOpen,
+        onOpenChange: onAdminModalOpenChange,
+    } = useDisclosure();
 
     return (
-        <div className="relative rounded-2xl shadow-sm p-12 overflow-hidden bg-[#f9f9f9] min-h-[500px]">
+        <Card className="relative p-12 min-h-[500px] bg-[#fbfbfb]" shadow="sm">
             <div className="flex-1">
                 <h1 className="text-5xl flex justify-center font-bold text-gray-800 mb-12">
                     Bienvenue dans la mine du PL$tek
@@ -38,30 +47,27 @@ const WelcomeBanner = () => {
                     alt="Charbon PL$tek"
                     fill
                     className="drop-shadow-[2px_2px_5px_rgba(0,0,0,0.3)]"
-
                 />
             </div>
             {!isVerified && (
-                <button onClick={() => setIsVerificationModalOpen(true)}>
+                <button onClick={onVerificationModalOpen}>
                     Connect
                 </button>
             )}
             {isVerified && (
                 <button onClick={() => disconnect()}>Disconnect</button>
             )}
-            {isAdmin && (
-                <button onClick={() => setIsAdminModalOpen(true)}>Admin</button>
-            )}
+            {isAdmin && <button onClick={onAdminModalOpen}>Admin</button>}
 
             <VerificationModal
                 isOpen={isVerificationModalOpen}
-                onClose={() => setIsVerificationModalOpen(false)}
+                onOpenChange={onVerificationModalOpenChange}
             />
             <AdminModal
                 isOpen={isAdminModalOpen}
-                onClose={() => setIsAdminModalOpen(false)}
+                onOpenChange={onAdminModalOpenChange}
             />
-        </div>
+        </Card>
     );
 };
 

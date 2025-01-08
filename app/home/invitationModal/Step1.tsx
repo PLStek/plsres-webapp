@@ -1,4 +1,5 @@
 import { useConnect } from "@app/hooks/useAuth";
+import { Button } from "@nextui-org/react";
 
 const Step1 = () => {
     const [connect] = useConnect();
@@ -10,7 +11,7 @@ const Step1 = () => {
             <p>
                 <strong>Etape 1: connexion à ton compte discord</strong>
                 <br />
-                <button onClick={() => connect()}>Connexion</button>
+                <Button onPress={() => connect()}>Connexion</Button>
             </p>
         </div>
     );

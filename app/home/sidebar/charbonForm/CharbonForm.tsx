@@ -1,12 +1,12 @@
 "use client";
 
 import { Charbon, CharbonUpdateInput } from "@lib/models/charbon";
-import styles from "./CharbonForm.module.css";
 import { useCoursesQuery } from "@app/hooks/useCourses";
 import { useActionneursQuery } from "@app/hooks/useActionneurs";
 import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
 import CardResources from "@app/home/charbonMine/charbonCard/CardResources";
 import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
+import { Button, Input, Select, SelectItem, Textarea } from "@nextui-org/react";
 
 type CharbonFormProps = {
     defaultCharbon: Charbon;
@@ -44,53 +44,48 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
 
     return (
         <form action={submit} className="flex flex-col gap-4">
-            <div>
-                <input
-                    type="text"
-                    name="name"
-                    className={styles.formField}
-                    defaultValue={defaultCharbon.name}
-                />
-            </div>
-
-            <div>
-                <textarea
-                    name="description"
-                    className={styles.formField}
-                    defaultValue={defaultCharbon.description}
-                    rows={4}
-                />
-            </div>
-
+            <Input
+                name="name"
+                label="Titre"
+                defaultValue={defaultCharbon.name}
+                size="sm"
+                isRequired
+            />
+            <Textarea
+                name="description"
+                label="Description"
+                defaultValue={defaultCharbon.description}
+                size="sm"
+                isRequired
+            />
             <div className="flex gap-4">
-                <select
+                <Select
                     name="courseId"
-                    className={styles.selectField}
-                    defaultValue={defaultCourse?.id ?? ""}
+                    placeholder="UV"
+                    defaultSelectedKeys={
+                        defaultCourse
+                            ? [defaultCourse.id.toString()]
+                            : undefined
+                    }
+                    size="sm"
                 >
-                    <option value="" disabled>
-                        UV
-                    </option>
                     {courses.map((course) => (
-                        <option key={course.id} value={course.id}>
-                            {course.code}
-                        </option>
+                        <SelectItem key={course.id}>{course.code}</SelectItem>
                     ))}
-                </select>
-             
-                <select
+                </Select>
+                <Select
                     name="actionneurIds"
-                    multiple
-                    className={styles.selectField}
-                    defaultValue={defaultActionneurs}
+                    selectionMode="multiple"
+                    placeholder="Actionneurs"
+                    defaultSelectedKeys={defaultActionneurs}
+                    size="sm"
                 >
                     {actionneurs.map((actionneur) => (
-                        <option key={actionneur.id} value={actionneur.id}>
+                        <SelectItem key={actionneur.id}>
                             {actionneur.username}
-                        </option>
+                        </SelectItem>
                     ))}
-                </select>
-         
+                </Select>
             </div>
             <div className="my-4">
                 {defaultResources && (
@@ -98,39 +93,33 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                 )}
             </div>
 
-            <div className="flex">
-                <button
+            <div className="flex justify-evenly gap-4">
+                <Button
                     type="button"
                     disabled={loading}
-                    className={`${styles.submitButton} ${
-                        loading && styles.submitButtonDisabled
-                    }`}
-                    onClick={onClose}
+                    onPress={onClose}
+                    size="md"
+                    fullWidth
                 >
                     {loading ? "Loading..." : "Annuler"}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="reset"
                     disabled={loading}
-                    className={`${styles.submitButton} ${
-                        loading && styles.submitButtonDisabled
-                    }`}
+                    size="md"
+                    fullWidth
                 >
                     {loading ? "Loading..." : "Réinitialiser"}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="submit"
                     disabled={loading}
-                    className={`${styles.submitButton} ${
-                        loading && styles.submitButtonDisabled
-                    }`}
+                    fullWidth
+                    size="md"
+                    isLoading={loading}
                 >
-                    {loading
-                        ? "Loading..."
-                        : defaultCharbon.isDraft
-                        ? "Publier"
-                        : "Editer"}
-                </button>
+                    {defaultCharbon.isDraft ? "Publier" : "Editer"}
+                </Button>
             </div>
         </form>
     );

@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {
-    getCharbonsGroupedByMonthAction,
-    getActionneursAction,
-    getCoursesAction,
-    authenticateAction,
-} from "@lib/actions";
-import CharbonProvider from "./context/CharbonContext";
-import ActionneurProvider from "./context/ActionneurContext";
-import CourseProvider from "./context/CourseContext";
-import ResourceProvider from "./context/ResourceContext";
-import AuthProvider from "./context/AuthContext";
 import "../lib/discord";
 import { Commissioner } from "next/font/google";
 
@@ -28,23 +17,11 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const charbons = await getCharbonsGroupedByMonthAction();
-    const actionneurs = await getActionneursAction();
-    const courses = await getCoursesAction();
-    const authData = await authenticateAction();
 
     return (
         <html lang="fr">
             <body className={`${commissioner.className} antialiased`}>
-                <AuthProvider initialAuthData={authData}>
-                    <CharbonProvider initialCharbons={charbons}>
-                        <ActionneurProvider initialActionneurs={actionneurs}>
-                            <CourseProvider initialCourses={courses}>
-                                <ResourceProvider>{children}</ResourceProvider>
-                            </CourseProvider>
-                        </ActionneurProvider>
-                    </CharbonProvider>
-                </AuthProvider>
+                {children}
             </body>
         </html>
     );

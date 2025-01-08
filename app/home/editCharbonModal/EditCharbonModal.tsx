@@ -1,37 +1,47 @@
 "use client";
 
-import Modal from "../Modal";
 import CharbonForm from "../sidebar/charbonForm/CharbonForm";
 import { useCharbonByIdQuery } from "@app/hooks/useCharbons";
-import { useEffect } from "react";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+import { memo, useEffect } from "react";
 
 const EditCharbonModal = ({
     charbonId,
     isOpen,
-    onClose,
+    onOpenChange,
 }: {
     charbonId: number;
     isOpen: boolean;
-    onClose: () => void;
+    onOpenChange: () => void;
 }) => {
-    const [charbon, isLoading, ] = useCharbonByIdQuery(charbonId);
+    const [charbon, isLoading] = useCharbonByIdQuery(charbonId);
     useEffect(() => {
-        if (!isLoading && !charbon) {
-            onClose();
+        if (!isLoading && !charbon && isOpen) {
+            onOpenChange();
         }
-    }, [isLoading, charbon, onClose]);
+    }, [isLoading, charbon, isOpen, onOpenChange]);
 
     return (
-        charbon && (
-            <Modal isOpen={isOpen && !!charbon} onClose={onClose} className="max-w-2xl bg-[#F6F6F6] border border-double border-gray-300">
-                {!isLoading ? (
-                    <CharbonForm defaultCharbon={charbon} onClose={onClose} />
-                ) : (
-                    <div>Loading...</div>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
+            <ModalContent>
+                {(onClose) => (
+                    <div>
+                        <ModalHeader>Modifier le charbon</ModalHeader>
+                        <ModalBody className="p-4">
+                            {!isLoading ? (
+                                <CharbonForm
+                                    defaultCharbon={charbon}
+                                    onClose={onClose}
+                                />
+                            ) : (
+                                <div>Loading...</div>
+                            )}
+                        </ModalBody>
+                    </div>
                 )}
-            </Modal>
-        )
+            </ModalContent>
+        </Modal>
     );
 };
 
-export default EditCharbonModal;
+export default memo(EditCharbonModal);

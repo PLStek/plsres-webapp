@@ -1,5 +1,6 @@
 import { useCreateActionneurMutation } from "@app/hooks/useActionneurs";
 import { useConnectActionneur } from "@app/hooks/useAuth";
+import { Button } from "@nextui-org/react";
 
 const Step2 = ({ invitationToken }: { invitationToken: string }) => {
     const [createActionneur, , ] =
@@ -29,7 +30,7 @@ const Step2 = ({ invitationToken }: { invitationToken: string }) => {
                         <label htmlFor="secret">Mot de passe</label>
                         <input type="password" name="secret" />
                     </div>
-                    <button type="submit">Créer un lien dinvitation</button>
+                    <Button type="submit">Créer un lien dinvitation</Button>
                 </form>
             </p>
         </div>
