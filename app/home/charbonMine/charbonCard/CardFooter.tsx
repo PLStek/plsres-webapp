@@ -1,4 +1,4 @@
-import { UserIcon, ClockIcon } from "@heroicons/react/24/outline";
+import { UserIcon, ClockIcon, CalendarDateRangeIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import { Actionneur } from "@lib/models/actionneur";
 
 type CardFooterProps = {
@@ -7,7 +7,7 @@ type CardFooterProps = {
 };
 
 const styles = {
-    footer: "relative mt-4 flex items-center justify-between text-gray-500",
+    footer: "relative mt-4 flex items-center justify-between text-gray-400",
     iconTextContainer: "flex items-center",
     icon: "h-5 w-5 mr-1",
 };  
@@ -23,7 +23,7 @@ const CardFooter = ({ actionneurs, timestamp }: CardFooterProps) => {
             </div>
 
             <div className={styles.iconTextContainer}>
-                <ClockIcon className={styles.icon} />
+                <CalendarIcon className={styles.icon} />
                 <span className="text-sm">
                     {new Date(timestamp).toLocaleDateString("fr-FR", {
                         day: "2-digit",

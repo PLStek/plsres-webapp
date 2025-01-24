@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCharbonContext } from "@app/context/CharbonContext";
-import { Charbon, CharbonUpdateInput } from "@lib/models/charbon";
+import { CharbonUpdateInput, FullCharbon } from "@lib/models/charbon";
 import {
     deleteCharbonAction,
-    getCharbonByIdWithDraftAction,
+    getFullCharbonByIdAction,
     updateCharbonAction,
 } from "@lib/actions";
 import { useCourseContext } from "@app/context/CourseContext";
@@ -19,6 +19,7 @@ export const useCharbonsByMonthQuery = (monthKey: string) => {
     const { charbons, charbonFilters } = useCharbonContext();
     const { courses } = useCourseContext();
 
+    //TODO: useeffect ?
     const preFilteredCharbons = charbons[monthKey].filter((charbon) => {
         if (
             charbonFilters.courseId &&
@@ -53,7 +54,7 @@ export const useCharbonsByMonthQuery = (monthKey: string) => {
 
     //TODO: look at fuse configs
     const fuse = new Fuse(preFilteredCharbons, {
-        keys: ["name", "description"],
+        keys: ["title", "description"],
         threshold: 0.3,
     });
 
@@ -64,28 +65,32 @@ export const useCharbonsByMonthQuery = (monthKey: string) => {
     return [filteredCharbons] as const;
 };
 
-export const useCharbonByIdQuery = (id: number) => {
-    const { charbons } = useCharbonContext();
-    const [data, setData] = useState<Charbon | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+export const useFullCharbonByIdQuery = (id: number | null) => {
+    const [state, setState] = useState({
+        data: null as FullCharbon | null,
+        loading: true,
+        error: null as Error | null,
+    }); //TODO: appliquer ailleurs aussi pour safety
+
+    const fetchData = useCallback(async () => {
+        setState({ data: null, loading: true, error: null });
+        if (!id) {
+            setState({ data: null, loading: false, error: null });
+            return;
+        }
+        try {
+            const charbon = await getFullCharbonByIdAction(id); //TODO: attention: réservé aux actionneurs => faire un check
+            setState({ data: charbon ?? null, loading: false, error: null });
+        } catch (err) {
+            setState({ data: null, loading: false, error: err as Error });
+        }
+    }, [id]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const charbon = await getCharbonByIdWithDraftAction(id); //TODO: attention: réservé aux actionneurs
-                setData(charbon ?? null);
-                setError(null);
-            } catch (err) {
-                setError(err as Error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchData();
-    }, [id, charbons]);
+    }, [fetchData]);
 
-    return [data, loading, error] as const;
+    return [state.data, state.loading, state.error] as const;
 };
 
 /* export const useCreateCharbonMutation = () => {

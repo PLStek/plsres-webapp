@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 //TODO: revoir wording et style
 const InvitationModal = () => {
     const searchParams = useSearchParams();
@@ -26,22 +27,24 @@ const InvitationModal = () => {
         }
     }, [isVerified, isActionneur, step]);
 
-
     return (
         //TODO: review html here
-        invitationToken && (
-            <Modal
-                isOpen={isOpen}
-                onClose={() => {
-                    setIsOpen(false);
-                    router.replace(pathname);
-                }}
-            >
-                {step === 1 && <Step1 />}
-                {step === 2 && <Step2 invitationToken={invitationToken!} />}
-                {step === 3 && <div>Step 3</div>}
-            </Modal>
-        )
+        <Modal
+            isOpen={isOpen}
+            onClose={() => {
+                setIsOpen(false);
+                router.replace(pathname);
+            }}
+        >
+            <ModalContent>
+                <ModalHeader>Création du compte actionneur</ModalHeader>
+                <ModalBody>
+                    {step === 1 && <Step1 />}
+                    {step === 2 && <Step2 invitationToken={invitationToken!} />}
+                    {step === 3 && <div>Step 3</div>}
+                </ModalBody>
+            </ModalContent>
+        </Modal>
     );
 };
 

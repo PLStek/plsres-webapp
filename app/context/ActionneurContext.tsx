@@ -3,6 +3,7 @@
 import { Actionneur } from "@lib/models/actionneur";
 import { createContext, ReactNode, useContext, useState } from "react";
 
+//TODO: make a map instead
 type ActionneurContextType = {
     actionneurs: Actionneur[];
     addActionneur: (newActionneur: Actionneur) => void;

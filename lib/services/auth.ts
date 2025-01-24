@@ -29,11 +29,11 @@ export const connectService = async (code: string) => {
     await checkDiscordUserGuildService(accessToken);
     const { id: discordId } = await getDiscordUserService(accessToken);
     const actionneur = await getActionneurByDiscordId(discordId);
-    const token = createUserToken(
-        actionneur?.isAdmin ?? false,
+    const token = createUserToken({
+        isAdmin: actionneur?.isAdmin ?? false,
         discordId,
-        actionneur?.id
-    );
+        actionneurId: actionneur?.id,
+    });
     setCookie("user_token", token);
     await revokeDiscordAccessTokenService(token);
 };
@@ -97,6 +97,37 @@ export const authenticateService = async (): Promise<AuthData> => {
         };
     }
     const payload = decodeToken(userToken); //TODO: cas ou le token a juste expiré
+    const actionneurToken = await getCookie("actionneur_token");
+
+    let isActionneurAuthentified = false;
+    if (actionneurToken) {
+        decodeActionneurToken(actionneurToken);
+        isActionneurAuthentified = true;
+    }
+
+    return { isVerified: true, isActionneurAuthentified, ...payload };
+};
+
+export const refreshAuthService = async (
+    newActionneurId?: number | null
+): Promise<AuthData> => {
+    const token = await getCookie("user_token");
+    if (!token) {
+        throw new Error("Couldn't find authentication token");
+    }
+    const { actionneurId, isAdmin, discordId } = decodeToken(token);
+    const newToken = createUserToken({
+        isAdmin,
+        discordId,
+        actionneurId:
+            newActionneurId === null
+                ? undefined
+                : newActionneurId ?? actionneurId ?? undefined,
+    });
+    setCookie("user_token", newToken);
+    revokeTokenService(token);
+
+    const payload = decodeToken(newToken);
     const actionneurToken = await getCookie("actionneur_token");
 
     let isActionneurAuthentified = false;

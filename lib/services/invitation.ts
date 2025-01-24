@@ -6,6 +6,7 @@ import {
 } from "@lib/data/invitation";
 import { decodeToken } from "@lib/utils/token";
 import { getCookie } from "@lib/utils/cookies";
+import { verifyDiscordUserIdService } from "./discord/verifyDiscordUserId";
 
 const WEBAPP_URL = process.env.NEXT_PUBLIC_WEBAPP_URL;
 
@@ -15,9 +16,10 @@ export const generateActionneurInvitationLink = async (
     if (!WEBAPP_URL) {
         throw new Error("Variables d'environnement manquantes");
     }
+    await verifyDiscordUserIdService(discordId);
     const token = randomUUID();
     const expiresAt = new Date(Date.now() + 3600 * 1000);
-    postInvitation({ token, discordId, expiresAt });
+    postInvitation({ token, discordId, expiresAt }); //TODO: throw error OR override if already exists
     return `${WEBAPP_URL}?invitation=${token}`;
 };
 

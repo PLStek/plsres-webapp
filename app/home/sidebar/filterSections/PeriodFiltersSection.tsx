@@ -1,3 +1,4 @@
+import Icon from "@app/home/components/Icon";
 import {
     useCharbonFilters,
     useCharbonMonthKeysQuery,
@@ -19,8 +20,7 @@ export const PeriodFiltersSection = () => {
                 <label className="block text-sm font-medium text-gray-700">
                     Période
                 </label>
-                <button
-                    type="button"
+                <Icon
                     onClick={() => {
                         setFilters({
                             ...filters,
@@ -29,8 +29,8 @@ export const PeriodFiltersSection = () => {
                         });
                     }}
                 >
-                    <ArrowPathIcon className="text-gray-700 h-4 w-4" />
-                </button>
+                    <ArrowPathIcon />
+                </Icon>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-2">
                 <Select

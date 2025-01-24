@@ -3,6 +3,7 @@
 import { Course } from "@lib/models/course";
 import { createContext, ReactNode, useContext, useState } from "react";
 
+//TODO: make a map instead
 type CourseContextType = {
     courses: Course[];
     addCourse: (newCourse: Course) => void;

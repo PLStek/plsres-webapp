@@ -3,10 +3,9 @@ import { CourseCategory } from "./course";
 export type CharbonStatus = "SCHEDULED" | "ONGOING" | "FINISHED";
 
 type CharbonBase = {
-    name: string;
+    title: string;
     description: string;
     timestamp: Date;
-    discordEventId: string;
 };
 
 export type Charbon = CharbonBase & {
@@ -23,6 +22,7 @@ export type FullCharbon = Charbon & {
     replayUrl: string | null;
     status: CharbonStatus;
     isDraft: boolean;
+    discordEventId: string;
 };
 
 export type CharbonCreateInput = CharbonBase & {
@@ -30,6 +30,7 @@ export type CharbonCreateInput = CharbonBase & {
     actionneurId: number;
     status?: CharbonStatus;
     replayUrl?: string | null;
+    discordEventId: string;
 };
 
 export type CharbonUpdateInput = Partial<
@@ -39,6 +40,7 @@ export type CharbonUpdateInput = Partial<
         status: CharbonStatus;
         isDraft: boolean;
         replayUrl: string | null;
+        discordEventId: string;
     }
 >;
 

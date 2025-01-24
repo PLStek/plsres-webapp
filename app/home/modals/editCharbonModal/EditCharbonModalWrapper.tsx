@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useIsActionneur } from "@app/hooks/useAuth";
-import EditCharbonModal from "./EditCharbonModal";
+import { useEditCharbonModal } from "./EditCharbonModal";
 
 const EditCharbonModalWrapper = () => {
+    const { onOpen, setCharbonId } = useEditCharbonModal();
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -13,8 +14,6 @@ const EditCharbonModalWrapper = () => {
 
     const charbonId = searchParams.get("charbon");
     const charbonIdInt = charbonId ? parseInt(charbonId) : null;
-
-    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     useEffect(() => {
         if (!charbonId) {
@@ -26,26 +25,21 @@ const EditCharbonModalWrapper = () => {
             return;
         }
 
-        setIsOpen(true);
-    }, [charbonId, isActionneur, charbonIdInt, pathname, router]);
+        setCharbonId(charbonIdInt);
+        onOpen();
+    }, [
+        charbonId,
+        isActionneur,
+        charbonIdInt,
+        pathname,
+        router,
+        onOpen,
+        setCharbonId,
+    ]);
 
     if (!charbonId || !charbonIdInt || isNaN(charbonIdInt)) {
         return null;
     }
-
-    return (
-        charbonIdInt && (
-            <EditCharbonModal
-                charbonId={charbonIdInt}
-                isOpen={isOpen}
-                onClose={() => {
-                    setIsOpen(false);
-                    console.log("pathname", pathname);
-                    router.replace(pathname);
-                }}
-            />
-        )
-    );
 };
 
 export default EditCharbonModalWrapper;

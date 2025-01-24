@@ -6,7 +6,14 @@ import { useActionneursQuery } from "@app/hooks/useActionneurs";
 import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
 import CardResources from "@app/home/charbonMine/charbonCard/CardResources";
 import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
-import { Button, Input, Select, SelectItem, Textarea } from "@nextui-org/react";
+import {
+    Button,
+    CircularProgress,
+    Input,
+    Select,
+    SelectItem,
+    Textarea,
+} from "@nextui-org/react";
 
 type CharbonFormProps = {
     defaultCharbon: Charbon;
@@ -16,7 +23,9 @@ type CharbonFormProps = {
 const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
     const [courses] = useCoursesQuery();
     const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId); //TODO: useCourseByCharbonId ?
-    const [defaultResources] = useResourcesByCharbonIdQuery(defaultCharbon.id);
+    const [resources, loadingResources] = useResourcesByCharbonIdQuery(
+        defaultCharbon.id
+    );
 
     const [actionneurs] = useActionneursQuery();
     const defaultActionneurs = actionneurs.reduce((acc, actionneur) => {
@@ -30,7 +39,7 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
 
     const submit = async (formData: FormData) => {
         const charbon: CharbonUpdateInput = {
-            name: formData.get("name") as string,
+            title: formData.get("title") as string,
             description: formData.get("description") as string,
             courseId: Number(formData.get("courseId")),
             actionneurIds: Array.from(formData.getAll("actionneurIds")).map(
@@ -45,9 +54,9 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
     return (
         <form action={submit} className="flex flex-col gap-4">
             <Input
-                name="name"
+                name="title"
                 label="Titre"
-                defaultValue={defaultCharbon.name}
+                defaultValue={defaultCharbon.title}
                 size="sm"
                 isRequired
             />
@@ -87,11 +96,18 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                     ))}
                 </Select>
             </div>
-            <div className="my-4">
-                {defaultResources && (
-                    <CardResources resources={defaultResources} editMode />
-                )}
-            </div>
+            {defaultCharbon.resourcesCount > 0 && (
+                <div className="my-4">
+                    {!loadingResources && !!resources?.length && (
+                        <CardResources resources={resources} editMode />
+                    )}
+                    {loadingResources && (
+                        <div className="w-full flex justify-center my-4">
+                            <CircularProgress label="Chargement des ressources" />
+                        </div>
+                    )}
+                </div>
+            )}
 
             <div className="flex justify-evenly gap-4">
                 <Button
@@ -103,12 +119,7 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                 >
                     {loading ? "Loading..." : "Annuler"}
                 </Button>
-                <Button
-                    type="reset"
-                    disabled={loading}
-                    size="md"
-                    fullWidth
-                >
+                <Button type="reset" disabled={loading} size="md" fullWidth>
                     {loading ? "Loading..." : "Réinitialiser"}
                 </Button>
                 <Button

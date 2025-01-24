@@ -11,7 +11,7 @@ model Charbon {
     id             Int      @id @default(autoincrement())
     status         String   @default("SCHEDULED")
     isDraft        Boolean  @default(true)
-    name           String
+    title          String
     description    String
     timestamp      DateTime
     replayUrl      String?  @unique
@@ -41,7 +41,7 @@ model CharbonAttendee {
 model Course {
     id                       Int    @id @default(autoincrement())
     code                     String @unique
-    name                     String
+    title                     String
     discordResourceChannelId String @unique
     discordVoiceChannelId    String @unique
 
@@ -51,7 +51,7 @@ model Course {
 
 model Resource {
     id        Int    @id @default(autoincrement())
-    name      String
+    title     String
     charbonId Int
     extension String
 

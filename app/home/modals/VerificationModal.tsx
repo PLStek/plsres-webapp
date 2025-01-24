@@ -1,20 +1,43 @@
-import { useConnect } from "@app/hooks/useAuth";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+"use client";
 
-const VerificationModal = ({
-    isOpen,
-    onOpenChange,
-}: {
+import { useConnect } from "@app/hooks/useAuth";
+import {
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalHeader,
+    useDisclosure,
+} from "@nextui-org/react";
+import { createContext, ReactNode, useContext } from "react";
+
+type VerificationModalContextType = {
     isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void;
     onOpenChange: () => void;
-}) => {
+};
+
+const VerificationModalContext =
+    createContext<VerificationModalContextType | null>(null);
+
+const VerificationModal = ({ children }: { children: ReactNode }) => {
+    const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
     const [connect, ,] = useConnect();
 
     return (
         //TODO: review html here
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-            <ModalContent>
-                {(onClose) => (
+        <VerificationModalContext.Provider
+            value={{
+                isOpen,
+                onOpen,
+                onClose,
+                onOpenChange,
+            }}
+        >
+            {children}
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
                     <div>
                         <ModalHeader>Verification</ModalHeader>
                         <ModalBody>
@@ -46,7 +69,6 @@ const VerificationModal = ({
                                 Vous aurez besoin de vérifier votre mail UTBM
                                 afin de rejoindre le pôle.
                             </p>
-                            <img src="assets/images/hub-verification.png" />
                             <p>
                                 <strong>
                                     Etape 2: liaison du compte discord au site
@@ -65,10 +87,20 @@ const VerificationModal = ({
                             </p>
                         </ModalBody>
                     </div>
-                )}
-            </ModalContent>
-        </Modal>
+                </ModalContent>
+            </Modal>
+        </VerificationModalContext.Provider>
     );
 };
 
 export default VerificationModal;
+
+export const useVerificationModal = () => {
+    const context = useContext(VerificationModalContext);
+    if (context === null) {
+        throw new Error(
+            "useVerificationModal must be used within the VerificationModal provider"
+        );
+    }
+    return context;
+};

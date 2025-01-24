@@ -1,3 +1,4 @@
+import Icon from "@app/home/components/Icon";
 import { useCharbonFilters } from "@app/hooks/useCharbons";
 import {
     ArrowPathIcon,
@@ -27,12 +28,14 @@ export const SearchFiltersSection = () => {
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Rechercher un charbon"
                     startContent={
-                        <MagnifyingGlassIcon className=" text-gray-400 h-4 w-4" />
+                        <MagnifyingGlassIcon className=" text-gray-400 h-5 w-5" />
                     }
                 />
-                <button type="button" onClick={() => setSearch("")}>
-                    <ArrowPathIcon className="text-gray-700 h-4 w-4" />
-                </button>
+                <div className="flex items-center">
+                    <Icon onClick={() => setSearch("")}>
+                        <ArrowPathIcon />
+                    </Icon>
+                </div>
             </div>
         </div>
     );

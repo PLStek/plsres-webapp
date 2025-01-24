@@ -32,7 +32,7 @@ const buildEventEndMessage = (
     const charbonUrl = `${WEBAPP_URL}?charbon=${charbon.id}`;
     const tags = actionneurDiscordIds.map((id) => `<@${id}>`).join(" ");
 
-    return `${tags} le charbon [${charbon.name}](${charbonUrl}) s'est terminé avec succès ! Merci d'ajouter ses ressources en cliquant sur ce lien.`;
+    return `${tags} le charbon [${charbon.title}](${charbonUrl}) s'est terminé avec succès ! Merci d'ajouter ses ressources en cliquant sur ce lien.`;
 };
 
 const onEventEnd = async (event: GuildScheduledEvent) => {

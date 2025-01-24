@@ -11,7 +11,7 @@ const buildEventMessage = (charbon: Charbon, creatorId: string) => {
         throw new Error("Missing environment variable NEXT_PUBLIC_WEBAPP_URL");
     }
     const charbonUrl = `${WEBAPP_URL}?charbon=${charbon.id}`;
-    return `<@${creatorId}>, le charbon [${charbon.name}](${charbonUrl}) a été ajouté en brouillon ! Merci de finaliser sa création en cliquant sur ce lien.`;
+    return `<@${creatorId}>, le charbon [${charbon.title}](${charbonUrl}) a été ajouté en brouillon ! Merci de finaliser sa création en cliquant sur ce lien.`;
 };
 
 export const guildScheduledEventCreate = async (event: GuildScheduledEvent) => {
@@ -34,7 +34,7 @@ export const guildScheduledEventCreate = async (event: GuildScheduledEvent) => {
         courseId: course.id,
         actionneurId: actionneur.id,
         description: event.description ?? "",
-        name: event.name,
+        title: event.name,
         timestamp: startAt,
         discordEventId: event.id,
     };

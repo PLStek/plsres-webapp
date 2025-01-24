@@ -4,9 +4,15 @@ import ActionneurProvider from "./context/ActionneurContext";
 import CourseProvider from "./context/CourseContext";
 import ResourceProvider from "./context/ResourceContext";
 import AuthProvider from "./context/AuthContext";
-import { authenticateAction, getActionneursAction, getCharbonsGroupedByMonthAction, getCoursesAction } from "@lib/actions";
+import {
+    authenticateAction,
+    getActionneursAction,
+    getCharbonsGroupedByMonthAction,
+    getCoursesAction,
+} from "@lib/actions";
+import { ReactNode } from "react";
 
-const Providers = async ({ children }: { children: React.ReactNode }) => {
+const Providers = async ({ children }: { children: ReactNode }) => {
     const charbons = await getCharbonsGroupedByMonthAction();
     const actionneurs = await getActionneursAction();
     const courses = await getCoursesAction();
@@ -25,6 +31,6 @@ const Providers = async ({ children }: { children: React.ReactNode }) => {
             </AuthProvider>
         </NextUIProvider>
     );
-}
+};
 
 export default Providers;

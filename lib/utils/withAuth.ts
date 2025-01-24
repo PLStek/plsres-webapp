@@ -7,9 +7,7 @@ export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
     accessLevel: AccessLevel,
     fn: Fn
 ): Fn {
-    return (async (
-        ...args: Parameters<Fn>
-    ): Promise<ReturnType<Fn> | { error: string }> => {
+    return (async (...args: Parameters<Fn>): Promise<ReturnType<Fn>> => {
         try {
             if (accessLevel !== "guest") {
                 if (accessLevel === "verified") {
@@ -18,16 +16,13 @@ export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
                     const { discordId } = await checkActionneurService(
                         accessLevel === "admin"
                     );
-                    await sendLogMessage(fn.name, discordId);
+                    await sendLogMessage(fn.title, discordId);
                 }
             }
-            return await fn(...args);
         } catch (error) {
             console.error("Authentication Error:", error);
-            return {
-                error:
-                    error instanceof Error ? error.message : "Erreur inconnue",
-            };
+            throw new Error("Authentication Error");
         }
+        return await fn(...args);
     }) as Fn;
 }

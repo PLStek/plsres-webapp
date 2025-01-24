@@ -3,6 +3,7 @@
 import { Resource } from "@lib/models/resource";
 import { createContext, ReactNode, useContext, useState } from "react";
 
+//TODO: make a map instead
 type ResourceContextType = {
     resourcesByCharbonId: Record<number, Resource[]>;
     setResourcesByCharbonId: (charbonId: number, resources: Resource[]) => void;

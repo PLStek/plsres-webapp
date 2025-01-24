@@ -72,6 +72,28 @@ export const useConnect = () => {
     return [connect, loading, error] as const;
 };
 
+export const useAuthenticate = () => {
+    const { setAuthData } = useAuthContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const authenticate = async () => {
+        try {
+            setLoading(true);
+            const authData = await authenticateAction();
+            setAuthData(authData);
+            setLoading(false);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return [authenticate, loading, error] as const;
+};
+
 export const useConnectActionneur = () => {
     const { setAuthData } = useAuthContext();
     const [loading, setLoading] = useState(false);

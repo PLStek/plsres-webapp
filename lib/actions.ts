@@ -13,12 +13,12 @@ import {
     connectActionneurService,
     connectService,
     disconnectService,
+    refreshAuthService,
 } from "./services/auth";
 import {
     deleteCharbonService,
-    getCharbonByIdService,
-    getCharbonByIdWithDraftService,
     getCharbonsGroupedByMonthService,
+    getFullCharbonByIdService,
     updateCharbonService,
 } from "./services/charbon/charbon";
 import {
@@ -63,11 +63,11 @@ export const createActionneurInviteAction = withAuth(
     "admin",
     generateActionneurInvitationLink
 );
-export const checkActionneurInviteTokenAction = withAuth(
+/* export const checkActionneurInviteTokenAction = withAuth(
     "guest",
     generateActionneurInvitationLink
 );
-
+ */
 // Auth
 
 export const connectAction = withAuth("guest", connectService);
@@ -77,6 +77,7 @@ export const connectActionneurAction = withAuth(
 );
 export const disconnectAction = withAuth("verified", disconnectService);
 export const authenticateAction = withAuth("guest", authenticateService);
+export const refreshAuthAction = withAuth("verified", refreshAuthService);
 
 // Charbon
 
@@ -84,13 +85,9 @@ export const getCharbonsGroupedByMonthAction = withAuth(
     "guest",
     getCharbonsGroupedByMonthService
 );
-export const getCharbonByIdAction = withAuth(
+export const getFullCharbonByIdAction = withAuth(
     "actionneur",
-    getCharbonByIdService
-);
-export const getCharbonByIdWithDraftAction = withAuth(
-    "actionneur",
-    getCharbonByIdWithDraftService
+    getFullCharbonByIdService
 );
 export const updateCharbonAction = withAuth("actionneur", updateCharbonService);
 export const deleteCharbonAction = withAuth("actionneur", deleteCharbonService);

@@ -2,7 +2,7 @@ export type CourseCategory = "MATH" | "ELEC" | "INFO" | "MECA";
 
 type CourseBase = {
     code: string;
-    name: string;
+    title: string;
     category: CourseCategory;
     discordResourceChannelId: string;
     discordVoiceChannelId: string;

@@ -41,7 +41,7 @@ export async function GET(request: Request) {
             status: 200,
             headers: {
                 "Content-Type": mimeType,
-                "Content-Disposition": `attachment; filename="${resource.name}.${resource.extension}"`,
+                "Content-Disposition": `attachment; filename="${resource.title}.${resource.extension}"`,
             },
         });
     } catch (error) {

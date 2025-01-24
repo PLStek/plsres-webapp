@@ -1,5 +1,9 @@
 import { useActionneurContext } from "@app/context/ActionneurContext";
-import { createActionneurAction, deleteActionneurAction } from "@lib/actions";
+import {
+    createActionneurAction,
+    deleteActionneurAction,
+    refreshAuthAction,
+} from "@lib/actions";
 import { ActionneurCreateInput } from "@lib/models/actionneur";
 
 import { useState, useEffect } from "react";
@@ -18,20 +22,19 @@ export const useActionneursByIdsQuery = (ids: number[]) => {
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        const fetchData = () => {
-            try {
-                const result = actionneurs.filter((c) => ids.includes(c.id));
-                setData(result); //TODO: fetch data from server if some ids are not in the context & do the same for other hooks
-                setError(null);
-            } catch (err) {
-                setError(err as Error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (ids.length > 0) {
-            fetchData();
+        if (!ids.length) {
+            setData([]);
+            setError(null);
+            setLoading(false);
+        }
+        try {
+            const result = actionneurs.filter((c) => ids.includes(c.id));
+            setData(result); //TODO: fetch data from server if some ids are not in the context & do the same for other hooks
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
         }
     }, [ids, actionneurs]);
 
@@ -47,6 +50,7 @@ export const useCreateActionneurMutation = () => {
         try {
             setLoading(true);
             const actionneur = await createActionneurAction(newActionneur);
+            await refreshAuthAction(actionneur.id);
             addActionneur(actionneur);
             setError(null);
         } catch (error) {

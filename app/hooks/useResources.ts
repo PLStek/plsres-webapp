@@ -1,6 +1,6 @@
 import { Resource, ResourceCreateInput } from "@lib/models/resource";
 import { useResourceContext } from "../context/ResourceContext";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     createResourceAction,
     deleteResourceAction,
@@ -19,31 +19,31 @@ export const useResourcesByCharbonIdQuery = (charbonId: number) => {
     const [data, setData] = useState<Resource[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
-    useEffect(() => {
-        const fetchData = async () => {
-            const resource = resourcesByCharbonId[charbonId];
-            if (resource) {
-                setData(resource);
-                setLoading(false);
-                setError(null);
-                return;
-            }
 
-            try {
-                const resources = await getResourcesByCharbonIdAction(
-                    charbonId
-                );
-                setResourcesByCharbonId(charbonId, resources);
-                setData(resources);
-                setError(null);
-            } catch (err) {
-                setError(err as Error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+    const fetchData = useCallback(async () => {
+        const resource = resourcesByCharbonId[charbonId];
+        if (resource) {
+            setData(resource);
+            setLoading(false);
+            setError(null);
+            return;
+        }
+
+        try {
+            const resources = await getResourcesByCharbonIdAction(charbonId);
+            setResourcesByCharbonId(charbonId, resources);
+            setData(resources);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     }, [charbonId, resourcesByCharbonId, setResourcesByCharbonId]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     return [data, loading, error] as const;
 };

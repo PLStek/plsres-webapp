@@ -1,16 +1,27 @@
+import Icon from "@app/home/components/Icon";
+import { useEditCharbonModal } from "@app/home/modals/editCharbonModal/EditCharbonModal";
+import { useVerificationModal } from "@app/home/modals/VerificationModal";
+import { useIsActionneur, useIsVerified } from "@app/hooks/useAuth";
+import {
+    ArchiveBoxIcon,
+    Cog6ToothIcon,
+    PlayCircleIcon,
+} from "@heroicons/react/24/outline";
+import { Charbon } from "@lib/models/charbon";
 import clsx from "clsx";
 
 type CardContentProps = {
-    title: string;
+    charbon: Charbon;
     course: string;
-    description: string;
     color: "math" | "elec" | "info" | "meca" | "default";
+    resourcesOpen: boolean;
+    toggleResources: () => void;
 };
 
 const styles = {
     wrapper: "flex justify-between items-start",
-    titleContainer: "flex items-center",
-    title: "text-xl font-semibold",
+    titleContainer: "flex items-center w-full justify-between mb-1",
+    title: "text-xl font-semibold text-center",
     description: "text-sm text-gray-600 whitespace-pre-line",
     badge: "text-xs font-semibold py-1 px-3 rounded-full",
     badgeColor: {
@@ -23,23 +34,76 @@ const styles = {
 };
 
 const CardContent = ({
-    title,
+    charbon,
     course,
-    description,
     color,
+    resourcesOpen,
+    toggleResources,
 }: CardContentProps) => {
-    return (
-        <div className={styles.wrapper}>
-            <div>
-                <div className={styles.titleContainer}>
-                    <h2 className={styles.title}>{title}</h2>
-                </div>
-                <p className={styles.description}>{description}</p>
-            </div>
+    const { onOpen: onVerificationModalOpen } = useVerificationModal();
+    const { onOpen: onEditModalOpen, setCharbonId: setEditModalCharbonId } = useEditCharbonModal();
 
-            <div className={clsx(styles.badge, styles.badgeColor[color])}>
-                {course}
+    const [isVerified] = useIsVerified();
+    const [isActionneur] = useIsActionneur();
+    return (
+        <div>
+            <div className={styles.titleContainer}>
+                <p className={styles.title}>{charbon.title}</p>
+                <div className="flex gap-4 items-center">
+                    <div
+                        className={clsx(
+                            resourcesOpen
+                                ? "flex gap-2 opacity-100"
+                                : "flex gap-2 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        )}
+                    >
+                        <Icon
+                            onClick={() => {
+                                if (!isVerified) {
+                                    onVerificationModalOpen();
+                                } else {
+                                    toggleResources();
+                                }
+                            }}
+                            tooltipContent={
+                                charbon.resourcesCount
+                                    ? ""
+                                    : "Aucune ressource disponible"
+                            }
+                            disabled={!charbon.resourcesCount}
+                        >
+                            <ArchiveBoxIcon />
+                        </Icon>
+                        <Icon
+                            onClick={() => {
+                                if (!isVerified) {
+                                    onVerificationModalOpen();
+                                } else {
+                                }
+                            }}
+                            disabled={!charbon.resourcesCount}
+                        >
+                            <PlayCircleIcon />
+                        </Icon>
+                        {isActionneur && (
+                            <Icon
+                                onClick={() => {
+                                    setEditModalCharbonId(charbon.id)
+                                    onEditModalOpen();
+                                }}
+                            >
+                                <Cog6ToothIcon />
+                            </Icon>
+                        )}
+                    </div>
+                    <div
+                        className={clsx(styles.badge, styles.badgeColor[color])}
+                    >
+                        {course}
+                    </div>
+                </div>
             </div>
+            <p className={styles.description}>{charbon.description}</p>
         </div>
     );
 };

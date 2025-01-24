@@ -3,27 +3,18 @@
 import React from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
-import VerificationModal from "../VerificationModal";
-import AdminModal from "../AdminModal";
+import { useVerificationModal } from "../modals/VerificationModal";
+import { useAdminModal } from "../modals/AdminModal";
 import { useDisconnect, useIsAdmin, useIsVerified } from "@app/hooks/useAuth";
-import { Card, useDisclosure } from "@nextui-org/react";
+import { Button, Card } from "@nextui-org/react";
 
 const WelcomeBanner = () => {
     const [disconnect] = useDisconnect();
     const [isVerified] = useIsVerified();
     const [isAdmin] = useIsAdmin();
 
-    const {
-        isOpen: isVerificationModalOpen,
-        onOpen: onVerificationModalOpen,
-        onOpenChange: onVerificationModalOpenChange,
-    } = useDisclosure();
-
-    const {
-        isOpen: isAdminModalOpen,
-        onOpen: onAdminModalOpen,
-        onOpenChange: onAdminModalOpenChange,
-    } = useDisclosure();
+    const { onOpen: onVerificationModalOpen } = useVerificationModal();
+    const { onOpen: onAdminModalOpen } = useAdminModal();
 
     return (
         <Card className="relative p-12 min-h-[500px] bg-[#fbfbfb]" shadow="sm">
@@ -49,24 +40,15 @@ const WelcomeBanner = () => {
                     className="drop-shadow-[2px_2px_5px_rgba(0,0,0,0.3)]"
                 />
             </div>
-            {!isVerified && (
-                <button onClick={onVerificationModalOpen}>
-                    Connect
-                </button>
-            )}
-            {isVerified && (
-                <button onClick={() => disconnect()}>Disconnect</button>
-            )}
-            {isAdmin && <button onClick={onAdminModalOpen}>Admin</button>}
-
-            <VerificationModal
-                isOpen={isVerificationModalOpen}
-                onOpenChange={onVerificationModalOpenChange}
-            />
-            <AdminModal
-                isOpen={isAdminModalOpen}
-                onOpenChange={onAdminModalOpenChange}
-            />
+            <div>
+                {!isVerified && (
+                    <Button onPress={onVerificationModalOpen}>Connect</Button>
+                )}
+                {isVerified && (
+                    <Button onPress={() => disconnect()}>Disconnect</Button>
+                )}
+                {isAdmin && <Button onPress={onAdminModalOpen}>Admin</Button>}
+            </div>
         </Card>
     );
 };

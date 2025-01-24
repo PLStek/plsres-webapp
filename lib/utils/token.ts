@@ -4,11 +4,15 @@ import { removeTokenCookie } from "./cookies";
 
 const SECRET_KEY = process.env.TOKEN_SECRET;
 
-export const createUserToken = (
-    isAdmin: boolean,
-    discordId: string,
-    actionneurId?: number
-): string => {
+export const createUserToken = ({
+    isAdmin,
+    discordId,
+    actionneurId,
+}: {
+    isAdmin: boolean;
+    discordId: string;
+    actionneurId?: number;
+}): string => {
     if (!SECRET_KEY) {
         throw new Error("Variables d'environnement manquantes");
     }

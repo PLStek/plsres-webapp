@@ -3,6 +3,7 @@ import { useCharbonFilters } from "@app/hooks/useCharbons";
 import { useCoursesQuery } from "@app/hooks/useCourses";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { CourseCategory } from "@lib/models/course";
+import Icon from "@app/home/components/Icon";
 
 export const CourseFiltersSection = () => {
     const [filters, setFilters] = useCharbonFilters();
@@ -14,8 +15,7 @@ export const CourseFiltersSection = () => {
                 <label className="block text-sm font-medium text-gray-700">
                     Filtres d{"'"}UV
                 </label>
-                <button
-                    type="button"
+                <Icon
                     onClick={() => {
                         setFilters({
                             ...filters,
@@ -25,8 +25,8 @@ export const CourseFiltersSection = () => {
                         });
                     }}
                 >
-                    <ArrowPathIcon className="text-gray-700 h-4 w-4" />
-                </button>
+                    <ArrowPathIcon />
+                </Icon>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-2">
                 <Select

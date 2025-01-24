@@ -28,7 +28,7 @@ const buildResource = (
     resource: Prisma.PromiseReturnType<typeof getResourceById>
 ) => ({
     ...resource,
-    filename: `${resource.name}.${resource.extension}`,
+    filename: `${resource.title}.${resource.extension}`,
 });
 
 export const getResourceByIdService = async (
@@ -49,7 +49,7 @@ export const getResourcesByCharbonIdService = async (
 export const createResourceService = async (
     data: ResourceCreateInput
 ): Promise<Resource> => {
-    const extension = data.file.name.split(".").pop() || "";
+    const extension = data.file.title.split(".").pop() || "";
     const newResourceData = {
         ...data,
         charbon: { connect: { id: data.charbonId } },
@@ -72,7 +72,7 @@ export const createResourceService = async (
     data: ResourceCreateInputForCharbon[]
 ): Promise<Resource[]> => {
     const newResourcesData = data.map((resource) => {
-        const extension = resource.file.name.split(".").pop() || "";
+        const extension = resource.file.title.split(".").pop() || "";
         return {
             ...resource,
             charbon: { connect: { id: charbonId } },
@@ -83,11 +83,11 @@ export const createResourceService = async (
     const newResources = await getResourceByCharbonId(charbonId);
 
     const fileMap = new Map(
-        data.map((resource) => [resource.name, resource.file])
+        data.map((resource) => [resource.title, resource.file])
     );
 
     const fileUploadPromises = newResources.map(async (resource) => {
-        const file = fileMap.get(resource.name);
+        const file = fileMap.get(resource.title);
         if (!file) throw new Error("File not found");
         await uploadResourceFileService(charbonId, resource.id, file);
         return resource;

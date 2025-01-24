@@ -1,0 +1,1 @@
+ALTER TABLE "Charbon" RENAME COLUMN "name" TO "title";
