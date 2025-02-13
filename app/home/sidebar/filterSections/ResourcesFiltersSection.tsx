@@ -1,5 +1,5 @@
 import { useCharbonFilters } from "@app/hooks/useCharbons";
-import { Checkbox } from "@nextui-org/react";
+import { Checkbox } from "@heroui/react";
 
 export const ResourcesFiltersSection = () => {
     const [filters, setFilters] = useCharbonFilters();

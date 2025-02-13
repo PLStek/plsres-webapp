@@ -7,7 +7,7 @@ import {
     ModalContent,
     ModalHeader,
     useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { createContext, ReactNode, useContext } from "react";
 
 type VerificationModalContextType = {
@@ -27,7 +27,7 @@ const VerificationModal = ({ children }: { children: ReactNode }) => {
 
     return (
         //TODO: review html here
-        <VerificationModalContext.Provider
+        (<VerificationModalContext.Provider
             value={{
                 isOpen,
                 onOpen,
@@ -89,7 +89,7 @@ const VerificationModal = ({ children }: { children: ReactNode }) => {
                     </div>
                 </ModalContent>
             </Modal>
-        </VerificationModalContext.Provider>
+        </VerificationModalContext.Provider>)
     );
 };
 

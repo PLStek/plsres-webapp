@@ -1,4 +1,4 @@
-export type ResourceBase = {
+type ResourceBase = {
     title: string;
     charbonId: number;
 };

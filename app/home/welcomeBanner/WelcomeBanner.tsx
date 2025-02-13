@@ -5,16 +5,25 @@ import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import { useVerificationModal } from "../modals/VerificationModal";
 import { useAdminModal } from "../modals/AdminModal";
-import { useDisconnect, useIsAdmin, useIsVerified } from "@app/hooks/useAuth";
-import { Button, Card } from "@nextui-org/react";
+import {
+    useDisconnect,
+    useIsActionneurAuthentified,
+    useIsAdmin,
+    useIsVerified,
+} from "@app/hooks/useAuth";
+import { Button, Card } from "@heroui/react";
+import { useActionneurConnectionModal } from "../modals/ActionneurConnectionModal";
 
 const WelcomeBanner = () => {
     const [disconnect] = useDisconnect();
     const [isVerified] = useIsVerified();
     const [isAdmin] = useIsAdmin();
+    const [isActionneurAuthentified] = useIsActionneurAuthentified();
 
     const { onOpen: onVerificationModalOpen } = useVerificationModal();
     const { onOpen: onAdminModalOpen } = useAdminModal();
+    const { onOpen: onActionneurConnectionModalOpen } =
+        useActionneurConnectionModal();
 
     return (
         <Card className="relative p-12 min-h-[500px] bg-[#fbfbfb]" shadow="sm">
@@ -42,12 +51,24 @@ const WelcomeBanner = () => {
             </div>
             <div>
                 {!isVerified && (
-                    <Button onPress={onVerificationModalOpen}>Connect</Button>
+                    <Button onPress={onVerificationModalOpen}>Connexion</Button>
                 )}
                 {isVerified && (
-                    <Button onPress={() => disconnect()}>Disconnect</Button>
+                    <Button onPress={() => disconnect()}>Déconnexion</Button>
                 )}
-                {isAdmin && <Button onPress={onAdminModalOpen}>Admin</Button>}
+                {isAdmin && (
+                    <Button
+                        onPress={() => {
+                            if (isActionneurAuthentified) {
+                                onAdminModalOpen();
+                            } else {
+                                onActionneurConnectionModalOpen();
+                            }
+                        }}
+                    >
+                        Espace admin
+                    </Button>
+                )}
             </div>
         </Card>
     );

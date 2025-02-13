@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/react";
 //TODO: revoir wording et style
 const InvitationModal = () => {
     const searchParams = useSearchParams();
@@ -29,7 +29,7 @@ const InvitationModal = () => {
 
     return (
         //TODO: review html here
-        <Modal
+        (<Modal
             isOpen={isOpen}
             onClose={() => {
                 setIsOpen(false);
@@ -44,7 +44,7 @@ const InvitationModal = () => {
                     {step === 3 && <div>Step 3</div>}
                 </ModalBody>
             </ModalContent>
-        </Modal>
+        </Modal>)
     );
 };
 

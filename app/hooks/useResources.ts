@@ -6,6 +6,7 @@ import {
     deleteResourceAction,
     getResourcesByCharbonIdAction,
 } from "@lib/actions";
+import { ErrorMessages } from "@lib/utils/errorMessages";
 
 /* export const useResourceByIdQuery = (id: number) => {
     const { resources } = useResourceContext();
@@ -18,7 +19,7 @@ export const useResourcesByCharbonIdQuery = (charbonId: number) => {
         useResourceContext();
     const [data, setData] = useState<Resource[] | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchData = useCallback(async () => {
         const resource = resourcesByCharbonId[charbonId];
@@ -29,16 +30,16 @@ export const useResourcesByCharbonIdQuery = (charbonId: number) => {
             return;
         }
 
-        try {
-            const resources = await getResourcesByCharbonIdAction(charbonId);
+        const { data: resources, error } = await getResourcesByCharbonIdAction(
+            charbonId
+        );
+        if (resources) {
             setResourcesByCharbonId(charbonId, resources);
-            setData(resources);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
         }
+        setData(resources);
+        setError(error);
+
+        setLoading(false);
     }, [charbonId, resourcesByCharbonId, setResourcesByCharbonId]);
 
     useEffect(() => {
@@ -50,7 +51,7 @@ export const useResourcesByCharbonIdQuery = (charbonId: number) => {
 
 export const useResourceFileById = () => {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const download = async (id: number, filename: string) => {
         try {
@@ -60,8 +61,10 @@ export const useResourceFileById = () => {
                 const errorData = await response.json();
                 const message = errorData?.error
                     ? errorData.error
-                    : "An error occurred";
-                throw new Error(message);
+                    : ErrorMessages.UnknownError;
+                setError(message);
+                setLoading(false);
+                return;
             }
 
             const blob = await response.blob();
@@ -72,9 +75,8 @@ export const useResourceFileById = () => {
             a.click();
             a.remove();
             URL.revokeObjectURL(url);
-            setLoading(false);
-        } catch (error) {
-            setError(error as Error);
+        } catch {
+            setError(ErrorMessages.UnknownError);
         } finally {
             setLoading(false);
         }
@@ -86,22 +88,21 @@ export const useCreateResourceMutation = () => {
     const { resourcesByCharbonId, setResourcesByCharbonId } =
         useResourceContext();
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (newResource: ResourceCreateInput) => {
-        try {
-            const resource = await createResourceAction(newResource);
+        const { data: resource, error } = await createResourceAction(
+            newResource
+        );
+        if (resource) {
             const charbonId = resource.charbonId;
             setResourcesByCharbonId(charbonId, [
                 ...resourcesByCharbonId[charbonId],
                 resource,
             ]);
-            setError(null); //TODO: voir si besoin des setErrors ici (partout)
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
         }
+        setError(error);
+        setLoading(false);
     };
 
     return [mutate, loading, error] as const;
@@ -111,22 +112,17 @@ export const useDeleteResourceMutation = () => {
     const { resourcesByCharbonId, setResourcesByCharbonId } =
         useResourceContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (id: number, charbonId: number) => {
-        try {
-            setLoading(true);
-            await deleteResourceAction(id);
-            setResourcesByCharbonId(
-                charbonId,
-                resourcesByCharbonId[charbonId].filter((r) => r.id !== id)
-            );
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
-        }
+        setLoading(true);
+        const { error } = await deleteResourceAction(id);
+        setResourcesByCharbonId(
+            charbonId,
+            resourcesByCharbonId[charbonId].filter((r) => r.id !== id)
+        );
+        setError(error);
+        setLoading(false);
     };
 
     return [mutate, loading, error] as const;

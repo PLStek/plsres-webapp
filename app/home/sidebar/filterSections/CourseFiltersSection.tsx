@@ -1,4 +1,4 @@
-import { Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@heroui/react";
 import { useCharbonFilters } from "@app/hooks/useCharbons";
 import { useCoursesQuery } from "@app/hooks/useCourses";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";

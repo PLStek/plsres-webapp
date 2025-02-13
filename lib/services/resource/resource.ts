@@ -49,7 +49,7 @@ export const getResourcesByCharbonIdService = async (
 export const createResourceService = async (
     data: ResourceCreateInput
 ): Promise<Resource> => {
-    const extension = data.file.title.split(".").pop() || "";
+    const extension = data.file.name.split(".").pop() || "";
     const newResourceData = {
         ...data,
         charbon: { connect: { id: data.charbonId } },

@@ -22,6 +22,8 @@ import {
 } from "@lib/utils/token";
 import { verifySecret } from "@lib/utils/encryption";
 import { AuthData } from "@lib/models/auth";
+import { ErrorMessages } from "@lib/utils/errorMessages";
+import { getActionneurByIdService } from "./actionneur";
 
 //TODO: meilleur typage et vérifications
 export const connectService = async (code: string) => {
@@ -38,25 +40,25 @@ export const connectService = async (code: string) => {
     await revokeDiscordAccessTokenService(token);
 };
 
-export const connectActionneurService = async (secret: number) => {
+export const connectActionneurService = async (secret: string) => {
     const userToken = await getCookie("user_token");
     if (!userToken) {
-        throw new Error("Couldn't find authentication token");
+        throw new Error(ErrorMessages.NotConnected);
     }
     const { actionneurId } = decodeToken(userToken);
     if (!actionneurId) {
-        throw new Error("User isn't an actionneur");
+        throw new Error(ErrorMessages.UserNotActionneur);
     }
 
     const actionneur = await getActionneurById(actionneurId);
     if (!actionneur) {
         //TODO: revoke ou refresh le user token + faire pareil si il n'est pas admin
-        throw new Error("User isn't an actionneur");
+        throw new Error(ErrorMessages.UserNotActionneur);
     }
-
-    verifySecret(secret, actionneur.secretHash);
+    await verifySecret(secret, actionneur.secretHash);
     const actionneurToken = createActionneurToken(actionneurId);
-    setCookie("actionneur_token", actionneurToken);
+    console.log("setting actionneur cookie ", secret);
+    await setCookie("actionneur_token", actionneurToken);
 };
 
 export const disconnectService = async () => {
@@ -113,7 +115,7 @@ export const refreshAuthService = async (
 ): Promise<AuthData> => {
     const token = await getCookie("user_token");
     if (!token) {
-        throw new Error("Couldn't find authentication token");
+        throw new Error(ErrorMessages.NotConnected);
     }
     const { actionneurId, isAdmin, discordId } = decodeToken(token);
     const newToken = createUserToken({
@@ -142,32 +144,32 @@ export const refreshAuthService = async (
 export const checkAuthService = async () => {
     const token = await getCookie("user_token");
     if (!token) {
-        throw new Error("Couldn't find authentication token");
+        throw new Error(ErrorMessages.NotConnected);
     }
     decodeToken(token);
 };
 
 export const checkActionneurService = async (checkAdmin: boolean) => {
-    /* const token = getCookie("actionneur_token");
+    const token = await getCookie("actionneur_token");
     if (!token) {
-        throw new Error("Couldn't find authentication token");
+        throw new Error(ErrorMessages.ActionneurNotConnected);
     }
     const { actionneurId } = decodeActionneurToken(token);
-    if (!actionneurId) throw new Error("User isn't an actionneur");
+    if (!actionneurId) throw new Error(ErrorMessages.UserNotActionneur);
 
     const actionneur = await getActionneurByIdService(actionneurId);
     if (!actionneur || !actionneur.isActive) {
-        throw new Error("User isn't an actionneur");
+        throw new Error(ErrorMessages.UserNotActionneur);
     }
     if (checkAdmin && !actionneur.isAdmin) {
-        throw new Error("User isn't admin");
+        throw new Error(ErrorMessages.UserNotAdmin);
     }
-    return actionneur; */
-    const token = await getCookie("user_token");
+    return actionneur;
+    /* const token = await getCookie("user_token");
     if (!token) {
-        throw new Error("Couldn't find authentication token");
+        throw new Error(ErrorMessages.NotConnected);
     }
-    return decodeToken(token);
+    return decodeToken(token); */
 };
 
 export const cleanExpiredTokensService = async () => {

@@ -1,5 +1,5 @@
 import { useConnect } from "@app/hooks/useAuth";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 const Step1 = () => {
     const [connect] = useConnect();

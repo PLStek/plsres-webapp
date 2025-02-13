@@ -4,7 +4,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import CardResources from "./CardResources";
 import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
 import clsx from "clsx";
-import { CircularProgress } from "@nextui-org/react";
+import { CircularProgress } from "@heroui/react";
 
 const LazyCardResources = ({
     charbonId,

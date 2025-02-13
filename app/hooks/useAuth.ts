@@ -23,17 +23,22 @@ export const useIsAdmin = () => {
     return [authData.isAdmin] as const;
 };
 
+export const useIsActionneurAuthentified = () => {
+    //TODO: change ?
+    const { authData } = useAuthContext();
+    return [!!authData.isActionneurAuthentified] as const;
+};
+
 //TODO: maybe refactor to use a single hook for auth data
 
 export const useConnect = () => {
     const { setAuthData } = useAuthContext();
     const [loading, setLoading] = useState(false);
-    const [error] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const connect = async (callback?: () => void) => {
         const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
         const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
-        if (!clientId || !redirectUri) return;
 
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
             redirectUri
@@ -49,11 +54,22 @@ export const useConnect = () => {
                 window.removeEventListener("message", handleAuthMessage);
                 authWindow?.close();
                 setLoading(true);
-                await connectAction(code);
-                const authData = await authenticateAction();
-                setAuthData(authData);
-                setLoading(false);
+                const { error: connectionError } = await connectAction(code);
+                if (connectionError) {
+                    setError(connectionError);
+                    setLoading(false);
+                    return;
+                }
+
+                const { data: authData, error: authError } =
+                    await authenticateAction();
+
+                if (authData) {
+                    setAuthData(authData);
+                }
+                setError(authError);
                 callback?.();
+                setLoading(false);
             }
         };
 
@@ -75,20 +91,16 @@ export const useConnect = () => {
 export const useAuthenticate = () => {
     const { setAuthData } = useAuthContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const authenticate = async () => {
-        try {
-            setLoading(true);
-            const authData = await authenticateAction();
+        setLoading(true);
+        const { data: authData, error } = await authenticateAction();
+        if (authData) {
             setAuthData(authData);
-            setLoading(false);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
         }
+        setError(error);
+        setLoading(false);
     };
 
     return [authenticate, loading, error] as const;
@@ -97,21 +109,24 @@ export const useAuthenticate = () => {
 export const useConnectActionneur = () => {
     const { setAuthData } = useAuthContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-    const connectActionneur = async (secret: number) => {
-        try {
-            setLoading(true);
-            await connectActionneurAction(secret);
-            const authData = await authenticateAction();
-            setAuthData(authData);
+    const connectActionneur = async (secret: string) => {
+        setLoading(true);
+        const { error: connectionError } = await connectActionneurAction(
+            secret
+        );
+        if (connectionError) {
+            setError(connectionError);
             setLoading(false);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
+            return;
         }
+        const { data: authData, error: authError } = await authenticateAction();
+        if (authData) {
+            setAuthData(authData);
+        }
+        setError(authError);
+        setLoading(false);
     };
 
     return [connectActionneur, loading, error] as const;
@@ -120,21 +135,22 @@ export const useConnectActionneur = () => {
 export const useDisconnect = () => {
     const { setAuthData } = useAuthContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const disconnect = async () => {
-        try {
-            setLoading(true);
-            await disconnectAction();
-            const authData = await authenticateAction();
-            setAuthData(authData);
+        setLoading(true);
+        const { error: disconnectError } = await disconnectAction();
+        if (disconnectError) {
+            setError(disconnectError);
             setLoading(false);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
+            return;
         }
+        const { data: authData, error: authError } = await authenticateAction();
+        if (authData) {
+            setAuthData(authData);
+        }
+        setError(authError);
+        setLoading(false);
     };
 
     return [disconnect, loading, error] as const;
@@ -142,20 +158,16 @@ export const useDisconnect = () => {
 
 export const useCreateActionneurInviteMutation = () => {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (discordId: string) => {
-        try {
-            setLoading(true);
-            const link = await createActionneurInviteAction(discordId);
-            setError(null);
-            return link;
-        } catch (err) {
-            setError(err as Error);
-            return null;
-        } finally {
-            setLoading(false);
-        }
+        setLoading(true);
+        const { data: link, error } = await createActionneurInviteAction(
+            discordId
+        );
+        setError(error);
+        setLoading(false);
+        return link;
     };
 
     return [mutate, loading, error] as const;

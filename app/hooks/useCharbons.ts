@@ -69,8 +69,8 @@ export const useFullCharbonByIdQuery = (id: number | null) => {
     const [state, setState] = useState({
         data: null as FullCharbon | null,
         loading: true,
-        error: null as Error | null,
-    }); //TODO: appliquer ailleurs aussi pour safety
+        error: null as string | null,
+    }); //TODO: appliquer ailleurs aussi pour safety ?
 
     const fetchData = useCallback(async () => {
         setState({ data: null, loading: true, error: null });
@@ -78,12 +78,8 @@ export const useFullCharbonByIdQuery = (id: number | null) => {
             setState({ data: null, loading: false, error: null });
             return;
         }
-        try {
-            const charbon = await getFullCharbonByIdAction(id); //TODO: attention: réservé aux actionneurs => faire un check
-            setState({ data: charbon ?? null, loading: false, error: null });
-        } catch (err) {
-            setState({ data: null, loading: false, error: err as Error });
-        }
+        const { data: charbon, error } = await getFullCharbonByIdAction(id); //TODO: attention: réservé aux actionneurs => faire un check
+        setState({ data: charbon ?? null, loading: false, error });
     }, [id]);
 
     useEffect(() => {
@@ -96,7 +92,7 @@ export const useFullCharbonByIdQuery = (id: number | null) => {
 /* export const useCreateCharbonMutation = () => {
     const { addCharbon } = useCharbonContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (newCharbon: CharbonCreateInput) => {
         try {
@@ -118,19 +114,19 @@ export const useFullCharbonByIdQuery = (id: number | null) => {
 export const useUpdateCharbonMutation = () => {
     const { updateCharbon } = useCharbonContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (id: number, newCharbon: CharbonUpdateInput) => {
-        try {
-            setLoading(true);
-            const charbon = await updateCharbonAction(id, newCharbon);
-            updateCharbon(charbon);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
+        setLoading(true);
+        const { data: charbon, error } = await updateCharbonAction(
+            id,
+            newCharbon
+        );
+        if (charbon) {
+            updateCharbon(charbon); //TODO: est-ce que ça va marcher si la date change ?
         }
+        setError(error);
+        setLoading(false);
     };
 
     return [mutate, loading, error] as const;
@@ -139,19 +135,14 @@ export const useUpdateCharbonMutation = () => {
 export const useDeleteCharbonMutation = () => {
     const { removeCharbon } = useCharbonContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (id: number) => {
-        try {
-            setLoading(true);
-            await deleteCharbonAction(id);
-            removeCharbon(id);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
-        }
+        setLoading(true);
+        const { error } = await deleteCharbonAction(id);
+        removeCharbon(id); //TODO: voir si on update quand même si erreur
+        setError(error);
+        setLoading(false);
     };
 
     return [mutate, loading, error] as const;

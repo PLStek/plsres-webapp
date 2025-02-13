@@ -17,18 +17,15 @@ export const useCourseByIdQuery = (id: number) => {
 export const useCreateCourseMutation = () => {
     const { addCourse } = useCourseContext();
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (newCourse: CourseCreateInput) => {
-        try {
-            const course = await createCourseAction(newCourse);
+        const { data: course, error } = await createCourseAction(newCourse);
+        if (course) {
             addCourse(course);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
         }
+        setError(error);
+        setLoading(false);
     };
 
     return [mutate, loading, error] as const;
@@ -37,19 +34,14 @@ export const useCreateCourseMutation = () => {
 export const useDeleteCourseMutation = () => {
     const { removeCourse } = useCourseContext();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (id: number) => {
-        try {
-            setLoading(true);
-            await deleteCourseAction(id);
-            removeCourse(id);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
-        }
+        setLoading(true);
+        const { error } = await deleteCourseAction(id);
+        removeCourse(id);
+        setError(error);
+        setLoading(false);
     };
 
     return [mutate, loading, error] as const;

@@ -3,7 +3,7 @@
 import { useCharbonMonthKeysQuery } from "@app/hooks/useCharbons";
 import Filters from "../sidebar/CharbonFiltersSection";
 import { lazy, memo } from "react";
-import { Card } from "@nextui-org/react";
+import { Card } from "@heroui/react";
 
 const styles = {
     container:

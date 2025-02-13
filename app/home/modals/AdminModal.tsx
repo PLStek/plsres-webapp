@@ -17,7 +17,7 @@ import {
     ModalBody,
     ModalContent,
     useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type AdminModalContextType = {
@@ -49,7 +49,7 @@ const AdminModal = ({ children }: { children: ReactNode }) => {
 
     return (
         //TODO: séparer en plusieurs composants -> adminDashboard
-        <AdminModalContext.Provider
+        (<AdminModalContext.Provider
             value={{
                 isOpen,
                 onOpen,
@@ -87,7 +87,7 @@ const AdminModal = ({ children }: { children: ReactNode }) => {
                                         size="sm"
                                         isInvalid={!!errorCreateInvite}
                                         errorMessage={
-                                            errorCreateInvite?.message
+                                            errorCreateInvite
                                         }
                                         onChange={(e) =>
                                             setDiscordIdInput(e.target.value)
@@ -106,7 +106,7 @@ const AdminModal = ({ children }: { children: ReactNode }) => {
                     )}
                 </ModalContent>
             </Modal>
-        </AdminModalContext.Provider>
+        </AdminModalContext.Provider>)
     );
 };
 

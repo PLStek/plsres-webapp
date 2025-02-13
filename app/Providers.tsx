@@ -1,4 +1,4 @@
-import { NextUIProvider } from "@nextui-org/react";
+import { HeroUIProvider } from "@heroui/react";
 import CharbonProvider from "./context/CharbonContext";
 import ActionneurProvider from "./context/ActionneurContext";
 import CourseProvider from "./context/CourseContext";
@@ -13,13 +13,17 @@ import {
 import { ReactNode } from "react";
 
 const Providers = async ({ children }: { children: ReactNode }) => {
-    const charbons = await getCharbonsGroupedByMonthAction();
-    const actionneurs = await getActionneursAction();
-    const courses = await getCoursesAction();
-    const authData = await authenticateAction();
+    const { data: charbons } = await getCharbonsGroupedByMonthAction();
+    const { data: actionneurs } = await getActionneursAction();
+    const { data: courses } = await getCoursesAction();
+    const { data: authData } = await authenticateAction();
+
+    if (!charbons || !actionneurs || !courses || !authData) {
+        return null; //TODO: check errors and add error page
+    }
 
     return (
-        <NextUIProvider>
+        <HeroUIProvider>
             <AuthProvider initialAuthData={authData}>
                 <CharbonProvider initialCharbons={charbons}>
                     <ActionneurProvider initialActionneurs={actionneurs}>
@@ -29,7 +33,7 @@ const Providers = async ({ children }: { children: ReactNode }) => {
                     </ActionneurProvider>
                 </CharbonProvider>
             </AuthProvider>
-        </NextUIProvider>
+        </HeroUIProvider>
     );
 };
 

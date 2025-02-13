@@ -9,11 +9,13 @@ import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
 import {
     Button,
     CircularProgress,
+    Divider,
     Input,
     Select,
     SelectItem,
     Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
+import ResourceForm from "./ResourceForm";
 
 type CharbonFormProps = {
     defaultCharbon: Charbon;
@@ -53,6 +55,7 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
 
     return (
         <form action={submit} className="flex flex-col gap-4">
+            <div className="font-medium text-center">Données du charbon</div>
             <Input
                 name="title"
                 label="Titre"
@@ -96,8 +99,11 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                     ))}
                 </Select>
             </div>
+            <Divider />
+            <div className="font-medium text-center">Ressources du charbon</div>
+            <ResourceForm />
             {defaultCharbon.resourcesCount > 0 && (
-                <div className="my-4">
+                <div>
                     {!loadingResources && !!resources?.length && (
                         <CardResources resources={resources} editMode />
                     )}
@@ -108,25 +114,24 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                     )}
                 </div>
             )}
-
             <div className="flex justify-evenly gap-4">
                 <Button
                     type="button"
                     disabled={loading}
                     onPress={onClose}
-                    size="md"
+                    size="sm"
                     fullWidth
                 >
                     {loading ? "Loading..." : "Annuler"}
                 </Button>
-                <Button type="reset" disabled={loading} size="md" fullWidth>
+                <Button type="reset" disabled={loading} size="sm" fullWidth>
                     {loading ? "Loading..." : "Réinitialiser"}
                 </Button>
                 <Button
                     type="submit"
                     disabled={loading}
                     fullWidth
-                    size="md"
+                    size="sm"
                     isLoading={loading}
                 >
                     {defaultCharbon.isDraft ? "Publier" : "Editer"}

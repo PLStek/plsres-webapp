@@ -4,7 +4,7 @@ import {
     useCharbonMonthKeysQuery,
 } from "@app/hooks/useCharbons";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@heroui/react";
 
 export const PeriodFiltersSection = () => {
     const [monthKeys] = useCharbonMonthKeysQuery();

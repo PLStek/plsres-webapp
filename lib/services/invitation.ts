@@ -7,15 +7,13 @@ import {
 import { decodeToken } from "@lib/utils/token";
 import { getCookie } from "@lib/utils/cookies";
 import { verifyDiscordUserIdService } from "./discord/verifyDiscordUserId";
+import { ErrorMessages } from "@lib/utils/errorMessages";
 
 const WEBAPP_URL = process.env.NEXT_PUBLIC_WEBAPP_URL;
 
 export const generateActionneurInvitationLink = async (
     discordId: string
 ): Promise<string> => {
-    if (!WEBAPP_URL) {
-        throw new Error("Variables d'environnement manquantes");
-    }
     await verifyDiscordUserIdService(discordId);
     const token = randomUUID();
     const expiresAt = new Date(Date.now() + 3600 * 1000);
@@ -28,17 +26,17 @@ export const checkActionneurInvitationToken = async (
 ) => {
     const token = await getCookie("user_token");
     if (!token) {
-        throw new Error("Couldn't find authentication token");
+        throw new Error(ErrorMessages.NotConnected);
     }
     const { discordId } = decodeToken(token);
     const invitation = await getInvitation(invitationToken);
     if (!invitation || invitation.discordId !== discordId) {
-        throw new Error("Invitation invalide");
+        throw new Error(ErrorMessages.InvalidInvitation);
     }
 
     if (invitation.expiresAt < new Date()) {
         deleteInvitation(invitation.id);
-        throw new Error("Invitation expirée");
+        throw new Error(ErrorMessages.ExpiredInvitation);
     }
     return invitation;
 };

@@ -7,9 +7,6 @@ import { sendFeedback } from "../utils/sendFeedback";
 const WEBAPP_URL = process.env.NEXT_PUBLIC_WEBAPP_URL;
 
 const buildEventMessage = (charbon: Charbon, creatorId: string) => {
-    if (!WEBAPP_URL) {
-        throw new Error("Missing environment variable NEXT_PUBLIC_WEBAPP_URL");
-    }
     const charbonUrl = `${WEBAPP_URL}?charbon=${charbon.id}`;
     return `<@${creatorId}>, le charbon [${charbon.title}](${charbonUrl}) a été ajouté en brouillon ! Merci de finaliser sa création en cliquant sur ce lien.`;
 };

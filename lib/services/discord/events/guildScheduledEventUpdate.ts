@@ -26,9 +26,6 @@ const buildEventEndMessage = (
     charbon: Charbon,
     actionneurDiscordIds: string[]
 ) => {
-    if (!WEBAPP_URL) {
-        throw new Error("Missing environment variable NEXT_PUBLIC_WEBAPP_URL");
-    }
     const charbonUrl = `${WEBAPP_URL}?charbon=${charbon.id}`;
     const tags = actionneurDiscordIds.map((id) => `<@${id}>`).join(" ");
 

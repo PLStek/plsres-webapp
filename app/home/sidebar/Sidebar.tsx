@@ -2,7 +2,7 @@
 
 import React from "react";
 import Filters from "./CharbonFiltersSection";
-import { Card } from "@nextui-org/react";
+import { Card } from "@heroui/react";
 
 const Sidebar = () => {
     return (

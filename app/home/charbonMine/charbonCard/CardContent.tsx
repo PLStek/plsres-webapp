@@ -1,7 +1,12 @@
 import Icon from "@app/home/components/Icon";
+import { useActionneurConnectionModal } from "@app/home/modals/ActionneurConnectionModal";
 import { useEditCharbonModal } from "@app/home/modals/editCharbonModal/EditCharbonModal";
 import { useVerificationModal } from "@app/home/modals/VerificationModal";
-import { useIsActionneur, useIsVerified } from "@app/hooks/useAuth";
+import {
+    useIsActionneur,
+    useIsActionneurAuthentified,
+    useIsVerified,
+} from "@app/hooks/useAuth";
 import {
     ArchiveBoxIcon,
     Cog6ToothIcon,
@@ -41,10 +46,14 @@ const CardContent = ({
     toggleResources,
 }: CardContentProps) => {
     const { onOpen: onVerificationModalOpen } = useVerificationModal();
-    const { onOpen: onEditModalOpen, setCharbonId: setEditModalCharbonId } = useEditCharbonModal();
+    const { onOpen: onEditModalOpen, setCharbonId: setEditModalCharbonId } =
+        useEditCharbonModal();
+    const { onOpen: onActionneurConnectionModalOpen } =
+        useActionneurConnectionModal();
 
     const [isVerified] = useIsVerified();
     const [isActionneur] = useIsActionneur();
+    const [isActionneurAuthentified] = useIsActionneurAuthentified();
     return (
         <div>
             <div className={styles.titleContainer}>
@@ -88,8 +97,12 @@ const CardContent = ({
                         {isActionneur && (
                             <Icon
                                 onClick={() => {
-                                    setEditModalCharbonId(charbon.id)
-                                    onEditModalOpen();
+                                    if (isActionneurAuthentified) {
+                                        setEditModalCharbonId(charbon.id);
+                                        onEditModalOpen();
+                                    } else {
+                                        onActionneurConnectionModalOpen();
+                                    }
                                 }}
                             >
                                 <Cog6ToothIcon />

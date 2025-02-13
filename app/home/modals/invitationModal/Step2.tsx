@@ -1,6 +1,6 @@
 import { useCreateActionneurMutation } from "@app/hooks/useActionneurs";
 import {  useConnectActionneur } from "@app/hooks/useAuth";
-import { Button, Form, Input } from "@nextui-org/react";
+import { Button, Form, Input } from "@heroui/react";
 
 const Step2 = ({ invitationToken }: { invitationToken: string }) => {
     const [createActionneur, loadingCreateActionneur, errorCreateActionneur] =
@@ -10,7 +10,7 @@ const Step2 = ({ invitationToken }: { invitationToken: string }) => {
 
     const submit = async (formData: FormData) => {
         const username = formData.get("username") as string;
-        const secret = Number(formData.get("secret"));
+        const secret = formData.get("secret") as string;
         await createActionneur({ username, secret, invitationToken });
         await connectActionneur(secret);
     };

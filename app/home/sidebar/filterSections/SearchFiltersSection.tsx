@@ -4,7 +4,7 @@ import {
     ArrowPathIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 import { useEffect, useState } from "react";
 
 export const SearchFiltersSection = () => {

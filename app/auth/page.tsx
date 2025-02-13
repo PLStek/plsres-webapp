@@ -1,5 +1,6 @@
 "use client";
 
+import { CircularProgress } from "@heroui/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -19,7 +20,7 @@ const Auth = () => {
         }
     }, []);
 
-    return <div>coucou</div>;
+    return <CircularProgress />;
 };
 
 export default Auth;

@@ -1,10 +1,6 @@
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
 export const sendLogMessage = (operation: string, userId: string) => {
-    if (!WEBHOOK_URL) {
-        throw new Error("Missing Discord Webhook URL");
-    }
-
     const message = {
         content: `<@${userId}> a effectué une opération.`,
         embeds: [

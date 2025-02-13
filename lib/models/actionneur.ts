@@ -12,7 +12,7 @@ export type Actionneur = ActionneurBase & {
 export type ActionneurCreateInput = {
     invitationToken: string;
     username: string;
-    secret: number;
+    secret: string;
 };
 
 export type ActionneurUpdateInput = Partial<ActionneurBase>;

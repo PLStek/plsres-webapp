@@ -41,7 +41,7 @@ model CharbonAttendee {
 model Course {
     id                       Int    @id @default(autoincrement())
     code                     String @unique
-    title                     String
+    title                    String
     discordResourceChannelId String @unique
     discordVoiceChannelId    String @unique
 

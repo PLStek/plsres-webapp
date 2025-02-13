@@ -1,14 +1,11 @@
+import { ErrorMessages } from "@lib/utils/errorMessages";
+
 const CLIENT_ID = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 export const getDiscordAccessTokenService = async (code: string) => {
-    if (!CLIENT_ID || !REDIRECT_URI || !CLIENT_SECRET) {
-        //TODO: gérer variables d'env proprement
-        throw new Error("Variables d'environnement manquantes");
-    }
-
     const response = await fetch("https://discord.com/api/oauth2/token", {
         method: "POST",
         headers: {
@@ -62,6 +59,6 @@ export const checkDiscordUserGuildService = async (accessToken: string) => {
     const guilds = (await response.json()) as { id: string }[];
 
     if (!guilds.some((guild) => guild.id === GUILD_ID)) {
-        throw new Error("User is not in the required guild");
+        throw new Error(ErrorMessages.DiscordUserNotInGuild);
     }
 };

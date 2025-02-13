@@ -40,7 +40,7 @@
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts"
-    ],
+, "env-keys.mjs"    ],
     "exclude": [
         "node_modules"
     ]

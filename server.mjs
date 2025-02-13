@@ -7,9 +7,28 @@ const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-
+const environnementVariables = [
+    "DATABASE_URL",
+    "TOKEN_SECRET",
+    "PEPPER",
+    "NEXT_PUBLIC_DISCORD_CLIENT_ID",
+    "NEXT_PUBLIC_DISCORD_REDIRECT_URI",
+    "DISCORD_CLIENT_SECRET",
+    "DISCORD_GUILD_ID",
+    "DISCORD_WEBHOOK_URL",
+    "DISCORD_COMMUNICATION_CHANNEL_ID",
+    "DISCORD_BOT_TOKEN",
+    "NEXT_PUBLIC_WEBAPP_URL",
+]
 
 app.prepare().then(() => {
+    environnementVariables.forEach((key) => {
+        if (!process.env[key]) {
+            console.error(`Missing environnment variable '${key}'.`);
+            process.exit(1);
+        }
+    });
+
     const server = createServer((req, res) => {
         const parsedUrl = parse(req.url, true);
         handle(req, res, parsedUrl);
