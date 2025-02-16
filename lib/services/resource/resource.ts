@@ -51,7 +51,7 @@ export const createResourceService = async (
 ): Promise<Resource> => {
     const extension = data.file.name.split(".").pop() || "";
     const newResourceData = {
-        ...data,
+        title: data.title,
         charbon: { connect: { id: data.charbonId } },
         extension,
     };

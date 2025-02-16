@@ -36,6 +36,7 @@ export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
             const data = await fn(...args);
             return { data, error: null };
         } catch (error) {
+            console.error(error);
             if (
                 error instanceof Error &&
                 Object.values(ErrorMessages).map(String).includes(error.message)

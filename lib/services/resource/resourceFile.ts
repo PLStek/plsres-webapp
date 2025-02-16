@@ -5,6 +5,7 @@ export const uploadResourceFileService = async (
     resourceId: number,
     file: File
 ): Promise<void> => {
+    console.log(file, resourceId);
     const { folderPath, filePath } = generateResourceFilePath(resourceId);
 
     await mkdir(folderPath, { recursive: true });

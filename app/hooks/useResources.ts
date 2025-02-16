@@ -91,9 +91,16 @@ export const useCreateResourceMutation = () => {
     const [error, setError] = useState<string | null>(null);
 
     const mutate = async (newResource: ResourceCreateInput) => {
-        const { data: resource, error } = await createResourceAction(
-            newResource
-        );
+        const formData = new FormData();
+        Object.entries(newResource).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach((item) => formData.append(key, item as any));
+            } else {
+                formData.append(key, value as any);
+            }
+        });
+
+        const { data: resource, error } = await createResourceAction(formData);
         if (resource) {
             const charbonId = resource.charbonId;
             setResourcesByCharbonId(charbonId, [

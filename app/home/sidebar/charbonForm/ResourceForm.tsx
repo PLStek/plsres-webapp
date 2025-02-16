@@ -1,12 +1,48 @@
 "use client";
 
-import { Input } from "@heroui/react";
+import { useState } from "react";
+import { Button, Input } from "@heroui/react";
+import { useCreateResourceMutation } from "@app/hooks/useResources";
 
-const ResourceForm = () => {
+type ResourceFormProps = {
+    charbonId: number;
+};
+
+const ResourceForm = ({ charbonId }: ResourceFormProps) => {
+    const [createResource, loading, error] = useCreateResourceMutation();
+
+    const [title, setTitle] = useState("");
+    const [file, setFile] = useState<File | null>(null);
+
+    const handleSubmit = async () => {
+        if (!title || !file) return;
+        createResource({
+            title,
+            file,
+            charbonId,
+        });
+    };
+
     return (
-        <div className="flex gap-4">
-            <Input label="Nom de la ressource" size="sm"></Input>
-            <Input type="file" size="md"></Input>
+        <div className="flex flex-col gap-4 p-4 border rounded">
+            <Input
+                label="Nom de la ressource"
+                size="sm"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+            />
+            <Input
+                label="Fichier de la ressource"
+                type="file"
+                size="sm"
+                onChange={(e) => {
+                    const file = e.target.files && e.target.files[0];
+                    setFile(file || null);
+                }}
+            />
+            <Button type="button" onPress={handleSubmit}>
+                Ajouter
+            </Button>
         </div>
     );
 };

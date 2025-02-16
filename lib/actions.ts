@@ -112,7 +112,15 @@ export const getResourcesByCharbonIdAction = withAuth(
 
 export const createResourceAction = withAuth(
     "actionneur",
-    createResourceService
+    (formData: FormData) => {
+        const charbonId = Number(formData.get("charbonId"));
+        const file = formData.get("file") as File;
+        const title = formData.get("title") as string;
+        if (!file) {
+            throw new Error("Le fichier est manquant");
+        }
+        return createResourceService({ file, charbonId, title });
+    }
 );
 export const updateResourceAction = withAuth(
     "actionneur",

@@ -1,21 +1,17 @@
 "use client";
 
 import { Charbon, CharbonUpdateInput } from "@lib/models/charbon";
-import { useCoursesQuery } from "@app/hooks/useCourses";
-import { useActionneursQuery } from "@app/hooks/useActionneurs";
 import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
 import CardResources from "@app/home/charbonMine/charbonCard/CardResources";
 import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
 import {
+    Accordion,
+    AccordionItem,
     Button,
     CircularProgress,
-    Divider,
-    Input,
-    Select,
-    SelectItem,
-    Textarea,
 } from "@heroui/react";
 import ResourceForm from "./ResourceForm";
+import { CharbonFormData } from "./CharbonFormData";
 
 type CharbonFormProps = {
     defaultCharbon: Charbon;
@@ -23,19 +19,9 @@ type CharbonFormProps = {
 };
 
 const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
-    const [courses] = useCoursesQuery();
-    const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId); //TODO: useCourseByCharbonId ?
     const [resources, loadingResources] = useResourcesByCharbonIdQuery(
         defaultCharbon.id
     );
-
-    const [actionneurs] = useActionneursQuery();
-    const defaultActionneurs = actionneurs.reduce((acc, actionneur) => {
-        if (defaultCharbon.actionneurIds.includes(actionneur.id)) {
-            acc.push(actionneur.id.toString());
-        }
-        return acc;
-    }, [] as string[]);
 
     const [updateCharbon, loading] = useUpdateCharbonMutation();
 
@@ -54,84 +40,62 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
     };
 
     return (
-        <form action={submit} className="flex flex-col gap-4">
-            <div className="font-medium text-center">Données du charbon</div>
-            <Input
-                name="title"
-                label="Titre"
-                defaultValue={defaultCharbon.title}
-                size="sm"
-                isRequired
-            />
-            <Textarea
-                name="description"
-                label="Description"
-                defaultValue={defaultCharbon.description}
-                size="sm"
-                isRequired
-            />
-            <div className="flex gap-4">
-                <Select
-                    name="courseId"
-                    placeholder="UV"
-                    defaultSelectedKeys={
-                        defaultCourse
-                            ? [defaultCourse.id.toString()]
-                            : undefined
-                    }
-                    size="sm"
+        <form action={submit} className="flex flex-col justify-between h-full">
+            <Accordion
+                defaultExpandedKeys={["1"]}
+                selectionMode="multiple"
+                className="flex-grow"
+            >
+                <AccordionItem key={1} title="Données du charbon">
+                    <div className="mb-4">
+                        <CharbonFormData defaultCharbon={defaultCharbon} />
+                    </div>
+                </AccordionItem>
+                <AccordionItem
+                    key={2}
+                    title="Ressources"
+                    isDisabled={loadingResources || !resources?.length}
                 >
-                    {courses.map((course) => (
-                        <SelectItem key={course.id}>{course.code}</SelectItem>
-                    ))}
-                </Select>
-                <Select
-                    name="actionneurIds"
-                    selectionMode="multiple"
-                    placeholder="Actionneurs"
-                    defaultSelectedKeys={defaultActionneurs}
-                    size="sm"
-                >
-                    {actionneurs.map((actionneur) => (
-                        <SelectItem key={actionneur.id}>
-                            {actionneur.username}
-                        </SelectItem>
-                    ))}
-                </Select>
-            </div>
-            <Divider />
-            <div className="font-medium text-center">Ressources du charbon</div>
-            <ResourceForm />
-            {defaultCharbon.resourcesCount > 0 && (
-                <div>
-                    {!loadingResources && !!resources?.length && (
-                        <CardResources resources={resources} editMode />
-                    )}
-                    {loadingResources && (
-                        <div className="w-full flex justify-center my-4">
-                            <CircularProgress label="Chargement des ressources" />
-                        </div>
-                    )}
-                </div>
-            )}
+                    <div className="flex flex-col gap-4 mb-4">
+                        {defaultCharbon.resourcesCount > 0 && (
+                            <div>
+                                {!loadingResources && !!resources?.length && (
+                                    <CardResources
+                                        resources={resources}
+                                        editMode
+                                    />
+                                )}
+                                {loadingResources && (
+                                    <div className="w-full flex justify-center my-4">
+                                        <CircularProgress label="Chargement des ressources" />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </AccordionItem>
+                <AccordionItem key={3} title="Ajouter des ressources">
+                    <ResourceForm charbonId={defaultCharbon.id} />
+                </AccordionItem>
+            </Accordion>
             <div className="flex justify-evenly gap-4">
                 <Button
                     type="button"
                     disabled={loading}
                     onPress={onClose}
-                    size="sm"
+                    size="md"
                     fullWidth
                 >
                     {loading ? "Loading..." : "Annuler"}
                 </Button>
-                <Button type="reset" disabled={loading} size="sm" fullWidth>
+                <Button type="reset" disabled={loading} size="md" fullWidth>
                     {loading ? "Loading..." : "Réinitialiser"}
                 </Button>
                 <Button
                     type="submit"
                     disabled={loading}
                     fullWidth
-                    size="sm"
+                    size="md"
                     isLoading={loading}
                 >
                     {defaultCharbon.isDraft ? "Publier" : "Editer"}

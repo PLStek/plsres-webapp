@@ -4,10 +4,10 @@ import CharbonForm from "../../sidebar/charbonForm/CharbonForm";
 import { useFullCharbonByIdQuery } from "@app/hooks/useCharbons";
 import {
     CircularProgress,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalHeader,
+    Drawer,
+    DrawerBody,
+    DrawerContent,
+    DrawerHeader,
     useDisclosure,
 } from "@heroui/react";
 import {
@@ -53,7 +53,7 @@ const EditCharbonModal = ({ children }: { children: ReactNode }) => {
             }}
         >
             {children}
-            <Modal
+            <Drawer
                 isOpen={isOpen}
                 onOpenChange={() => {
                     if (isOpen) {
@@ -63,26 +63,24 @@ const EditCharbonModal = ({ children }: { children: ReactNode }) => {
                 }}
                 size="2xl"
             >
-                <ModalContent>
-                    <div>
-                        <ModalHeader>Modifier le charbon</ModalHeader>
-                        <ModalBody className="p-4">
-                            {!isLoading && charbon ? (
-                                <CharbonForm
-                                    defaultCharbon={charbon}
-                                    onClose={() => {
-                                        onClose();
-                                    }}
-                                />
-                            ) : (
-                                <div className="w-full flex justify-center my-16">
-                                    <CircularProgress label="Chargement du charbon" />
-                                </div>
-                            )}
-                        </ModalBody>
-                    </div>
-                </ModalContent>
-            </Modal>
+                <DrawerContent>
+                    <DrawerHeader>Modifier le charbon</DrawerHeader>
+                    <DrawerBody className="p-4 h-full">
+                        {!isLoading && charbon ? (
+                            <CharbonForm
+                                defaultCharbon={charbon}
+                                onClose={() => {
+                                    onClose();
+                                }}
+                            />
+                        ) : (
+                            <div className="w-full flex justify-center my-16">
+                                <CircularProgress label="Chargement du charbon" />
+                            </div>
+                        )}
+                    </DrawerBody>
+                </DrawerContent>
+            </Drawer>
         </EditCharbonModalContext.Provider>
     );
 };
