@@ -7,6 +7,8 @@ export enum ErrorMessages {
     UserNotActionneur = "Vous n'êtes pas un actionneur",
     UserNotAdmin = "Vous n'êtes pas un administrateur",
     InvalidToken = "Token d'authentification invalide", //TODO: mettre un message plus user friendly
+    NoConnectionInitiated = "Aucune connexion n'a été initiée",
+    DiscordConnectionExpired = "La connexion discord a expirée",
 
     InvalidInvitation = "Invitation invalide",
     ExpiredInvitation = "Invitation expirée",

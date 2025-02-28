@@ -58,7 +58,5 @@ export const checkDiscordUserGuildService = async (accessToken: string) => {
 
     const guilds = (await response.json()) as { id: string }[];
 
-    if (!guilds.some((guild) => guild.id === GUILD_ID)) {
-        throw new Error(ErrorMessages.DiscordUserNotInGuild);
-    }
+    return guilds.some((guild) => guild.id === GUILD_ID);
 };

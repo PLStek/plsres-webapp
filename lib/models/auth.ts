@@ -18,6 +18,8 @@ export type AuthData = {
     exp: number;
 };
 
+export type AuthState = { isInGuild: boolean; discordId: string };
+
 export type UserTokenPayload = {
     actionneurId: number | null;
     isAdmin: boolean;

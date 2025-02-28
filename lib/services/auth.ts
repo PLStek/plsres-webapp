@@ -21,15 +21,52 @@ import {
     decodeToken,
 } from "@lib/utils/token";
 import { verifySecret } from "@lib/utils/encryption";
-import { AuthData } from "@lib/models/auth";
+import { AuthData, AuthState } from "@lib/models/auth";
 import { ErrorMessages } from "@lib/utils/errorMessages";
 import { getActionneurByIdService } from "./actionneur";
+import {
+    deletePendingAuth,
+    getPendingAuthByDiscordUserId,
+    postPendingAuth,
+} from "@lib/data/pendingAuth";
 
 //TODO: meilleur typage et vérifications
-export const connectService = async (code: string) => {
+export const connectService = async (code: string): Promise<AuthState> => {
+    //TODO: add type in model
     const accessToken = await getDiscordAccessTokenService(code);
-    await checkDiscordUserGuildService(accessToken);
+    const isInGuild = await checkDiscordUserGuildService(accessToken);
     const { id: discordId } = await getDiscordUserService(accessToken);
+    if (!isInGuild) {
+        const expiresAt = new Date(Date.now() + 3600 * 1000);
+        await postPendingAuth({ discordId, expiresAt, accessToken });
+    } else {
+        // TODO: mettre en commun avec connectFromDiscordIdService
+        const actionneur = await getActionneurByDiscordId(discordId);
+        const token = createUserToken({
+            isAdmin: actionneur?.isAdmin ?? false,
+            discordId,
+            actionneurId: actionneur?.id,
+        });
+        setCookie("user_token", token);
+        revokeDiscordAccessTokenService(token);
+    }
+    return { isInGuild, discordId };
+};
+
+export const connectFromDiscordIdService = async (discordId: string) => {
+    const pendingAuth = await getPendingAuthByDiscordUserId(discordId);
+    if (!pendingAuth) {
+        throw new Error(ErrorMessages.NoConnectionInitiated);
+    }
+    if (pendingAuth.expiresAt < new Date()) {
+        throw new Error(ErrorMessages.DiscordConnectionExpired);
+    }
+    const isInGuild = await checkDiscordUserGuildService(
+        pendingAuth.accessToken
+    );
+    if (!isInGuild) {
+        throw new Error(ErrorMessages.DiscordUserNotInGuild);
+    }
     const actionneur = await getActionneurByDiscordId(discordId);
     const token = createUserToken({
         isAdmin: actionneur?.isAdmin ?? false,
@@ -37,7 +74,8 @@ export const connectService = async (code: string) => {
         actionneurId: actionneur?.id,
     });
     setCookie("user_token", token);
-    await revokeDiscordAccessTokenService(token);
+    deletePendingAuth(discordId);
+    revokeDiscordAccessTokenService(token);
 };
 
 export const connectActionneurService = async (secret: string) => {
@@ -57,7 +95,6 @@ export const connectActionneurService = async (secret: string) => {
     }
     await verifySecret(secret, actionneur.secretHash);
     const actionneurToken = createActionneurToken(actionneurId);
-    console.log("setting actionneur cookie ", secret);
     await setCookie("actionneur_token", actionneurToken);
 };
 

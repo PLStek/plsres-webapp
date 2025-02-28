@@ -5,7 +5,7 @@ import { Button, Form, Input } from "@heroui/react";
 const Step2 = ({ invitationToken }: { invitationToken: string }) => {
     const [createActionneur, loadingCreateActionneur, errorCreateActionneur] =
         useCreateActionneurMutation();
-    const [connectActionneur, ,] = useConnectActionneur();
+    const [connectActionneur] = useConnectActionneur();
     //TODO: implement loading & error
 
     const submit = async (formData: FormData) => {

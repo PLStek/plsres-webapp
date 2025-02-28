@@ -14,7 +14,7 @@ import {
     ModalHeader,
     useDisclosure,
 } from "@heroui/react";
-import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 
 type ActionneurConnectionModalContextType = {
     isOpen: boolean;

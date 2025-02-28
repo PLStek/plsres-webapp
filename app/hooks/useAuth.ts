@@ -6,7 +6,9 @@ import {
     connectActionneurAction,
     disconnectAction,
     createActionneurInviteAction,
+    connectFromDiscordIdAction,
 } from "@lib/actions";
+import { AuthState } from "@lib/models/auth";
 
 export const useIsVerified = () => {
     const { authData } = useAuthContext();
@@ -33,6 +35,7 @@ export const useIsActionneurAuthentified = () => {
 
 export const useConnect = () => {
     const { setAuthData } = useAuthContext();
+    const [data, setData] = useState<AuthState | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +57,9 @@ export const useConnect = () => {
                 window.removeEventListener("message", handleAuthMessage);
                 authWindow?.close();
                 setLoading(true);
-                const { error: connectionError } = await connectAction(code);
+                const { data: connectionData, error: connectionError } =
+                    await connectAction(code);
+                setData(connectionData);
                 if (connectionError) {
                     setError(connectionError);
                     setLoading(false);
@@ -67,8 +72,8 @@ export const useConnect = () => {
                 if (authData) {
                     setAuthData(authData);
                 }
-                setError(authError);
                 callback?.();
+                setError(authError);
                 setLoading(false);
             }
         };
@@ -83,6 +88,33 @@ export const useConnect = () => {
         }, 1000);
 
         //TODO: handle other popup closing cases
+    };
+
+    return [connect, data, loading, error] as const;
+};
+
+export const useConnectFromDiscordId = () => {
+    const { setAuthData } = useAuthContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const connect = async (discordId: string, callback?: () => void) => {
+        setLoading(true);
+        const { error: connectionError } = await connectFromDiscordIdAction(
+            discordId
+        );
+        if (connectionError) {
+            setError(connectionError);
+            setLoading(false);
+            return;
+        }
+        const { data: authData, error: authError } = await authenticateAction();
+        if (authData) {
+            setAuthData(authData);
+        }
+        callback?.();
+        setError(authError);
+        setLoading(false);
     };
 
     return [connect, loading, error] as const;

@@ -23,8 +23,8 @@ model Charbon {
     course      Course              @relation(fields: [courseId], references: [id], onDelete: Restrict)
     attendees   CharbonAttendee[]
 
-    @@index([courseId])
-    @@index([discordEventId])
+    @@index(courseId)
+    @@index(discordEventId)
 }
 
 model CharbonAttendee {
@@ -35,7 +35,8 @@ model CharbonAttendee {
     charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
 
     @@unique([charbonId, discordUserId])
-    @@index([charbonId])
+    @@index(charbonId)
+    @@index(discordUserId)
 }
 
 model Course {
@@ -47,6 +48,8 @@ model Course {
 
     category String
     charbon  Charbon[]
+
+    @@index(discordVoiceChannelId)
 }
 
 model Resource {
@@ -57,7 +60,7 @@ model Resource {
 
     charbon Charbon @relation(fields: [charbonId], references: [id], onDelete: Cascade)
 
-    @@index([charbonId])
+    @@index(charbonId)
 }
 
 model Actionneur {
@@ -69,6 +72,8 @@ model Actionneur {
     secretHash String
 
     charbons CharbonActionneur[]
+
+    @@index(discordId)
 }
 
 model Invitation {
@@ -77,7 +82,7 @@ model Invitation {
     discordId String   @unique
     expiresAt DateTime
 
-    @@index([token])
+    @@index(token)
 }
 
 model CharbonActionneur {
@@ -95,5 +100,14 @@ model RevokedToken {
     token     String   @unique
     expiresAt DateTime
 
-    @@index([expiresAt])
+    @@index(token)
+}
+
+model PendingAuth {
+    id          Int      @id @default(autoincrement())
+    discordId   String   @unique
+    accessToken String   @unique
+    expiresAt   DateTime
+
+    @@index(discordId)
 }

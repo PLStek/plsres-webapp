@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import { useVerificationModal } from "../modals/VerificationModal";
 import { useAdminModal } from "../modals/AdminModal";
 import {
+    useConnect,
     useDisconnect,
     useIsActionneurAuthentified,
     useIsAdmin,
@@ -15,15 +16,23 @@ import { Button, Card } from "@heroui/react";
 import { useActionneurConnectionModal } from "../modals/ActionneurConnectionModal";
 
 const WelcomeBanner = () => {
+    const [connect, authState] = useConnect();
     const [disconnect] = useDisconnect();
     const [isVerified] = useIsVerified();
     const [isAdmin] = useIsAdmin();
     const [isActionneurAuthentified] = useIsActionneurAuthentified();
 
-    const { onOpen: onVerificationModalOpen } = useVerificationModal();
+    const { onOpen: onVerificationModalOpen, setDiscordId } = useVerificationModal();
     const { onOpen: onAdminModalOpen } = useAdminModal();
     const { onOpen: onActionneurConnectionModalOpen } =
         useActionneurConnectionModal();
+
+    useEffect(() => {
+        if (authState && !authState.isInGuild) {
+            setDiscordId(authState.discordId);
+            onVerificationModalOpen();
+        }
+    }, [setDiscordId, authState, onVerificationModalOpen]);
 
     return (
         <Card className="relative p-12 min-h-[500px] bg-[#fbfbfb]" shadow="sm">
@@ -51,7 +60,7 @@ const WelcomeBanner = () => {
             </div>
             <div>
                 {!isVerified && (
-                    <Button onPress={onVerificationModalOpen}>Connexion</Button>
+                    <Button onPress={() => connect()}>Connexion</Button>
                 )}
                 {isVerified && (
                     <Button onPress={() => disconnect()}>Déconnexion</Button>

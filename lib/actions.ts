@@ -11,6 +11,7 @@ import {
 import {
     authenticateService,
     connectActionneurService,
+    connectFromDiscordIdService,
     connectService,
     disconnectService,
     refreshAuthService,
@@ -71,6 +72,10 @@ export const createActionneurInviteAction = withAuth(
 // Auth
 
 export const connectAction = withAuth("guest", connectService);
+export const connectFromDiscordIdAction = withAuth(
+    "guest",
+    connectFromDiscordIdService
+);
 export const connectActionneurAction = withAuth(
     "verified",
     connectActionneurService
