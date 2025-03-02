@@ -13,23 +13,23 @@ import {
     Button,
     Code,
     Input,
-    Modal,
-    ModalBody,
-    ModalContent,
+    Drawer,
+    DrawerBody,
+    DrawerContent,
     useDisclosure,
 } from "@heroui/react";
 import { createContext, ReactNode, useContext, useState } from "react";
 
-type AdminModalContextType = {
+type AdminDrawerContextType = {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
     onOpenChange: () => void;
 };
 
-const AdminModalContext = createContext<AdminModalContextType | null>(null);
+const AdminDrawerContext = createContext<AdminDrawerContextType | null>(null);
 
-const AdminModal = ({ children }: { children: ReactNode }) => {
+const AdminDrawer = ({ children }: { children: ReactNode }) => {
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
     const [createInvite, , errorCreateInvite] =
         useCreateActionneurInviteMutation();
@@ -49,7 +49,7 @@ const AdminModal = ({ children }: { children: ReactNode }) => {
 
     return (
         //TODO: séparer en plusieurs composants -> adminDashboard
-        (<AdminModalContext.Provider
+        (<AdminDrawerContext.Provider
             value={{
                 isOpen,
                 onOpen,
@@ -58,10 +58,10 @@ const AdminModal = ({ children }: { children: ReactNode }) => {
             }}
         >
             {children}
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                <ModalContent>
+            <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+                <DrawerContent>
                     {isAdmin && (
-                        <ModalBody>
+                        <DrawerBody>
                             {actionneurs.map((actionneur) => (
                                 <div key={actionneur.id} className="flex">
                                     <p className="mr-3">
@@ -102,21 +102,21 @@ const AdminModal = ({ children }: { children: ReactNode }) => {
                                 </div>
                             )}
                             {generatedLink && <Code>{generatedLink}</Code>}
-                        </ModalBody>
+                        </DrawerBody>
                     )}
-                </ModalContent>
-            </Modal>
-        </AdminModalContext.Provider>)
+                </DrawerContent>
+            </Drawer>
+        </AdminDrawerContext.Provider>)
     );
 };
 
-export default AdminModal;
+export default AdminDrawer;
 
-export const useAdminModal = () => {
-    const context = useContext(AdminModalContext);
+export const useAdminDrawer = () => {
+    const context = useContext(AdminDrawerContext);
     if (context === null) {
         throw new Error(
-            "useAdminModal must be used within the AdminModal provider"
+            "useAdminDrawer must be used within the AdminDrawer provider"
         );
     }
     return context;

@@ -11,6 +11,7 @@ model Charbon {
     id             Int      @id @default(autoincrement())
     status         String   @default("SCHEDULED")
     isDraft        Boolean  @default(true)
+    isCancelled    Boolean  @default(false)
     title          String
     description    String
     timestamp      DateTime

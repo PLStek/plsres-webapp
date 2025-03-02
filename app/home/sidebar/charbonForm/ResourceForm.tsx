@@ -24,22 +24,24 @@ const ResourceForm = ({ charbonId }: ResourceFormProps) => {
     };
 
     return (
-        <div className="flex flex-col gap-4 p-4 border rounded">
-            <Input
-                label="Nom de la ressource"
-                size="sm"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            <Input
-                label="Fichier de la ressource"
-                type="file"
-                size="sm"
-                onChange={(e) => {
-                    const file = e.target.files && e.target.files[0];
-                    setFile(file || null);
-                }}
-            />
+        <div className="flex flex-col gap-4">
+            <div className="flex gap-4 justify-evenly">
+                <Input
+                    label="Nom de la ressource"
+                    size="sm"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                <Input
+                    label="Fichier de la ressource"
+                    type="file"
+                    size="sm"
+                    onChange={(e) => {
+                        const file = e.target.files && e.target.files[0];
+                        setFile(file || null);
+                    }}
+                />
+            </div>
             <Button type="button" onPress={handleSubmit}>
                 Ajouter
             </Button>

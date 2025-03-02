@@ -14,6 +14,7 @@ export type Charbon = CharbonBase & {
     actionneurIds: number[];
     status: CharbonStatus; //TODO: remove
     isDraft: boolean; //TODO: remove
+    isCancelled: boolean; //TODO: remove
     hasReplay: boolean;
     resourcesCount: number;
 };
@@ -22,6 +23,7 @@ export type FullCharbon = Charbon & {
     replayUrl: string | null;
     status: CharbonStatus;
     isDraft: boolean;
+    isCancelled: boolean;
     discordEventId: string;
 };
 
@@ -39,6 +41,7 @@ export type CharbonUpdateInput = Partial<
         actionneurIds: number[];
         status: CharbonStatus;
         isDraft: boolean;
+        isCancelled: boolean;
         replayUrl: string | null;
         discordEventId: string;
     }

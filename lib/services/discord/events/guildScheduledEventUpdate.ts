@@ -3,6 +3,7 @@ import {
     finishCharbonService,
     getCharbonByDiscordEventIdService,
     startCharbonService,
+    updateCharbonService,
 } from "@lib/services/charbon/charbon";
 import {
     GuildScheduledEvent,
@@ -47,6 +48,17 @@ const onEventEnd = async (event: GuildScheduledEvent) => {
     await finishCharbonService(charbon.id);
 };
 
+const onStartTimestampChange = async (event: GuildScheduledEvent) => {
+    const charbon = await getCharbonByDiscordEventIdService(event.id);
+    const timestamp = event.scheduledStartTimestamp;
+    if (!charbon || !timestamp) {
+        return;
+    }
+    await updateCharbonService(charbon.id, {
+        timestamp: new Date(timestamp),
+    });
+};
+
 export const guildScheduledEventUpdate = async (
     oldEvent: GuildScheduledEvent | PartialGuildScheduledEvent | null,
     newEvent: GuildScheduledEvent
@@ -63,5 +75,9 @@ export const guildScheduledEventUpdate = async (
         newEvent.status == GuildScheduledEventStatus.Completed
     ) {
         onEventEnd(newEvent);
+    } else if (
+        oldEvent?.scheduledStartTimestamp !== newEvent.scheduledStartTimestamp
+    ) {
+        onStartTimestampChange(newEvent);
     }
 };

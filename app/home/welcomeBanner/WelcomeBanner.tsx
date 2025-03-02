@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import { useVerificationModal } from "../modals/VerificationModal";
-import { useAdminModal } from "../modals/AdminModal";
+import { useAdminDrawer } from "../modals/AdminDrawer";
 import {
     useConnect,
     useDisconnect,
@@ -23,7 +23,7 @@ const WelcomeBanner = () => {
     const [isActionneurAuthentified] = useIsActionneurAuthentified();
 
     const { onOpen: onVerificationModalOpen, setDiscordId } = useVerificationModal();
-    const { onOpen: onAdminModalOpen } = useAdminModal();
+    const { onOpen: onAdminDrawerOpen } = useAdminDrawer();
     const { onOpen: onActionneurConnectionModalOpen } =
         useActionneurConnectionModal();
 
@@ -69,7 +69,7 @@ const WelcomeBanner = () => {
                     <Button
                         onPress={() => {
                             if (isActionneurAuthentified) {
-                                onAdminModalOpen();
+                                onAdminDrawerOpen();
                             } else {
                                 onActionneurConnectionModalOpen();
                             }

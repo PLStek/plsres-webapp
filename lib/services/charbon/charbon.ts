@@ -27,13 +27,22 @@ type PrismaCharbon = Prisma.PromiseReturnType<typeof getCharbonById>;
 const buildFullCharbonWithActionneurs = (
     charbon: PrismaCharbon
 ): FullCharbon => ({
-    ...charbon,
+    id: charbon.id,
+    title: charbon.title,
+    description: charbon.description,
+    timestamp: charbon.timestamp,
+    courseId: charbon.courseId,
+    discordEventId: charbon.discordEventId,
+    replayUrl: charbon.replayUrl,
+    isDraft: charbon.isDraft,
+    isCancelled: charbon.isCancelled,
     status: charbon.status as CharbonStatus,
     actionneurIds: charbon.actionneurs.map((ca) => ca.actionneurId),
     hasReplay: !!charbon.replayUrl,
     resourcesCount: charbon._count.resources,
 });
 
+// TODO: be careful with the type here
 const buildCharbonWithActionneurs: (charbon: PrismaCharbon) => Charbon =
     buildFullCharbonWithActionneurs;
 
@@ -76,7 +85,6 @@ export const getCharbonByDiscordEventIdService = async (
     return buildCharbonWithActionneurs(charbon) as Charbon;
 };
 
-//TODO: delete
 export const getOngoingCharbonsService = async (): Promise<Charbon[]> => {
     const charbons = await getOngoingCharbons();
     return charbons.map(buildCharbonWithActionneurs);
@@ -110,25 +118,21 @@ export const updateCharbonService = async (
     { courseId, actionneurIds, ...data }: CharbonUpdateInput
 ): Promise<Charbon> => {
     const course = courseId ? { connect: { id: courseId } } : undefined;
-    const newCharbonPutData = courseId
-        ? {
-              ...data,
-              course,
-              courseId: undefined,
-          }
-        : data;
 
-    if (actionneurIds) {
-        await deleteCharbonActionneurByCharbonIds([id]);
-        const charbonActionneursPostData = actionneurIds.map(
-            (actionneurId) => ({
-                charbonId: id,
-                actionneurId,
-            })
-        );
-        await postCharbonActionneurs(charbonActionneursPostData);
-        //TODO: refactor to avoid deleting and reinserting (look at prisma doc)
-    }
+    const actionneursUpdate = actionneurIds
+        ? {
+              set: actionneurIds.map((actionneurId) => ({
+                  charbonId_actionneurId: { charbonId: id, actionneurId },
+              })),
+          }
+        : undefined;
+
+    const newCharbonPutData: Prisma.CharbonUpdateInput = {
+        ...data,
+        ...(course && { course }),
+        ...(actionneursUpdate && { actionneurs: actionneursUpdate }),
+    };
+
     const updatedCharbon = await putCharbon(id, newCharbonPutData);
 
     return buildCharbonWithActionneurs(updatedCharbon);

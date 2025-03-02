@@ -10,6 +10,7 @@ import {
     DrawerHeader,
     useDisclosure,
 } from "@heroui/react";
+import { usePathname, useRouter } from "next/navigation";
 import {
     createContext,
     memo,
@@ -33,6 +34,8 @@ const EditCharbonModalContext =
 const EditCharbonModal = ({ children }: { children: ReactNode }) => {
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
     const [charbonId, setCharbonId] = useState<number | null>(null);
+    const router = useRouter();
+    const pathname = usePathname();
 
     const [charbon, isLoading] = useFullCharbonByIdQuery(charbonId);
     useEffect(() => {
@@ -41,6 +44,14 @@ const EditCharbonModal = ({ children }: { children: ReactNode }) => {
             setCharbonId(null);
         }
     }, [isLoading, charbon, charbonId, isOpen, onClose]);
+
+    const resetAfterClose = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("charbon")) {
+            router.replace(pathname);
+            setCharbonId(null);
+        }
+    };
 
     return (
         <EditCharbonModalContext.Provider
@@ -57,7 +68,7 @@ const EditCharbonModal = ({ children }: { children: ReactNode }) => {
                 isOpen={isOpen}
                 onOpenChange={() => {
                     if (isOpen) {
-                        setCharbonId(null);
+                        resetAfterClose();
                     }
                     onOpenChange();
                 }}
@@ -71,6 +82,7 @@ const EditCharbonModal = ({ children }: { children: ReactNode }) => {
                                 defaultCharbon={charbon}
                                 onClose={() => {
                                     onClose();
+                                    resetAfterClose();
                                 }}
                             />
                         ) : (

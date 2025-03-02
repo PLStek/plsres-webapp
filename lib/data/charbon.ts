@@ -19,6 +19,7 @@ export const getCharbons = async () => {
         include,
         where: {
             isDraft: false,
+            isCancelled: false,
         },
     });
 };

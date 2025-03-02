@@ -9,9 +9,11 @@ import {
     AccordionItem,
     Button,
     CircularProgress,
+    ScrollShadow,
 } from "@heroui/react";
 import ResourceForm from "./ResourceForm";
 import { CharbonFormData } from "./CharbonFormData";
+import { useRouter, usePathname } from "next/navigation";
 
 type CharbonFormProps = {
     defaultCharbon: Charbon;
@@ -25,6 +27,13 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
 
     const [updateCharbon, loading] = useUpdateCharbonMutation();
 
+    const closeAndReplace = () => {
+        onClose();
+        if (defaultCharbon.isDraft) {
+            router.replace(pathname);
+        }
+    };
+
     const submit = async (formData: FormData) => {
         const charbon: CharbonUpdateInput = {
             title: formData.get("title") as string,
@@ -36,53 +45,56 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
             isDraft: false,
         };
         await updateCharbon(defaultCharbon.id, charbon);
-        onClose();
+        closeAndReplace();
     };
 
     return (
-        <form action={submit} className="flex flex-col justify-between h-full">
-            <Accordion
-                defaultExpandedKeys={["1"]}
-                selectionMode="multiple"
-                className="flex-grow"
-            >
-                <AccordionItem key={1} title="Données du charbon">
-                    <div className="mb-4">
-                        <CharbonFormData defaultCharbon={defaultCharbon} />
-                    </div>
-                </AccordionItem>
-                <AccordionItem
-                    key={2}
-                    title="Ressources"
-                    isDisabled={loadingResources || !resources?.length}
+        <form action={submit} className="flex flex-col justify-between  h-full">
+            <ScrollShadow className="h-full" hideScrollBar>
+                <Accordion
+                    defaultExpandedKeys={["1"]}
+                    selectionMode="multiple"
+                    className="flex-grow"
                 >
-                    <div className="flex flex-col gap-4 mb-4">
-                        {defaultCharbon.resourcesCount > 0 && (
-                            <div>
-                                {!loadingResources && !!resources?.length && (
-                                    <CardResources
-                                        resources={resources}
-                                        editMode
-                                    />
-                                )}
-                                {loadingResources && (
-                                    <div className="w-full flex justify-center my-4">
-                                        <CircularProgress label="Chargement des ressources" />
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </AccordionItem>
-                <AccordionItem key={3} title="Ajouter des ressources">
-                    <ResourceForm charbonId={defaultCharbon.id} />
-                </AccordionItem>
-            </Accordion>
-            <div className="flex justify-evenly gap-4">
+                    <AccordionItem key={1} title="Données du charbon">
+                        <div className="mb-4">
+                            <CharbonFormData defaultCharbon={defaultCharbon} />
+                        </div>
+                    </AccordionItem>
+                    <AccordionItem
+                        key={2}
+                        title="Ressources"
+                        isDisabled={loadingResources || !resources?.length}
+                    >
+                        <div className="flex flex-col gap-4 mb-4">
+                            {defaultCharbon.resourcesCount > 0 && (
+                                <div>
+                                    {!loadingResources &&
+                                        !!resources?.length && (
+                                            <CardResources
+                                                resources={resources}
+                                                editMode
+                                            />
+                                        )}
+                                    {loadingResources && (
+                                        <div className="w-full flex justify-center my-4">
+                                            <CircularProgress label="Chargement des ressources" />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </AccordionItem>
+                    <AccordionItem key={3} title="Ajouter des ressources">
+                        <ResourceForm charbonId={defaultCharbon.id} />
+                    </AccordionItem>
+                </Accordion>
+            </ScrollShadow>
+            <div className="flex justify-evenly gap-4 mt-2">
                 <Button
                     type="button"
                     disabled={loading}
-                    onPress={onClose}
+                    onPress={closeAndReplace}
                     size="md"
                     fullWidth
                 >

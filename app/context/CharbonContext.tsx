@@ -43,12 +43,22 @@ const CharbonProvider = ({
 
     const updateCharbon = (updatedCharbon: Charbon) => {
         const key = updatedCharbon.timestamp.toISOString().slice(0, 7);
-        setCharbons((prev) => ({
-            ...prev,
-            [key]: prev[key].map((charbon) =>
-                charbon.id === updatedCharbon.id ? updatedCharbon : charbon
-            ),
-        }));
+        setCharbons((prev) => {
+            const existingCharbons = prev[key] || [];
+            const charbonExists = existingCharbons.some(
+                (charbon) => charbon.id === updatedCharbon.id
+            );
+            return {
+                ...prev,
+                [key]: charbonExists
+                    ? existingCharbons.map((charbon) =>
+                          charbon.id === updatedCharbon.id
+                              ? updatedCharbon
+                              : charbon
+                      )
+                    : [...existingCharbons, updatedCharbon],
+            };
+        });
     };
 
     const removeCharbon = (id: number) => {
