@@ -1,6 +1,6 @@
 import Icon from "@app/home/components/Icon";
 import { useActionneurConnectionModal } from "@app/home/modals/ActionneurConnectionModal";
-import { useEditCharbonModal } from "@app/home/modals/editCharbonModal/EditCharbonModal";
+import { useEditCharbonDrawer } from "@app/home/modals/editCharbonDrawer/EditCharbonDrawer";
 import { useVerificationModal } from "@app/home/modals/VerificationModal";
 import {
     useIsActionneur,
@@ -47,7 +47,7 @@ const CardContent = ({
 }: CardContentProps) => {
     const { onOpen: onVerificationModalOpen } = useVerificationModal();
     const { onOpen: onEditModalOpen, setCharbonId: setEditModalCharbonId } =
-        useEditCharbonModal();
+        useEditCharbonDrawer();
     const { onOpen: onActionneurConnectionModalOpen } =
         useActionneurConnectionModal();
 

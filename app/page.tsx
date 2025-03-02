@@ -2,10 +2,10 @@ import WelcomeBanner from "./home/welcomeBanner/WelcomeBanner";
 import CharbonMine from "./home/charbonMine/CharbonMine";
 import Sidebar from "./home/sidebar/Sidebar";
 import InvitationModal from "./home/modals/invitationModal/InvitationModal";
-import EditCharbonModalWrapper from "./home/modals/editCharbonModal/EditCharbonModalWrapper";
+import EditCharbonDrawerWrapper from "./home/modals/editCharbonDrawer/EditCharbonDrawerWrapper";
 import Providers from "./Providers";
 import AdminDrawer from "./home/modals/AdminDrawer";
-import EditCharbonModal from "./home/modals/editCharbonModal/EditCharbonModal";
+import EditCharbonDrawer from "./home/modals/editCharbonDrawer/EditCharbonDrawer";
 import VerificationModal from "./home/modals/VerificationModal";
 import ActionneurConnectionModal from "./home/modals/ActionneurConnectionModal";
 
@@ -22,10 +22,10 @@ export default function Home() {
                             </AdminDrawer>
                         </div>
                         <div className="flex flex-row mt-10 space-x-10 items-start">
-                            <EditCharbonModal>
-                                <EditCharbonModalWrapper />
+                            <EditCharbonDrawer>
+                                <EditCharbonDrawerWrapper />
                                 <CharbonMine />
-                            </EditCharbonModal>
+                            </EditCharbonDrawer>
                             <div className="hidden xl:block w-[520px] sticky top-[50px]">
                                 <Sidebar />
                             </div>

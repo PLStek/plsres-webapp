@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useIsActionneur } from "@app/hooks/useAuth";
-import { useEditCharbonModal } from "./EditCharbonModal";
+import { useEditCharbonDrawer } from "./EditCharbonDrawer";
 
-const EditCharbonModalWrapper = () => {
-    const { onOpen, setCharbonId } = useEditCharbonModal();
+const EditCharbonDrawerWrapper = () => {
+    const { onOpen, setCharbonId } = useEditCharbonDrawer();
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -42,4 +42,4 @@ const EditCharbonModalWrapper = () => {
     }
 };
 
-export default EditCharbonModalWrapper;
+export default EditCharbonDrawerWrapper;

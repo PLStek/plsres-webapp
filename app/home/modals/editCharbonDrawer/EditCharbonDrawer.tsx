@@ -20,7 +20,7 @@ import {
     useState,
 } from "react";
 
-type EditCharbonModalContextType = {
+type EditCharbonDrawerContextType = {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
@@ -28,10 +28,10 @@ type EditCharbonModalContextType = {
     setCharbonId: (charbonId: number) => void;
 };
 
-const EditCharbonModalContext =
-    createContext<EditCharbonModalContextType | null>(null);
+const EditCharbonDrawerContext =
+    createContext<EditCharbonDrawerContextType | null>(null);
 
-const EditCharbonModal = ({ children }: { children: ReactNode }) => {
+const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
     const [charbonId, setCharbonId] = useState<number | null>(null);
     const router = useRouter();
@@ -54,7 +54,7 @@ const EditCharbonModal = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <EditCharbonModalContext.Provider
+        <EditCharbonDrawerContext.Provider
             value={{
                 isOpen,
                 onOpen,
@@ -93,17 +93,17 @@ const EditCharbonModal = ({ children }: { children: ReactNode }) => {
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>
-        </EditCharbonModalContext.Provider>
+        </EditCharbonDrawerContext.Provider>
     );
 };
 
-export default memo(EditCharbonModal);
+export default memo(EditCharbonDrawer);
 
-export const useEditCharbonModal = () => {
-    const context = useContext(EditCharbonModalContext);
+export const useEditCharbonDrawer = () => {
+    const context = useContext(EditCharbonDrawerContext);
     if (!context) {
         throw new Error(
-            "useEditCharbonModal must be used within the EditCharbonModal provider"
+            "useEditCharbonDrawer must be used within the EditCharbonDrawer provider"
         );
     }
     return context;
