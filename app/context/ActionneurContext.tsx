@@ -7,6 +7,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 type ActionneurContextType = {
     actionneurs: Actionneur[];
     addActionneur: (newActionneur: Actionneur) => void;
+    updateActionneur: (id: number, updatedActionneur: Actionneur) => void;
     removeActionneur: (id: number) => void;
 };
 
@@ -25,6 +26,12 @@ const ActionneurProvider = ({
 
     const addActionneur = (newActionneur: Actionneur) =>
         setActionneurs([...actionneurs, newActionneur]);
+    const updateActionneur = (id: number, updatedActionneur: Actionneur) =>
+        setActionneurs(
+            actionneurs.map((c) =>
+                c.id === id ? { ...c, ...updatedActionneur } : c
+            )
+        );
     const removeActionneur = (id: number) =>
         setActionneurs(actionneurs.filter((c) => c.id !== id));
 
@@ -33,6 +40,7 @@ const ActionneurProvider = ({
             value={{
                 actionneurs,
                 addActionneur,
+                updateActionneur,
                 removeActionneur,
             }}
         >

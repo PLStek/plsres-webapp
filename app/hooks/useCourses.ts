@@ -1,6 +1,10 @@
-import { createCourseAction, deleteCourseAction } from "@lib/actions";
+import {
+    createCourseAction,
+    deleteCourseAction,
+    updateCourseAction,
+} from "@lib/actions";
 import { useState } from "react";
-import { CourseCreateInput } from "@lib/models/course";
+import { CourseCreateInput, CourseUpdateInput } from "@lib/models/course";
 import { useCourseContext } from "@app/context/CourseContext";
 
 export const useCoursesQuery = () => {
@@ -8,10 +12,10 @@ export const useCoursesQuery = () => {
     return [courses] as const;
 };
 
-export const useCourseByIdQuery = (id: number) => {
+export const useCourseByIdQuery = (id: number | null) => {
     const { courses } = useCourseContext();
     const course = courses.find((c) => c.id === id);
-    return [course] as const;
+    return [course ?? null] as const;
 };
 
 export const useCreateCourseMutation = () => {
@@ -23,6 +27,24 @@ export const useCreateCourseMutation = () => {
         const { data: course, error } = await createCourseAction(newCourse);
         if (course) {
             addCourse(course);
+        }
+        setError(error);
+        setLoading(false);
+    };
+
+    return [mutate, loading, error] as const;
+};
+
+export const useUpdateCourseMutation = () => {
+    const { updateCourse } = useCourseContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const mutate = async (id: number, course: CourseUpdateInput) => {
+        setLoading(true);
+        const { data, error } = await updateCourseAction(id, course);
+        if (data) {
+            updateCourse(data);
         }
         setError(error);
         setLoading(false);

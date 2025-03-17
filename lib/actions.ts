@@ -28,7 +28,11 @@ import {
     getCoursesService,
     updateCourseService,
 } from "./services/course";
-import { generateActionneurInvitationLink } from "./services/invitation";
+import {
+    deleteActionneurInvitesService,
+    generateActionneurInviteLink,
+    getActionneurInvitesService,
+} from "./services/invite";
 import {
     createResourceService,
     deleteResourceService,
@@ -60,13 +64,24 @@ export const deleteActionneurAction = withAuth(
     "admin",
     deleteActionneurService
 );
+
+export const getActionneurInvitesAction = withAuth(
+    "admin",
+    getActionneurInvitesService
+);
+
 export const createActionneurInviteAction = withAuth(
     "admin",
-    generateActionneurInvitationLink
+    generateActionneurInviteLink
+);
+
+export const deleteActionneurInvitesAction = withAuth(
+    "admin",
+    deleteActionneurInvitesService
 );
 /* export const checkActionneurInviteTokenAction = withAuth(
     "guest",
-    generateActionneurInvitationLink
+    generateActionneurInviteLink
 );
  */
 // Auth

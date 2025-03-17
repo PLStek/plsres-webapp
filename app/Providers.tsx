@@ -1,4 +1,4 @@
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import CharbonProvider from "./context/CharbonContext";
 import ActionneurProvider from "./context/ActionneurContext";
 import CourseProvider from "./context/CourseContext";
@@ -11,6 +11,7 @@ import {
     getCoursesAction,
 } from "@lib/actions";
 import { ReactNode } from "react";
+import InviteProvider from "./context/InviteContext";
 
 const Providers = async ({ children }: { children: ReactNode }) => {
     const { data: charbons } = await getCharbonsGroupedByMonthAction();
@@ -24,12 +25,15 @@ const Providers = async ({ children }: { children: ReactNode }) => {
 
     return (
         <HeroUIProvider>
+            <ToastProvider />
             <AuthProvider initialAuthData={authData}>
                 <CharbonProvider initialCharbons={charbons}>
                     <ActionneurProvider initialActionneurs={actionneurs}>
-                        <CourseProvider initialCourses={courses}>
-                            <ResourceProvider>{children}</ResourceProvider>
-                        </CourseProvider>
+                        <InviteProvider>
+                            <CourseProvider initialCourses={courses}>
+                                <ResourceProvider>{children}</ResourceProvider>
+                            </CourseProvider>
+                        </InviteProvider>
                     </ActionneurProvider>
                 </CharbonProvider>
             </AuthProvider>

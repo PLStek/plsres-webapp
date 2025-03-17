@@ -7,12 +7,11 @@ import { createContext, ReactNode, useContext, useState } from "react";
 type CourseContextType = {
     courses: Course[];
     addCourse: (newCourse: Course) => void;
+    updateCourse: (updatedCourse: Course) => void;
     removeCourse: (id: number) => void;
 };
 
-export const CourseContext = createContext<CourseContextType | null>(
-    null
-);
+export const CourseContext = createContext<CourseContextType | null>(null);
 
 const CourseProvider = ({
     initialCourses,
@@ -25,11 +24,17 @@ const CourseProvider = ({
 
     const addCourse = (newCourse: Course) =>
         setCourses([...courses, newCourse]);
+
+    const updateCourse = (updatedCourse: Course) =>
+        setCourses(
+            courses.map((c) => (c.id === updatedCourse.id ? updatedCourse : c))
+        );
+
     const removeCourse = (id: number) =>
         setCourses(courses.filter((c) => c.id !== id));
 
     return (
-        <CourseContext.Provider value={{ courses, addCourse, removeCourse }}>
+        <CourseContext.Provider value={{ courses, addCourse, updateCourse, removeCourse }}>
             {children}
         </CourseContext.Provider>
     );

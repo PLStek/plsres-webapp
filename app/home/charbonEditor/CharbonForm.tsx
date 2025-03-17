@@ -3,11 +3,11 @@ import { useCoursesQuery } from "@app/hooks/useCourses";
 import { Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { Charbon } from "@lib/models/charbon";
 
-type CharbonFormDataProps = {
+type CharbonFormProps = {
     defaultCharbon: Charbon;
 };
 
-export const CharbonFormData = ({ defaultCharbon }: CharbonFormDataProps) => {
+export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
     const [courses] = useCoursesQuery();
     const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId);
 
@@ -38,7 +38,7 @@ export const CharbonFormData = ({ defaultCharbon }: CharbonFormDataProps) => {
             <div className="flex gap-4">
                 <Select
                     name="courseId"
-                    placeholder="UV"
+                    placeholder="Cours"
                     defaultSelectedKeys={
                         defaultCourse
                             ? [defaultCourse.id.toString()]

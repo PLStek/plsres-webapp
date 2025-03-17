@@ -5,7 +5,6 @@ import {
     authenticateAction,
     connectActionneurAction,
     disconnectAction,
-    createActionneurInviteAction,
     connectFromDiscordIdAction,
 } from "@lib/actions";
 import { AuthState } from "@lib/models/auth";
@@ -186,21 +185,4 @@ export const useDisconnect = () => {
     };
 
     return [disconnect, loading, error] as const;
-};
-
-export const useCreateActionneurInviteMutation = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const mutate = async (discordId: string) => {
-        setLoading(true);
-        const { data: link, error } = await createActionneurInviteAction(
-            discordId
-        );
-        setError(error);
-        setLoading(false);
-        return link;
-    };
-
-    return [mutate, loading, error] as const;
 };

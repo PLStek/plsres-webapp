@@ -93,6 +93,7 @@ export const useCreateResourceMutation = () => {
     const mutate = async (newResource: ResourceCreateInput) => {
         const formData = new FormData();
         Object.entries(newResource).forEach(([key, value]) => {
+            //TODO: review (AI generated)
             if (Array.isArray(value)) {
                 value.forEach((item) => formData.append(key, item as any));
             } else {

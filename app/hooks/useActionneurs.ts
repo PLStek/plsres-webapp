@@ -1,6 +1,7 @@
 import { useActionneurContext } from "@app/context/ActionneurContext";
 import {
     createActionneurAction,
+    updateActionneurAction,
     deleteActionneurAction,
     refreshAuthAction,
 } from "@lib/actions";
@@ -56,6 +57,32 @@ export const useCreateActionneurMutation = () => {
         );
         addActionneur(actionneur);
         setError(refreshAuthErorr);
+        setLoading(false);
+    };
+
+    return [mutate, loading, error] as const;
+};
+
+export const useUpdateActionneurMutation = () => {
+    const { updateActionneur } = useActionneurContext();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const mutate = async (
+        id: number,
+        updatedActionneur: Partial<Actionneur>
+    ) => {
+        setLoading(true);
+        const { data: actionneur, error } = await updateActionneurAction(
+            id,
+            updatedActionneur
+        );
+        if (!actionneur) {
+            setError(error);
+            setLoading(false);
+            return;
+        }
+        updateActionneur(id, actionneur);
         setLoading(false);
     };
 

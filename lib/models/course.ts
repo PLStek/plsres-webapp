@@ -10,8 +10,11 @@ type CourseBase = {
 
 export type Course = CourseBase & {
     id: number;
+    isActive: boolean;
 };
 
 export type CourseCreateInput = CourseBase;
 
-export type CourseUpdateInput = Partial<CourseBase>;
+export type CourseUpdateInput = Partial<CourseBase> & {
+    isActive?: boolean;
+};

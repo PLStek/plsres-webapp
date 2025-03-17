@@ -13,7 +13,7 @@ export const CourseFiltersSection = () => {
         <div className="mb-4">
             <div className="flex justify-between items-center">
                 <label className="block text-sm font-medium text-gray-700">
-                    Filtres d{"'"}UV
+                    Filtres de cours
                 </label>
                 <Icon
                     onClick={() => {
@@ -56,7 +56,7 @@ export const CourseFiltersSection = () => {
                             courseId: isNaN(courseId) ? null : courseId,
                         });
                     }} //TODO: make multiple
-                    placeholder="UV"
+                    placeholder="Cours"
                     size="sm"
                 >
                     {courses.map((course) => (

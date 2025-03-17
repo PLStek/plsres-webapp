@@ -20,6 +20,9 @@ export const getCharbons = async () => {
         where: {
             isDraft: false,
             isCancelled: false,
+            course: {
+                isActive: true,
+            },
         },
     });
 };

@@ -52,7 +52,8 @@ export const updateCourseService = async (
     id: number,
     data: CourseUpdateInput
 ) => {
-    return putCourse(id, data);
+    const course = await putCourse(id, data);
+    return buildCourse(course);
 };
 
 export const deleteCourseService = async (id: number) => {

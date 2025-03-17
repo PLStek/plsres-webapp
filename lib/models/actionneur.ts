@@ -10,15 +10,16 @@ export type Actionneur = ActionneurBase & {
 };
 
 export type ActionneurCreateInput = {
-    invitationToken: string;
+    inviteToken: string;
     username: string;
     secret: string;
 };
 
 export type ActionneurUpdateInput = Partial<ActionneurBase>;
 
-export type Invitation = {
-    token: string;
+export type Invite = {
+    id: number;
+    link: string;
     discordId: string;
     expiresAt: Date;
 };

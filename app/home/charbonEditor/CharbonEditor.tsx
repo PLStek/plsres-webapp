@@ -12,27 +12,19 @@ import {
     ScrollShadow,
 } from "@heroui/react";
 import ResourceForm from "./ResourceForm";
-import { CharbonFormData } from "./CharbonFormData";
-import { useRouter, usePathname } from "next/navigation";
+import { CharbonForm } from "./CharbonForm";
 
-type CharbonFormProps = {
+type CharbonEditorProps = {
     defaultCharbon: Charbon;
     onClose: () => void;
 };
 
-const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
+const CharbonEditor = ({ defaultCharbon, onClose }: CharbonEditorProps) => {
     const [resources, loadingResources] = useResourcesByCharbonIdQuery(
         defaultCharbon.id
     );
 
     const [updateCharbon, loading] = useUpdateCharbonMutation();
-
-    const closeAndReplace = () => {
-        onClose();
-        if (defaultCharbon.isDraft) {
-            router.replace(pathname);
-        }
-    };
 
     const submit = async (formData: FormData) => {
         const charbon: CharbonUpdateInput = {
@@ -45,7 +37,7 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
             isDraft: false,
         };
         await updateCharbon(defaultCharbon.id, charbon);
-        closeAndReplace();
+        onClose();
     };
 
     return (
@@ -58,7 +50,7 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                 >
                     <AccordionItem key={1} title="Données du charbon">
                         <div className="mb-4">
-                            <CharbonFormData defaultCharbon={defaultCharbon} />
+                            <CharbonForm defaultCharbon={defaultCharbon} />
                         </div>
                     </AccordionItem>
                     <AccordionItem
@@ -94,7 +86,7 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
                 <Button
                     type="button"
                     disabled={loading}
-                    onPress={closeAndReplace}
+                    onPress={onClose}
                     size="md"
                     fullWidth
                 >
@@ -117,4 +109,4 @@ const CharbonForm = ({ defaultCharbon, onClose }: CharbonFormProps) => {
     );
 };
 
-export default CharbonForm;
+export default CharbonEditor;

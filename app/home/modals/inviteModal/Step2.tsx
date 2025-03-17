@@ -2,7 +2,7 @@ import { useCreateActionneurMutation } from "@app/hooks/useActionneurs";
 import {  useConnectActionneur } from "@app/hooks/useAuth";
 import { Button, Form, Input } from "@heroui/react";
 
-const Step2 = ({ invitationToken }: { invitationToken: string }) => {
+const Step2 = ({ inviteToken }: { inviteToken: string }) => {
     const [createActionneur, loadingCreateActionneur, errorCreateActionneur] =
         useCreateActionneurMutation();
     const [connectActionneur] = useConnectActionneur();
@@ -11,7 +11,7 @@ const Step2 = ({ invitationToken }: { invitationToken: string }) => {
     const submit = async (formData: FormData) => {
         const username = formData.get("username") as string;
         const secret = formData.get("secret") as string;
-        await createActionneur({ username, secret, invitationToken });
+        await createActionneur({ username, secret, inviteToken });
         await connectActionneur(secret);
     };
 

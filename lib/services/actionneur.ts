@@ -11,8 +11,8 @@ import {
     ActionneurCreateInput,
     ActionneurUpdateInput,
 } from "../models/actionneur";
-import { deleteInvitation } from "@lib/data/invitation";
-import { checkActionneurInvitationToken } from "./invitation";
+import { deleteInvite } from "@lib/data/invite";
+import { checkActionneurInviteToken } from "./invite";
 
 export const getActionneursService = async (): Promise<Actionneur[]> => {
     return getActionneurs();
@@ -30,19 +30,20 @@ export const getActionneurByIdService = async (
 }; */
 
 export const createActionneurService = async ({
-    invitationToken,
+    inviteToken,
     username,
     secret,
 }: ActionneurCreateInput) => {
-    const { discordId, id: invitationId } =
-        await checkActionneurInvitationToken(invitationToken);
+    const { discordId, id: inviteId } = await checkActionneurInviteToken(
+        inviteToken
+    );
     const secretHash = await hashSecret(secret);
     const actionneur = await postActionneur({
         username,
         discordId,
         secretHash,
     });
-    deleteInvitation(invitationId);
+    deleteInvite(inviteId);
     return actionneur;
 };
 

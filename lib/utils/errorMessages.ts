@@ -10,8 +10,9 @@ export enum ErrorMessages {
     NoConnectionInitiated = "Aucune connexion n'a été initiée",
     DiscordConnectionExpired = "La connexion discord a expirée",
 
-    InvalidInvitation = "Invitation invalide",
-    ExpiredInvitation = "Invitation expirée",
+    InvalidInvite = "Invitation invalide",
+    ExpiredInvite = "Invitation expirée",
+    DuplicateInvite = "Invitation déjà existante",
 
     InvalidCode = "Code invalide",
 

@@ -20,7 +20,7 @@ import {
     TableRow,
 } from "@heroui/react";
 import Icon from "@app/home/components/Icon";
-import ResourceForm from "@app/home/sidebar/charbonForm/ResourceForm";
+import ResourceForm from "@app/home/charbonEditor/ResourceForm";
 
 type CardResourcesProps = {
     resources: Resource[];
@@ -33,7 +33,6 @@ const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
 
     const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
 
-    const [isAddingResource, setIsAddingResource] = useState(false);
 
     return (
         <Table
@@ -41,6 +40,7 @@ const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
+            onRowAction={() => {}}  
             removeWrapper
         >
             <TableHeader>

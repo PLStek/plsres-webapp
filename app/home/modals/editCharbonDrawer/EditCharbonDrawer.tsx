@@ -1,6 +1,6 @@
 "use client";
 
-import CharbonForm from "../../sidebar/charbonForm/CharbonForm";
+import CharbonEditor from "../../charbonEditor/CharbonEditor";
 import { useFullCharbonByIdQuery } from "@app/hooks/useCharbons";
 import {
     CircularProgress,
@@ -78,7 +78,7 @@ const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
                     <DrawerHeader>Modifier le charbon</DrawerHeader>
                     <DrawerBody className="p-4 h-full">
                         {!isLoading && charbon ? (
-                            <CharbonForm
+                            <CharbonEditor
                                 defaultCharbon={charbon}
                                 onClose={() => {
                                     onClose();
