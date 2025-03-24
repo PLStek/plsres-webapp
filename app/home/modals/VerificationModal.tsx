@@ -19,17 +19,24 @@ import {
 
 type VerificationModalContextType = {
     isOpen: boolean;
-    onOpen: () => void;
+    onOpen: (discordId: string) => void;
     onClose: () => void;
-    onOpenChange: () => void;
-    setDiscordId: (discordId: string) => void;
 };
 
 const VerificationModalContext =
     createContext<VerificationModalContextType | null>(null);
 
 const VerificationModal = ({ children }: { children: ReactNode }) => {
-    const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure({
+        onClose: () => {
+            setDiscordId(null);
+        },
+        onChange: (isOpen) => {
+            if (!isOpen) {
+                setDiscordId(null);
+            }
+        },
+    });
 
     const [discordId, setDiscordId] = useState<string | null>(null);
     const [showValidateButton, setShowValidateButton] = useState(false);
@@ -54,10 +61,11 @@ const VerificationModal = ({ children }: { children: ReactNode }) => {
         <VerificationModalContext.Provider
             value={{
                 isOpen,
-                onOpen,
+                onOpen: (discordId: string) => {
+                    setDiscordId(discordId);
+                    onOpen();
+                },
                 onClose,
-                onOpenChange,
-                setDiscordId,
             }}
         >
             {children}

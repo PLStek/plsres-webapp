@@ -19,21 +19,38 @@ import {
     useEffect,
     useState,
 } from "react";
+import { useActionneurConnectionModal } from "../ActionneurConnectionModal";
+import {
+    useIsActionneur,
+    useIsActionneurAuthentified,
+} from "@app/hooks/useAuth";
 
 type EditCharbonDrawerContextType = {
     isOpen: boolean;
-    onOpen: () => void;
+    onOpen: (charbonId: number) => void;
     onClose: () => void;
-    onOpenChange: () => void;
-    setCharbonId: (charbonId: number) => void;
 };
 
 const EditCharbonDrawerContext =
     createContext<EditCharbonDrawerContextType | null>(null);
 
 const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
-    const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
     const [charbonId, setCharbonId] = useState<number | null>(null);
+    const [isActionneur] = useIsActionneur();
+    const [isActionneurAuthentified] = useIsActionneurAuthentified();
+    const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure({
+        onClose: () => {
+            resetAfterClose();
+        },
+        onChange: (isOpen) => {
+            if (!isOpen) {
+                resetAfterClose();
+            }
+        },
+    });
+    const { onOpen: onActionneurConnectionModalOpen } =
+        useActionneurConnectionModal();
+
     const router = useRouter();
     const pathname = usePathname();
 
@@ -41,7 +58,6 @@ const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (isLoading === false && !charbonId && !charbon && isOpen) {
             onClose(); //TODO: afficher message à la place
-            setCharbonId(null);
         }
     }, [isLoading, charbon, charbonId, isOpen, onClose]);
 
@@ -57,34 +73,27 @@ const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
         <EditCharbonDrawerContext.Provider
             value={{
                 isOpen,
-                onOpen,
+                onOpen: (charbonId: number) => {
+                    if (!isActionneur) {
+                        return;
+                    }
+                    if (isActionneurAuthentified) {
+                        setCharbonId(charbonId);
+                        onOpen();
+                    } else {
+                        onActionneurConnectionModalOpen();
+                    }
+                },
                 onClose,
-                onOpenChange,
-                setCharbonId,
             }}
         >
             {children}
-            <Drawer
-                isOpen={isOpen}
-                onOpenChange={() => {
-                    if (isOpen) {
-                        resetAfterClose();
-                    }
-                    onOpenChange();
-                }}
-                size="2xl"
-            >
+            <Drawer isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
                 <DrawerContent>
                     <DrawerHeader>Modifier le charbon</DrawerHeader>
                     <DrawerBody className="p-4 h-full">
                         {!isLoading && charbon ? (
-                            <CharbonEditor
-                                defaultCharbon={charbon}
-                                onClose={() => {
-                                    onClose();
-                                    resetAfterClose();
-                                }}
-                            />
+                            <CharbonEditor defaultCharbon={charbon} />
                         ) : (
                             <div className="w-full flex justify-center my-16">
                                 <CircularProgress label="Chargement du charbon" />

@@ -13,13 +13,14 @@ import {
 } from "@heroui/react";
 import ResourceForm from "./ResourceForm";
 import { CharbonForm } from "./CharbonForm";
+import { useEditCharbonDrawer } from "../modals/editCharbonDrawer/EditCharbonDrawer";
 
 type CharbonEditorProps = {
     defaultCharbon: Charbon;
-    onClose: () => void;
 };
 
-const CharbonEditor = ({ defaultCharbon, onClose }: CharbonEditorProps) => {
+const CharbonEditor = ({ defaultCharbon }: CharbonEditorProps) => {
+    const { onClose } = useEditCharbonDrawer();
     const [resources, loadingResources] = useResourcesByCharbonIdQuery(
         defaultCharbon.id
     );

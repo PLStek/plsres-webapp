@@ -6,7 +6,7 @@ import { useIsActionneur } from "@app/hooks/useAuth";
 import { useEditCharbonDrawer } from "./EditCharbonDrawer";
 
 const EditCharbonDrawerWrapper = () => {
-    const { onOpen, setCharbonId } = useEditCharbonDrawer();
+    const { onOpen } = useEditCharbonDrawer();
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -25,17 +25,8 @@ const EditCharbonDrawerWrapper = () => {
             return;
         }
 
-        setCharbonId(charbonIdInt);
-        onOpen();
-    }, [
-        charbonId,
-        isActionneur,
-        charbonIdInt,
-        pathname,
-        router,
-        onOpen,
-        setCharbonId,
-    ]);
+        onOpen(charbonIdInt);
+    }, [charbonId, isActionneur, charbonIdInt, pathname, router, onOpen]);
 
     if (!charbonId || !charbonIdInt || isNaN(charbonIdInt)) {
         return null;

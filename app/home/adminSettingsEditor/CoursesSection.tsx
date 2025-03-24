@@ -3,7 +3,6 @@ import {
     useUpdateCourseMutation,
 } from "@app/hooks/useCourses";
 import {
-    Pagination,
     Switch,
     Table,
     TableBody,
@@ -20,7 +19,7 @@ const CoursesSection = () => {
     const [courses] = useCoursesQuery();
     const [updateCourse] = useUpdateCourseMutation();
 
-    const { onOpen, setCourseId } = useEditCourseModal();
+    const { onOpen } = useEditCourseModal();
 
     /* const [page, setPage] = useState(1);
     const rowsPerPage = 10;
@@ -76,15 +75,16 @@ const CoursesSection = () => {
                             <Switch
                                 size="sm"
                                 isSelected={course.isActive}
-                                onValueChange={(isActive) => updateCourse(course.id, { isActive })}
+                                onValueChange={(isActive) =>
+                                    updateCourse(course.id, { isActive })
+                                }
                             ></Switch>
                         </TableCell>
                         <TableCell>
                             <div className="flex gap-2">
                                 <Icon
                                     onClick={() => {
-                                        setCourseId(course.id);
-                                        onOpen();
+                                        onOpen(course.id);
                                     }}
                                 >
                                     <Cog6ToothIcon />

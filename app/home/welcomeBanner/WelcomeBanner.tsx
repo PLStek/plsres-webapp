@@ -8,31 +8,25 @@ import { useAdminDrawer } from "../modals/AdminDrawer";
 import {
     useConnect,
     useDisconnect,
-    useIsActionneurAuthentified,
     useIsAdmin,
     useIsVerified,
 } from "@app/hooks/useAuth";
 import { Button, Card } from "@heroui/react";
-import { useActionneurConnectionModal } from "../modals/ActionneurConnectionModal";
 
 const WelcomeBanner = () => {
     const [connect, authState] = useConnect();
     const [disconnect] = useDisconnect();
     const [isVerified] = useIsVerified();
     const [isAdmin] = useIsAdmin();
-    const [isActionneurAuthentified] = useIsActionneurAuthentified();
 
-    const { onOpen: onVerificationModalOpen, setDiscordId } = useVerificationModal();
+    const { onOpen: onVerificationModalOpen } = useVerificationModal();
     const { onOpen: onAdminDrawerOpen } = useAdminDrawer();
-    const { onOpen: onActionneurConnectionModalOpen } =
-        useActionneurConnectionModal();
 
     useEffect(() => {
         if (authState && !authState.isInGuild) {
-            setDiscordId(authState.discordId);
-            onVerificationModalOpen();
+            onVerificationModalOpen(authState.discordId);
         }
-    }, [setDiscordId, authState, onVerificationModalOpen]);
+    }, [authState, onVerificationModalOpen]);
 
     return (
         <Card className="relative p-12 min-h-[500px] bg-[#fbfbfb]" shadow="sm">
@@ -66,17 +60,7 @@ const WelcomeBanner = () => {
                     <Button onPress={() => disconnect()}>Déconnexion</Button>
                 )}
                 {isAdmin && (
-                    <Button
-                        onPress={() => {
-                            if (isActionneurAuthentified) {
-                                onAdminDrawerOpen();
-                            } else {
-                                onActionneurConnectionModalOpen();
-                            }
-                        }}
-                    >
-                        Espace admin
-                    </Button>
+                    <Button onPress={onAdminDrawerOpen}>Espace admin</Button>
                 )}
             </div>
         </Card>

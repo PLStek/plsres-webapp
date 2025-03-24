@@ -7,17 +7,17 @@ import {
 import { Input, Select, SelectItem, Button } from "@heroui/react";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Course, CourseCategory } from "@lib/models/course";
+import { useEditCourseModal } from "./EditCourseModal";
 
 type EditCourseModalContentProps = {
     defaultCourse: Course;
-    onClose: () => void;
 };
 
 const EditCourseModalContent = ({
     defaultCourse,
-    onClose,
 }: EditCourseModalContentProps) => {
     const isUpdating = !!defaultCourse;
+    const { onClose } = useEditCourseModal();
 
     const [updateCourse] = useUpdateCourseMutation();
     const [createCourse] = useCreateCourseMutation();

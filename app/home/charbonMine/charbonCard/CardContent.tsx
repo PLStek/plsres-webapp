@@ -1,7 +1,5 @@
 import Icon from "@app/home/components/Icon";
-import { useActionneurConnectionModal } from "@app/home/modals/ActionneurConnectionModal";
 import { useEditCharbonDrawer } from "@app/home/modals/editCharbonDrawer/EditCharbonDrawer";
-import { useVerificationModal } from "@app/home/modals/VerificationModal";
 import {
     useIsActionneur,
     useIsActionneurAuthentified,
@@ -45,15 +43,11 @@ const CardContent = ({
     resourcesOpen,
     toggleResources,
 }: CardContentProps) => {
-    const { onOpen: onVerificationModalOpen } = useVerificationModal();
-    const { onOpen: onEditModalOpen, setCharbonId: setEditModalCharbonId } =
-        useEditCharbonDrawer();
-    const { onOpen: onActionneurConnectionModalOpen } =
-        useActionneurConnectionModal();
+    const { onOpen: onEditModalOpen } = useEditCharbonDrawer();
 
     const [isVerified] = useIsVerified();
     const [isActionneur] = useIsActionneur();
-    const [isActionneurAuthentified] = useIsActionneurAuthentified();
+
     return (
         <div>
             <div className={styles.titleContainer}>
@@ -68,9 +62,7 @@ const CardContent = ({
                     >
                         <Icon
                             onClick={() => {
-                                if (!isVerified) {
-                                    onVerificationModalOpen();
-                                } else {
+                                if (isVerified) {
                                     toggleResources();
                                 }
                             }}
@@ -84,12 +76,7 @@ const CardContent = ({
                             <ArchiveBoxIcon />
                         </Icon>
                         <Icon
-                            onClick={() => {
-                                if (!isVerified) {
-                                    onVerificationModalOpen();
-                                } else {
-                                }
-                            }}
+                            onClick={() => {}}
                             disabled={!charbon.resourcesCount}
                         >
                             <PlayCircleIcon />
@@ -97,12 +84,7 @@ const CardContent = ({
                         {isActionneur && (
                             <Icon
                                 onClick={() => {
-                                    if (isActionneurAuthentified) {
-                                        setEditModalCharbonId(charbon.id);
-                                        onEditModalOpen();
-                                    } else {
-                                        onActionneurConnectionModalOpen();
-                                    }
+                                    onEditModalOpen(charbon.id);
                                 }}
                             >
                                 <Cog6ToothIcon />

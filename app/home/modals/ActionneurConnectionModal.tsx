@@ -20,7 +20,6 @@ type ActionneurConnectionModalContextType = {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    onOpenChange: () => void;
 };
 
 const ActionneurConnectionModalContext =
@@ -31,8 +30,7 @@ const ActionneurConnectionModal = ({ children }: { children: ReactNode }) => {
 
     const [isActionneur] = useIsActionneur();
     const [isActionneurAuthentified] = useIsActionneurAuthentified();
-    const [connectActionneur, loadingConnect, errorConnect] =
-        useConnectActionneur();
+    const [connectActionneur, loadingConnect] = useConnectActionneur();
 
     const onCodeChange = (code: string) => {
         if (code.length === 4) {
@@ -47,13 +45,11 @@ const ActionneurConnectionModal = ({ children }: { children: ReactNode }) => {
     }, [isOpen, isActionneur, isActionneurAuthentified, onClose]);
 
     return (
-        //TODO: review html here
         <ActionneurConnectionModalContext.Provider
             value={{
                 isOpen,
                 onOpen,
                 onClose,
-                onOpenChange,
             }}
         >
             {children}

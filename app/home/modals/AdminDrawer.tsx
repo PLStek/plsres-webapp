@@ -9,26 +9,40 @@ import {
 } from "@heroui/react";
 import { createContext, ReactNode, useContext } from "react";
 import AdminSettingsEditor from "../adminSettingsEditor/AdminSettingsEditor";
+import { useActionneurConnectionModal } from "./ActionneurConnectionModal";
+import { useIsActionneurAuthentified, useIsAdmin } from "@app/hooks/useAuth";
 
 type AdminDrawerContextType = {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    onOpenChange: () => void;
 };
 
 const AdminDrawerContext = createContext<AdminDrawerContextType | null>(null);
 
 const AdminDrawer = ({ children }: { children: ReactNode }) => {
+    const { onOpen: onActionneurConnectionModalOpen } =
+        useActionneurConnectionModal();
+    const [isActionneurAuthentified] = useIsActionneurAuthentified();
+    const [isAdmin] = useIsAdmin();
+
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
     return (
         <AdminDrawerContext.Provider
             value={{
                 isOpen,
-                onOpen,
+                onOpen: () => {
+                    if (!isAdmin) {
+                        return;
+                    }
+                    if (!isActionneurAuthentified) {
+                        onActionneurConnectionModalOpen();
+                    } else {
+                        onOpen();
+                    }
+                },
                 onClose,
-                onOpenChange,
             }}
         >
             {children}
