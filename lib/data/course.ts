@@ -2,7 +2,11 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@lib/prisma";
 
 export const getCourses = async () => {
-    return prisma.course.findMany();
+    return prisma.course.findMany({
+        where: {
+            isActive: true,
+        },
+    });
 };
 
 export const getCourseById = async (id: number) => {

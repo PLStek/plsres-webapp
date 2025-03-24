@@ -22,7 +22,7 @@ import { useIsAdmin } from "@app/hooks/useAuth";
 
 type EditCourseModalContextType = {
     isOpen: boolean;
-    onOpen: (courseId: number) => void;
+    onOpen: (courseId?: number) => void;
     onClose: () => void;
 };
 
@@ -47,18 +47,22 @@ const EditCourseModal = ({ children }: { children: ReactNode }) => {
     const [course] = useCourseByIdQuery(courseId);
 
     useEffect(() => {
-        if (!courseId && !course && isOpen) {
+        if (courseId && !course && isOpen) {
             onClose(); //TODO: afficher message à la place
         }
     }, [course, courseId, isOpen, onClose]);
+
+    const isUpdating = !!courseId;
 
     return (
         <EditCourseModalContext.Provider
             value={{
                 isOpen,
-                onOpen: (courseId: number) => {
+                onOpen: (courseId?: number) => {
                     if (isAdmin) {
-                        setCourseId(courseId);
+                        if (courseId) {
+                            setCourseId(courseId);
+                        }
                         onOpen();
                     }
                 },
@@ -68,10 +72,15 @@ const EditCourseModal = ({ children }: { children: ReactNode }) => {
             {children}
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
                 <ModalContent>
-                    <ModalHeader>Modifier le cours</ModalHeader>
+                    <ModalHeader>
+                        {isUpdating ? "Modifier le cours" : "Ajouter un cours"}
+                    </ModalHeader>
                     <ModalBody className="p-4 h-full">
-                        {course ? (
-                            <EditCourseModalContent defaultCourse={course} />
+                        {course || !isUpdating ? (
+                            <EditCourseModalContent
+                                isUpdating={isUpdating}
+                                defaultCourse={course ?? undefined}
+                            />
                         ) : (
                             <div className="w-full flex justify-center my-16">
                                 <CircularProgress label="Chargement de du cours" />

@@ -10,13 +10,14 @@ import { Course, CourseCategory } from "@lib/models/course";
 import { useEditCourseModal } from "./EditCourseModal";
 
 type EditCourseModalContentProps = {
-    defaultCourse: Course;
+    isUpdating?: boolean;
+    defaultCourse?: Course;
 };
 
 const EditCourseModalContent = ({
+    isUpdating = false,
     defaultCourse,
 }: EditCourseModalContentProps) => {
-    const isUpdating = !!defaultCourse;
     const { onClose } = useEditCourseModal();
 
     const [updateCourse] = useUpdateCourseMutation();
@@ -45,8 +46,14 @@ const EditCourseModalContent = ({
         reset();
     }, [reset]);
 
+    useEffect(() => {
+        if (isUpdating && !defaultCourse) {
+            onClose();
+        }
+    }, [isUpdating, defaultCourse, onClose]);
+
     const submit = () => {
-        if (isUpdating) {
+        if (isUpdating && defaultCourse) {
             updateCourse(defaultCourse.id, {
                 code,
                 title,

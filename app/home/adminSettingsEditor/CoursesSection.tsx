@@ -59,7 +59,12 @@ const CoursesSection = () => {
                 <TableColumn>Active</TableColumn>
                 <TableColumn>
                     <div className="flex gap-2">
-                        <Icon onClick={() => {}}>
+                        <Icon
+                            onClick={() => {
+                                onOpen();
+                                console.log("clicked");
+                            }}
+                        >
                             <PlusIcon />
                         </Icon>
                     </div>
