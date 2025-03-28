@@ -28,9 +28,10 @@ const ActionneurConnectionModalContext =
 const ActionneurConnectionModal = ({ children }: { children: ReactNode }) => {
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
-    const [isActionneur] = useIsActionneur();
-    const [isActionneurAuthentified] = useIsActionneurAuthentified();
-    const [connectActionneur, loadingConnect] = useConnectActionneur();
+    const isActionneur = useIsActionneur();
+    const isActionneurAuthentified = useIsActionneurAuthentified();
+    const { connectActionneur, loading: loadingConnect } =
+        useConnectActionneur();
 
     const onCodeChange = (code: string) => {
         if (code.length === 4) {

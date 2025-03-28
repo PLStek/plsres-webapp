@@ -116,24 +116,24 @@ export const updateResourceService = async (
 
 export const deleteResourceService = async (id: number) => {
     const resource = await getResourceByIdService(id);
-    if (!resource) return;
+    if (!resource) return null;
 
-    deleteResourceFileService(id);
-
-    return deleteResource(id);
+    await deleteResourceFileService(id);
+    await deleteResource(id);
+    return resource;
 };
 
 export const deleteResourcesByCharbonIdService = async (id: number) => {
     const resources = await getResourcesByCharbonId(id);
-    if (!resources) return;
+    if (!resources) return null;
 
     const deletePromises = resources.map((resource) =>
         deleteResourceFileService(resource.id)
     );
 
     await Promise.all(deletePromises);
-
-    return deleteResourcesByCharbonId(id);
+    await deleteResourcesByCharbonId(id);
+    return resources;
 };
 
 //TODO: delete multiple resources

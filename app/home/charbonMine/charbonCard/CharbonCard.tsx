@@ -36,8 +36,10 @@ const CharbonCard = ({
     const [showResources, setShowResources] = useState(false);
     const [resourcesOpen, setResourcesOpen] = useState(false);
 
-    const [actionneurs] = useActionneursByIdsQuery(charbon.actionneurIds);
-    const [course] = useCourseByIdQuery(charbon.courseId);
+    const { data: actionneurs } = useActionneursByIdsQuery(
+        charbon.actionneurIds
+    );
+    const { data: course } = useCourseByIdQuery(charbon.courseId);
 
     const borderTopClass = isFirst ? "rounded-t-xl" : "";
     const borderBottomClass = isLast ? "rounded-b-xl" : "border-b-0";
@@ -76,7 +78,7 @@ const CharbonCard = ({
             )}
 
             <CardFooter
-                actionneurs={actionneurs}
+                actionneurs={actionneurs || []}
                 timestamp={charbon.timestamp}
             />
         </div>

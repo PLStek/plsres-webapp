@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
     createActionneurInviteAction,
     getActionneurInvitesAction,
@@ -6,74 +6,59 @@ import {
 } from "@lib/actions";
 import { Invite } from "@lib/models/actionneur";
 import { useInviteContext } from "@app/context/InviteContext";
+import { useMutationState, useQueryState } from "./useQueryState";
 
 export const useActionneurInvitesQuery = () => {
     const { invites, setInvites } = useInviteContext();
-    const [data, setData] = useState<Invite[] | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { state, setResult, makeLoading } = useQueryState<Invite[]>({});
 
     const fetchData = useCallback(async () => {
-        if (!invites.length) {
-            setLoading(true);
-            const { data: fetchedInvites, error } =
-                await getActionneurInvitesAction();
-            if (fetchedInvites) {
-                setInvites(fetchedInvites);
+        if (invites === null) {
+            makeLoading();
+            const result = await getActionneurInvitesAction();
+            if (result.data) {
+                setInvites(result.data);
             }
-            setError(error);
-            setLoading(false);
+            setResult(result);
+        } else {
+            setResult({ data: invites, error: null });
         }
-        setData(invites);
-        return invites;
-    }, [invites, setInvites]);
+    }, [invites, setResult, setInvites, makeLoading]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    return [data, loading, error] as const;
+    return state;
 };
 
 export const useCreateActionneurInviteMutation = () => {
     const { addInvite } = useInviteContext();
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const mutate = async (discordId: string) => {
-        setLoading(true);
-
-        const { data: newInvite, error } = await createActionneurInviteAction(
-            discordId
-        );
-        if (newInvite) {
-            addInvite(newInvite);
+    const mutation = async (discordId: string) => {
+        const result = await createActionneurInviteAction(discordId);
+        if (result.data) {
+            addInvite(result.data);
         }
-        setError(error);
-        setLoading(false);
-        return newInvite;
+        return result;
     };
 
-    return [mutate, loading, error] as const;
+    const result = useMutationState<Invite>({ mutation });
+    return result;
 };
 
 export const useDeleteActionneurInvitesMutation = () => {
     const { removeInvite } = useInviteContext();
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const mutate = async (ids: number[]) => {
-        setLoading(true);
-
-        const { error } = await deleteActionneurInvitesAction(ids);
-        if (!error) {
+    const mutation = async (ids: number[]) => {
+        const result = await deleteActionneurInvitesAction(ids);
+        if (!result.error) {
             ids.forEach(removeInvite); //TODO: implement multiple delete in context (else sync error)
         }
-        setError(error);
-        setLoading(false);
+        return result;
     };
 
-    return [mutate, loading, error] as const;
+    const result = useMutationState<void>({ mutation });
+
+    return result;
 };

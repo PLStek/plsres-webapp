@@ -1,70 +1,50 @@
 import { Resource, ResourceCreateInput } from "@lib/models/resource";
 import { useResourceContext } from "../context/ResourceContext";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
     createResourceAction,
     deleteResourceAction,
     getResourcesByCharbonIdAction,
 } from "@lib/actions";
 import { ErrorMessages } from "@lib/utils/errorMessages";
-
-/* export const useResourceByIdQuery = (id: number) => {
-    const { resources } = useResourceContext();
-    const resource = resources.find((c) => c.id === id);
-    return [resource] as const;
-}; */
+import { useMutationState, useQueryState } from "./useQueryState";
 
 export const useResourcesByCharbonIdQuery = (charbonId: number) => {
     const { resourcesByCharbonId, setResourcesByCharbonId } =
         useResourceContext();
-    const [data, setData] = useState<Resource[] | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { state, setResult } = useQueryState<Resource[]>({});
 
     const fetchData = useCallback(async () => {
         const resource = resourcesByCharbonId[charbonId];
         if (resource) {
-            setData(resource);
-            setLoading(false);
-            setError(null);
+            setResult({ data: resource, error: null });
             return;
         }
 
-        const { data: resources, error } = await getResourcesByCharbonIdAction(
-            charbonId
-        );
-        if (resources) {
-            setResourcesByCharbonId(charbonId, resources);
+        const result = await getResourcesByCharbonIdAction(charbonId);
+        if (result.data) {
+            setResourcesByCharbonId(charbonId, result.data);
         }
-        setData(resources);
-        setError(error);
-
-        setLoading(false);
-    }, [charbonId, resourcesByCharbonId, setResourcesByCharbonId]);
+        setResult(result);
+    }, [charbonId, resourcesByCharbonId, setResourcesByCharbonId, setResult]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    return [data, loading, error] as const;
+    return state;
 };
 
 export const useResourceFileById = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
     const download = async (id: number, filename: string) => {
         try {
-            setLoading(true);
             const response = await fetch("/resource?id=" + id);
             if (!response.ok) {
                 const errorData = await response.json();
                 const message = errorData?.error
                     ? errorData.error
                     : ErrorMessages.UnknownError;
-                setError(message);
-                setLoading(false);
-                return;
+                return { error: message };
             }
 
             const blob = await response.blob();
@@ -76,21 +56,22 @@ export const useResourceFileById = () => {
             a.remove();
             URL.revokeObjectURL(url);
         } catch {
-            setError(ErrorMessages.UnknownError);
-        } finally {
-            setLoading(false);
+            return { error: ErrorMessages.UnknownError };
         }
+        return;
     };
-    return [download, loading, error] as const;
+
+    const { mutate, loading, error } = useMutationState<null>({
+        mutation: download,
+    });
+    return { download: mutate, loading, error };
 };
 
 export const useCreateResourceMutation = () => {
     const { resourcesByCharbonId, setResourcesByCharbonId } =
         useResourceContext();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
-    const mutate = async (newResource: ResourceCreateInput) => {
+    const mutation = async (newResource: ResourceCreateInput) => {
         const formData = new FormData();
         Object.entries(newResource).forEach(([key, value]) => {
             //TODO: review (AI generated)
@@ -101,7 +82,8 @@ export const useCreateResourceMutation = () => {
             }
         });
 
-        const { data: resource, error } = await createResourceAction(formData);
+        const result = await createResourceAction(formData);
+        const resource = result.data;
         if (resource) {
             const charbonId = resource.charbonId;
             setResourcesByCharbonId(charbonId, [
@@ -109,29 +91,31 @@ export const useCreateResourceMutation = () => {
                 resource,
             ]);
         }
-        setError(error);
-        setLoading(false);
+        return result;
     };
 
-    return [mutate, loading, error] as const;
+    const result = useMutationState<Resource>({
+        mutation,
+    });
+    return result;
 };
 
 export const useDeleteResourceMutation = () => {
     const { resourcesByCharbonId, setResourcesByCharbonId } =
         useResourceContext();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
-    const mutate = async (id: number, charbonId: number) => {
-        setLoading(true);
-        const { error } = await deleteResourceAction(id);
+    const mutation = async (id: number, charbonId: number) => {
+        const result = await deleteResourceAction(id);
         setResourcesByCharbonId(
             charbonId,
             resourcesByCharbonId[charbonId].filter((r) => r.id !== id)
         );
-        setError(error);
-        setLoading(false);
+        return result;
     };
 
-    return [mutate, loading, error] as const;
+    const result = useMutationState<Resource>({
+        mutation,
+    });
+
+    return result;
 };

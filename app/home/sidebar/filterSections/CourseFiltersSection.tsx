@@ -6,8 +6,8 @@ import { CourseCategory } from "@lib/models/course";
 import Icon from "@app/home/components/Icon";
 
 export const CourseFiltersSection = () => {
-    const [filters, setFilters] = useCharbonFilters();
-    const [courses] = useCoursesQuery();
+    const { filters, setFilters } = useCharbonFilters();
+    const { data: courses } = useCoursesQuery();
 
     return (
         <div className="mb-4">

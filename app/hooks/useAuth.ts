@@ -1,5 +1,5 @@
 import { useAuthContext } from "@app/context/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     connectAction,
     authenticateAction,
@@ -8,26 +8,27 @@ import {
     connectFromDiscordIdAction,
 } from "@lib/actions";
 import { AuthState } from "@lib/models/auth";
+import { addToast } from "@heroui/react";
 
 export const useIsVerified = () => {
     const { authData } = useAuthContext();
-    return [authData.isVerified] as const;
+    return authData.isVerified;
 };
 
 export const useIsActionneur = () => {
     const { authData } = useAuthContext();
-    return [!!authData.actionneurId] as const;
+    return !!authData.actionneurId;
 };
 
 export const useIsAdmin = () => {
     const { authData } = useAuthContext();
-    return [authData.isAdmin] as const;
+    return authData.isAdmin;
 };
 
 export const useIsActionneurAuthentified = () => {
     //TODO: change ?
     const { authData } = useAuthContext();
-    return [!!authData.isActionneurAuthentified] as const;
+    return !!authData.isActionneurAuthentified;
 };
 
 //TODO: maybe refactor to use a single hook for auth data
@@ -89,7 +90,16 @@ export const useConnect = () => {
         //TODO: handle other popup closing cases
     };
 
-    return [connect, data, loading, error] as const;
+    useEffect(() => {
+        if (error) {
+            addToast({
+                title: error,
+                color: "danger",
+            });
+        }
+    }, [error]);
+
+    return { connect, data, loading, error };
 };
 
 export const useConnectFromDiscordId = () => {
@@ -116,7 +126,7 @@ export const useConnectFromDiscordId = () => {
         setLoading(false);
     };
 
-    return [connect, loading, error] as const;
+    return { connect, loading, error };
 };
 
 export const useAuthenticate = () => {
@@ -134,7 +144,7 @@ export const useAuthenticate = () => {
         setLoading(false);
     };
 
-    return [authenticate, loading, error] as const;
+    return { authenticate, loading, error };
 };
 
 export const useConnectActionneur = () => {
@@ -160,7 +170,7 @@ export const useConnectActionneur = () => {
         setLoading(false);
     };
 
-    return [connectActionneur, loading, error] as const;
+    return { connectActionneur, loading, error };
 };
 
 export const useDisconnect = () => {
@@ -184,5 +194,5 @@ export const useDisconnect = () => {
         setLoading(false);
     };
 
-    return [disconnect, loading, error] as const;
+    return { disconnect, loading, error };
 };

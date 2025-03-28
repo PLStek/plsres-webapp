@@ -36,8 +36,8 @@ const EditCharbonDrawerContext =
 
 const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
     const [charbonId, setCharbonId] = useState<number | null>(null);
-    const [isActionneur] = useIsActionneur();
-    const [isActionneurAuthentified] = useIsActionneurAuthentified();
+    const isActionneur = useIsActionneur();
+    const isActionneurAuthentified = useIsActionneurAuthentified();
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure({
         onClose: () => {
             resetAfterClose();
@@ -54,12 +54,14 @@ const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
 
-    const [charbon, isLoading] = useFullCharbonByIdQuery(charbonId);
+    const { data: charbon, loading: loading } =
+        useFullCharbonByIdQuery(charbonId);
+
     useEffect(() => {
-        if (isLoading === false && !charbonId && !charbon && isOpen) {
+        if (loading === false && !charbonId && !charbon && isOpen) {
             onClose(); //TODO: afficher message à la place
         }
-    }, [isLoading, charbon, charbonId, isOpen, onClose]);
+    }, [loading, charbon, charbonId, isOpen, onClose]);
 
     const resetAfterClose = () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -92,7 +94,7 @@ const EditCharbonDrawer = ({ children }: { children: ReactNode }) => {
                 <DrawerContent>
                     <DrawerHeader>Modifier le charbon</DrawerHeader>
                     <DrawerBody className="p-4 h-full">
-                        {!isLoading && charbon ? (
+                        {!loading && charbon ? (
                             <CharbonEditor defaultCharbon={charbon} />
                         ) : (
                             <div className="w-full flex justify-center my-16">

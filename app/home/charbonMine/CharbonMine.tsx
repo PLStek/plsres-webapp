@@ -25,7 +25,7 @@ const styles = {
 const CharbonList = lazy(() => import("./CharbonList"));
 
 const CharbonMine = () => {
-    const [charbonMonthKeys] = useCharbonMonthKeysQuery();
+    const { data: charbonMonthKeys } = useCharbonMonthKeysQuery();
 
     const getMonthFromKey = (key: string) => {
         const [year, month] = key.split("-");
@@ -39,8 +39,11 @@ const CharbonMine = () => {
         return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     };
 
-    return ( 
-        <Card className="pt-8 pb-100 bg-[#fbfbfb] w-full lg:flex-grow" shadow="sm">
+    return (
+        <Card
+            className="pt-8 pb-100 bg-[#fbfbfb] w-full lg:flex-grow"
+            shadow="sm"
+        >
             <h2 className={styles.title}>La mine de charbon</h2>
             <div className={styles.filterContainer}>
                 <div className={styles.filterWrapper}>

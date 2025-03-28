@@ -19,10 +19,10 @@ import Icon from "../components/Icon";
 import { DocumentDuplicateIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const InvitesSection = () => {
-    const [invites] = useActionneurInvitesQuery();
-    const [createInvite, , errorCreateInvite] =
+    const { data: invites } = useActionneurInvitesQuery();
+    const { mutate: createInvite, error: errorCreateInvite } =
         useCreateActionneurInviteMutation();
-    const [deleteInvites] = useDeleteActionneurInvitesMutation();
+    const { mutate: deleteInvites } = useDeleteActionneurInvitesMutation();
 
     const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
 

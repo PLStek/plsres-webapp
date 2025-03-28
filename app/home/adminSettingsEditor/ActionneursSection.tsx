@@ -13,8 +13,8 @@ import {
 } from "@heroui/react";
 
 const ActionneursSection = () => {
-    const [actionneurs, ,] = useActionneursQuery();
-    const [updateActionneur, ,] = useUpdateActionneurMutation();
+    const { data: actionneurs } = useActionneursQuery();
+    const { mutate: updateActionneur } = useUpdateActionneurMutation();
 
     const updateActionneurActive = (id: number, isActive: boolean) => {
         updateActionneur(id, { isActive });

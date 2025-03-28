@@ -1,7 +1,7 @@
 "use client";
 
 import { Invite } from "@lib/models/actionneur";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
 //TODO: make a map instead
 type InviteContextType = {
@@ -32,16 +32,19 @@ const InviteProvider = ({
     const removeInvite = (id: number) =>
         setInvites(invites.filter((c) => c.id !== id));
 
+    const value = useMemo(
+        () => ({
+            invites,
+            setInvites,
+            addInvite,
+            updateInvite,
+            removeInvite,
+        }),
+        [invites]
+    );
+
     return (
-        <InviteContext.Provider
-            value={{
-                invites,
-                setInvites,
-                addInvite,
-                updateInvite,
-                removeInvite,
-            }}
-        >
+        <InviteContext.Provider value={value}>
             {children}
         </InviteContext.Provider>
     );

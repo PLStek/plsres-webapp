@@ -2,7 +2,7 @@ import { useCharbonFilters } from "@app/hooks/useCharbons";
 import { Checkbox } from "@heroui/react";
 
 export const ResourcesFiltersSection = () => {
-    const [filters, setFilters] = useCharbonFilters();
+    const { filters, setFilters } = useCharbonFilters();
 
     return (
         <div className="mb-4">

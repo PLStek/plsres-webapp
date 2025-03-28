@@ -32,7 +32,7 @@ const EditCourseModalContext = createContext<EditCourseModalContextType | null>(
 
 const EditCourseModal = ({ children }: { children: ReactNode }) => {
     const [courseId, setCourseId] = useState<number | null>(null);
-    const [isAdmin] = useIsAdmin();
+    const isAdmin = useIsAdmin();
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure({
         onClose: () => {
             setCourseId(null);
@@ -44,7 +44,7 @@ const EditCourseModal = ({ children }: { children: ReactNode }) => {
         },
     });
 
-    const [course] = useCourseByIdQuery(courseId);
+    const { data: course } = useCourseByIdQuery(courseId);
 
     useEffect(() => {
         if (courseId && !course && isOpen) {

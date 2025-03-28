@@ -1,11 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
-import {
-    ArrowDownTrayIcon,
-    PlusCircleIcon,
-    TrashIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
     useDeleteResourceMutation,
     useResourceFileById,
@@ -20,7 +16,6 @@ import {
     TableRow,
 } from "@heroui/react";
 import Icon from "@app/home/components/Icon";
-import ResourceForm from "@app/home/charbonEditor/ResourceForm";
 
 type CardResourcesProps = {
     resources: Resource[];
@@ -28,11 +23,10 @@ type CardResourcesProps = {
 };
 
 const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
-    const [download, loading, error] = useResourceFileById();
-    const [deleteResource] = useDeleteResourceMutation();
+    const { download } = useResourceFileById();
+    const { mutate: deleteResource } = useDeleteResourceMutation();
 
     const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
-
 
     return (
         <Table
@@ -40,7 +34,7 @@ const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
-            onRowAction={() => {}}  
+            onRowAction={() => {}}
             removeWrapper
         >
             <TableHeader>

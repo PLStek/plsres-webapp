@@ -1,5 +1,3 @@
-import { ErrorMessages } from "@lib/utils/errorMessages";
-
 const CLIENT_ID = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;

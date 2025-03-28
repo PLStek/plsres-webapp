@@ -1,10 +1,6 @@
 import Icon from "@app/home/components/Icon";
 import { useEditCharbonDrawer } from "@app/home/modals/editCharbonDrawer/EditCharbonDrawer";
-import {
-    useIsActionneur,
-    useIsActionneurAuthentified,
-    useIsVerified,
-} from "@app/hooks/useAuth";
+import { useIsActionneur, useIsVerified } from "@app/hooks/useAuth";
 import {
     ArchiveBoxIcon,
     Cog6ToothIcon,
@@ -45,8 +41,8 @@ const CardContent = ({
 }: CardContentProps) => {
     const { onOpen: onEditModalOpen } = useEditCharbonDrawer();
 
-    const [isVerified] = useIsVerified();
-    const [isActionneur] = useIsActionneur();
+    const isVerified = useIsVerified();
+    const isActionneur = useIsActionneur();
 
     return (
         <div>

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useCharbonContext } from "@app/context/CharbonContext";
-import { CharbonUpdateInput, FullCharbon } from "@lib/models/charbon";
+import { Charbon, CharbonUpdateInput, FullCharbon } from "@lib/models/charbon";
 import {
     deleteCharbonAction,
     getFullCharbonByIdAction,
@@ -8,48 +8,48 @@ import {
 } from "@lib/actions";
 import { useCourseContext } from "@app/context/CourseContext";
 import Fuse from "fuse.js";
+import { useMutationState, useQueryState } from "./useQueryState";
 
 export const useCharbonMonthKeysQuery = () => {
     const { charbons } = useCharbonContext();
-    return [Object.keys(charbons).filter((key) => charbons[key].length > 0)];
+    return {
+        data: Object.keys(charbons).filter((key) => charbons[key].length > 0),
+    };
 };
 
 //TODO: add option to not use cache
 export const useCharbonsByMonthQuery = (monthKey: string) => {
-    const { charbons, charbonFilters } = useCharbonContext();
+    const { charbons, filters } = useCharbonContext();
     const { courses } = useCourseContext();
 
     //TODO: useeffect ?
     const preFilteredCharbons = charbons[monthKey].filter((charbon) => {
-        if (
-            charbonFilters.courseId &&
-            charbon.courseId !== charbonFilters.courseId
-        ) {
+        if (filters.courseId && charbon.courseId !== filters.courseId) {
             return false;
         }
 
-        if (!charbonFilters.courseId && charbonFilters.category) {
+        if (!filters.courseId && filters.category) {
             const course = courses.find(
                 (course) => course.id === charbon.courseId
             );
-            if (!course || course.category !== charbonFilters.category) {
+            if (!course || course.category !== filters.category) {
                 return false;
             }
         }
 
-        if (charbonFilters.hasReplay && !charbon.hasReplay) {
+        if (filters.hasReplay && !charbon.hasReplay) {
             return false;
         }
 
-        if (charbonFilters.hasResources && charbon.resourcesCount === 0) {
+        if (filters.hasResources && charbon.resourcesCount === 0) {
             return false;
         }
 
         return true;
     });
 
-    if (!charbonFilters.search) {
-        return [preFilteredCharbons] as const;
+    if (!filters.search) {
+        return { data: preFilteredCharbons };
     }
 
     //TODO: look at fuse configs
@@ -59,96 +59,64 @@ export const useCharbonsByMonthQuery = (monthKey: string) => {
     });
 
     const filteredCharbons = fuse
-        .search(charbonFilters.search)
+        .search(filters.search)
         .map((result) => result.item);
 
-    return [filteredCharbons] as const;
+    return { data: filteredCharbons };
 };
 
 export const useFullCharbonByIdQuery = (id: number | null) => {
-    const [state, setState] = useState({
-        data: null as FullCharbon | null,
+    const { state, setResult } = useQueryState<FullCharbon>({
         loading: true,
-        error: null as string | null,
-    }); //TODO: appliquer ailleurs aussi pour safety ?
+    });
 
     const fetchData = useCallback(async () => {
-        setState({ data: null, loading: true, error: null });
         if (!id) {
-            setState({ data: null, loading: false, error: null });
+            setResult({ data: null, error: null });
             return;
         }
-        const { data: charbon, error } = await getFullCharbonByIdAction(id); //TODO: attention: réservé aux actionneurs => faire un check
-        setState({ data: charbon ?? null, loading: false, error });
-    }, [id]);
+        const result = await getFullCharbonByIdAction(id); //TODO: attention: réservé aux actionneurs => faire un check
+        setResult(result);
+    }, [id, setResult]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    return [state.data, state.loading, state.error] as const;
+    return state;
 };
-
-/* export const useCreateCharbonMutation = () => {
-    const { addCharbon } = useCharbonContext();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const mutate = async (newCharbon: CharbonCreateInput) => {
-        try {
-            setLoading(true);
-            const charbon = await createCharbonAction(newCharbon);
-            addCharbon(charbon);
-            setError(null);
-        } catch (err) {
-            setError(err as Error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return [mutate, loading, error] as const;
-};
- */
 
 export const useUpdateCharbonMutation = () => {
     const { updateCharbon } = useCharbonContext();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
-    const mutate = async (id: number, newCharbon: CharbonUpdateInput) => {
-        setLoading(true);
-        const { data: charbon, error } = await updateCharbonAction(
-            id,
-            newCharbon
-        );
-        if (charbon) {
-            updateCharbon(charbon); //TODO: est-ce que ça va marcher si la date change ?
+    const mutation = async (id: number, newCharbon: CharbonUpdateInput) => {
+        const result = await updateCharbonAction(id, newCharbon);
+        if (result.data) {
+            updateCharbon(result.data); //TODO: est-ce que ça va marcher si la date change ?
         }
-        setError(error);
-        setLoading(false);
+        return result;
     };
 
-    return [mutate, loading, error] as const;
+    const result = useMutationState<Charbon>({ mutation });
+
+    return result;
 };
 
 export const useDeleteCharbonMutation = () => {
     const { removeCharbon } = useCharbonContext();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const mutate = async (id: number) => {
-        setLoading(true);
-        const { error } = await deleteCharbonAction(id);
+        const result = await deleteCharbonAction(id);
         removeCharbon(id); //TODO: voir si on update quand même si erreur
-        setError(error);
-        setLoading(false);
+        return result;
     };
 
-    return [mutate, loading, error] as const;
+    const result = useMutationState<Charbon>({ mutation: mutate });
+
+    return result;
 };
 
 export const useCharbonFilters = () => {
-    const { charbonFilters, setCharbonFilters } = useCharbonContext();
-    return [charbonFilters, setCharbonFilters] as const;
+    const { filters, setFilters } = useCharbonContext();
+    return { filters, setFilters };
 };

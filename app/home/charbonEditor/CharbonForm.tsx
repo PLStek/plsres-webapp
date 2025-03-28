@@ -8,10 +8,10 @@ type CharbonFormProps = {
 };
 
 export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
-    const [courses] = useCoursesQuery();
+    const { data: courses } = useCoursesQuery();
     const defaultCourse = courses.find((c) => c.id === defaultCharbon.courseId);
 
-    const [actionneurs] = useActionneursQuery();
+    const { data: actionneurs } = useActionneursQuery();
     const defaultActionneurs = actionneurs.reduce((acc, actionneur) => {
         if (defaultCharbon.actionneurIds.includes(actionneur.id)) {
             acc.push(actionneur.id.toString());

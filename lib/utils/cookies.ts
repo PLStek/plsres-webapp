@@ -1,3 +1,5 @@
+"use server";
+
 import { CookieType } from "@lib/models/auth";
 import { cookies } from "next/headers";
 

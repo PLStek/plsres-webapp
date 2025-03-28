@@ -20,8 +20,8 @@ const EditCourseModalContent = ({
 }: EditCourseModalContentProps) => {
     const { onClose } = useEditCourseModal();
 
-    const [updateCourse] = useUpdateCourseMutation();
-    const [createCourse] = useCreateCourseMutation();
+    const { mutate: updateCourse } = useUpdateCourseMutation();
+    const { mutate: createCourse } = useCreateCourseMutation();
 
     const [code, setCode] = useState("");
     const [title, setTitle] = useState("");

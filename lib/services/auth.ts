@@ -47,7 +47,7 @@ export const connectService = async (code: string): Promise<AuthState> => {
             discordId,
             actionneurId: actionneur?.id,
         });
-        setCookie("user_token", token);
+        await setCookie("user_token", token);
         revokeDiscordAccessTokenService(token);
     }
     return { isInGuild, discordId };
@@ -73,7 +73,7 @@ export const connectFromDiscordIdService = async (discordId: string) => {
         discordId,
         actionneurId: actionneur?.id,
     });
-    setCookie("user_token", token);
+    await setCookie("user_token", token);
     deletePendingAuth(discordId);
     revokeDiscordAccessTokenService(token);
 };
@@ -163,7 +163,7 @@ export const refreshAuthService = async (
                 ? undefined
                 : newActionneurId ?? actionneurId ?? undefined,
     });
-    setCookie("user_token", newToken);
+    await setCookie("user_token", newToken);
     revokeTokenService(token);
 
     const payload = decodeToken(newToken);

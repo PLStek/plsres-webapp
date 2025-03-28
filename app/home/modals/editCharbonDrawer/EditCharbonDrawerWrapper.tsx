@@ -2,15 +2,15 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useIsActionneur } from "@app/hooks/useAuth";
 import { useEditCharbonDrawer } from "./EditCharbonDrawer";
+import { useIsActionneur } from "@app/hooks/useAuth";
 
 const EditCharbonDrawerWrapper = () => {
     const { onOpen } = useEditCharbonDrawer();
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
-    const [isActionneur] = useIsActionneur();
+    const isActionneur = useIsActionneur();
 
     const charbonId = searchParams.get("charbon");
     const charbonIdInt = charbonId ? parseInt(charbonId) : null;

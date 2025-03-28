@@ -23,8 +23,8 @@ const AdminDrawerContext = createContext<AdminDrawerContextType | null>(null);
 const AdminDrawer = ({ children }: { children: ReactNode }) => {
     const { onOpen: onActionneurConnectionModalOpen } =
         useActionneurConnectionModal();
-    const [isActionneurAuthentified] = useIsActionneurAuthentified();
-    const [isAdmin] = useIsAdmin();
+    const isActionneurAuthentified = useIsActionneurAuthentified();
+    const isAdmin = useIsAdmin();
 
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 

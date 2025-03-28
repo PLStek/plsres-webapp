@@ -10,7 +10,7 @@ const styles = {
 const CharbonCard = lazy(() => import("./charbonCard/CharbonCard"));
 
 const CharbonList = ({ monthKey }: { monthKey: string }) => {
-    const [charbons] = useCharbonsByMonthQuery(monthKey);
+    const { data: charbons } = useCharbonsByMonthQuery(monthKey);
 
     const lastIndex = charbons.length - 1;
 

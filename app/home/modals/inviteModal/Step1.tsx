@@ -2,7 +2,7 @@ import { useConnect } from "@app/hooks/useAuth";
 import { Button } from "@heroui/react";
 
 const Step1 = () => {
-    const [connect] = useConnect();
+    const { connect } = useConnect();
 
     return (
         <div>

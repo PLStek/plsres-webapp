@@ -1,15 +1,15 @@
 "use client";
 
 import { Charbon, CharbonFilters } from "@lib/models/charbon";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState } from "react";
 
 type CharbonContextType = {
     charbons: Record<string, Charbon[]>;
-    charbonFilters: CharbonFilters;
+    filters: CharbonFilters;
     addCharbon: (newCharbon: Charbon) => void;
     updateCharbon: (updatedCharbon: Charbon) => void;
     removeCharbon: (id: number) => void;
-    setCharbonFilters: (filters: CharbonFilters) => void;
+    setFilters: Dispatch<SetStateAction <CharbonFilters>>;
 };
 
 export const CharbonContext = createContext<CharbonContextType | null>(null);
@@ -22,7 +22,7 @@ const CharbonProvider = ({
     children: ReactNode;
 }) => {
     const [charbons, setCharbons] = useState(initialCharbons || {});
-    const [charbonFilters, setCharbonFilters] = useState<CharbonFilters>({
+    const [filters, setFilters] = useState<CharbonFilters>({
         search: "",
         category: null,
         courseId: null,
@@ -76,17 +76,20 @@ const CharbonProvider = ({
         });
     };
 
+    const value = useMemo(
+        () => ({
+            charbons,
+            filters,
+            addCharbon,
+            updateCharbon,
+            removeCharbon,
+            setFilters,
+        }),
+        [charbons, filters]
+    );
+
     return (
-        <CharbonContext.Provider
-            value={{
-                charbons,
-                charbonFilters,
-                addCharbon,
-                updateCharbon,
-                removeCharbon,
-                setCharbonFilters,
-            }}
-        >
+        <CharbonContext.Provider value={value}>
             {children}
         </CharbonContext.Provider>
     );

@@ -1,4 +1,4 @@
-import { UserIcon, ClockIcon, CalendarDateRangeIcon, CalendarIcon } from "@heroicons/react/24/outline";
+import { UserIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import { Actionneur } from "@lib/models/actionneur";
 
 type CardFooterProps = {
@@ -10,7 +10,7 @@ const styles = {
     footer: "relative mt-4 flex items-center justify-between text-gray-400",
     iconTextContainer: "flex items-center",
     icon: "h-5 w-5 mr-1",
-};  
+};
 
 const CardFooter = ({ actionneurs, timestamp }: CardFooterProps) => {
     return (

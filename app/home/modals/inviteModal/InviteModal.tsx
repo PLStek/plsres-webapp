@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsVerified, useIsActionneur } from "@app/hooks/useAuth";
+import { useIsActionneur, useIsVerified } from "@app/hooks/useAuth";
 import { useEffect, useState } from "react";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
@@ -13,8 +13,8 @@ const InviteModal = () => {
     const pathname = usePathname();
     const inviteToken = searchParams.get("invite");
 
-    const [isVerified] = useIsVerified();
-    const [isActionneur] = useIsActionneur();
+    const isVerified = useIsVerified();
+    const isActionneur = useIsActionneur();
     const [isOpen, setIsOpen] = useState<boolean>(!!inviteToken);
     const [step, setStep] = useState<1 | 2 | 3>(isVerified ? 2 : 1);
 
@@ -29,7 +29,7 @@ const InviteModal = () => {
 
     return (
         //TODO: review html here
-        (<Modal
+        <Modal
             isOpen={isOpen}
             onClose={() => {
                 setIsOpen(false);
@@ -44,7 +44,7 @@ const InviteModal = () => {
                     {step === 3 && <div>Step 3</div>}
                 </ModalBody>
             </ModalContent>
-        </Modal>)
+        </Modal>
     );
 };
 

@@ -8,16 +8,16 @@ import { Input } from "@heroui/react";
 import { useEffect, useState } from "react";
 
 export const SearchFiltersSection = () => {
-    const [filters, setFilters] = useCharbonFilters();
+    const { setFilters } = useCharbonFilters();
 
     const [search, setSearch] = useState<string>("");
 
     useEffect(() => {
         //TODO: Attendre 1 seconde sans saisie pour mettre à jour les filtres
-        setFilters({
-            ...filters,
+        setFilters((prev) => ({
+            ...prev,
             search,
-        });
+        }));
     }, [search, setFilters]);
 
     return (

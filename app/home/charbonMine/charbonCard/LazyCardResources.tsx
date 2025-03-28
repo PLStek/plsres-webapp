@@ -13,7 +13,7 @@ const LazyCardResources = ({
     charbonId: number;
     isOpen: boolean;
 }) => {
-    const [resources, loading] = useResourcesByCharbonIdQuery(charbonId);
+    const {data: resources, loading} = useResourcesByCharbonIdQuery(charbonId);
 
     const [maxHeight, setMaxHeight] = useState("0px");
     const [opacity, setOpacity] = useState("opacity-0");

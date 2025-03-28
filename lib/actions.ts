@@ -132,7 +132,7 @@ export const getResourcesByCharbonIdAction = withAuth(
 
 export const createResourceAction = withAuth(
     "actionneur",
-    (formData: FormData) => {
+    async (formData: FormData) => {
         const charbonId = Number(formData.get("charbonId"));
         const file = formData.get("file") as File;
         const title = formData.get("title") as string;

@@ -9,7 +9,7 @@ type ResourceFormProps = {
 };
 
 const ResourceForm = ({ charbonId }: ResourceFormProps) => {
-    const [createResource, loading, error] = useCreateResourceMutation();
+    const { mutate: createResource } = useCreateResourceMutation();
 
     const [title, setTitle] = useState("");
     const [file, setFile] = useState<File | null>(null);

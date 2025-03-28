@@ -21,11 +21,10 @@ type CharbonEditorProps = {
 
 const CharbonEditor = ({ defaultCharbon }: CharbonEditorProps) => {
     const { onClose } = useEditCharbonDrawer();
-    const [resources, loadingResources] = useResourcesByCharbonIdQuery(
-        defaultCharbon.id
-    );
+    const { data: resources, loading: loadingResources } =
+        useResourcesByCharbonIdQuery(defaultCharbon.id);
 
-    const [updateCharbon, loading] = useUpdateCharbonMutation();
+    const { mutate: updateCharbon, loading } = useUpdateCharbonMutation();
 
     const submit = async (formData: FormData) => {
         const charbon: CharbonUpdateInput = {

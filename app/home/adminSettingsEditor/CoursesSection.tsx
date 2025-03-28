@@ -16,8 +16,8 @@ import { Cog6ToothIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useEditCourseModal } from "../modals/editCourseModal/EditCourseModal";
 
 const CoursesSection = () => {
-    const [courses] = useCoursesQuery();
-    const [updateCourse] = useUpdateCourseMutation();
+    const { data: courses } = useCoursesQuery();
+    const { mutate: updateCourse } = useUpdateCourseMutation();
 
     const { onOpen } = useEditCourseModal();
 

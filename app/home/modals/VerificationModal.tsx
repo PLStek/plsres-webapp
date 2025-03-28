@@ -41,7 +41,7 @@ const VerificationModal = ({ children }: { children: ReactNode }) => {
     const [discordId, setDiscordId] = useState<string | null>(null);
     const [showValidateButton, setShowValidateButton] = useState(false);
 
-    const [connect] = useConnectFromDiscordId();
+    const { connect } = useConnectFromDiscordId();
 
     useEffect(() => {
         if (!discordId && isOpen) {
