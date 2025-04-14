@@ -1,11 +1,11 @@
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
-export const sendLogMessage = (operation: string, userId: string) => {
+export const sendLogMessage = async (operation: string, userId: string) => {
+    console.log(operation);
     const message = {
-        content: `<@${userId}> a effectué une opération.`,
         embeds: [
             {
-                title: "Log d'opération",
+                title: "Opération effectuée",
                 color: 5814783, // Vous pouvez changer la couleur
                 fields: [
                     {
@@ -28,7 +28,7 @@ export const sendLogMessage = (operation: string, userId: string) => {
         ],
     };
 
-    fetch(WEBHOOK_URL, {
+    await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

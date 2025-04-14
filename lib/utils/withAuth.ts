@@ -30,7 +30,7 @@ export function withAuth<Fn extends (...args: any[]) => Promise<any>>(
                     const { discordId } = await checkActionneurService(
                         accessLevel === "admin"
                     );
-                    await sendLogMessage(fn.title, discordId);
+                    await sendLogMessage(fn.name, discordId);
                 }
             }
             const data = await fn(...args);

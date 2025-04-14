@@ -3,6 +3,11 @@
  */
 const nextConfig = {
     reactStrictMode: false,
+    experimental: {
+        serverActions: {
+            bodySizeLimit: "8mb",
+        },
+    },
     webpack: (config, { isServer }) => {
         if (isServer) {
             const externals = ["discord.js"];

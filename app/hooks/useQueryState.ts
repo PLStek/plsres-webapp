@@ -49,36 +49,36 @@ export const useQueryState = <T>({
     };
 };
 
-type MutationProps<T> = {
-    mutation: (...args: any[]) => Promise<Partial<Result<T>> | void>;
-};
-
-type MutationState = {
+type MutationProps<T, Args extends unknown[]> = {
+    mutation: (...args: Args) => Promise<Partial<Result<T>> | void>;
+  };
+  
+  type MutationState = {
     loading: boolean;
     error: string | null;
-};
-
-export const useMutationState = <T>({ mutation }: MutationProps<T>) => {
-    const [state, setState] = useState<MutationState>({
-        loading: false,
-        error: null,
-    });
-
-    const mutate = async (...args: any[]): Promise<T | null> => {
-        setState({ loading: true, error: null });
-
-        const result = await mutation(...args);
-        const error = result?.error ?? null;
-        setState({ loading: false, error });
-        if (error) {
-            addToast({
-                title: error,
-                color: "danger",
-            });
-        }
-
-        return result?.data ?? null;
+  };
+  
+  export const useMutationState = <T, Args extends unknown[]>({
+    mutation,
+  }: MutationProps<T, Args>) => {
+    const [state, setState] = useState<MutationState>({ loading: false, error: null });
+  
+    // Ici, args sera de type Args, déduit depuis la fonction mutation passée en paramètre
+    const mutate = async (...args: Args): Promise<T | null> => {
+      setState({ loading: true, error: null });
+  
+      const result = await mutation(...args);
+      const error = result?.error ?? null;
+      setState({ loading: false, error });
+      if (error) {
+        addToast({
+          title: error,
+          color: "danger",
+        });
+      }
+  
+      return result?.data ?? null;
     };
-
+  
     return { mutate, ...state };
-};
+  };

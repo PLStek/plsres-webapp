@@ -1,48 +1,96 @@
 "use client";
 
-import { Charbon, CharbonUpdateInput } from "@lib/models/charbon";
-import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
+import { Charbon } from "@lib/models/charbon";
 import CardResources from "@app/home/charbonMine/charbonCard/CardResources";
 import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
 import {
     Accordion,
     AccordionItem,
+    Alert,
     Button,
     CircularProgress,
     ScrollShadow,
 } from "@heroui/react";
 import ResourceForm from "./ResourceForm";
 import { CharbonForm } from "./CharbonForm";
-import { useEditCharbonDrawer } from "../modals/editCharbonDrawer/EditCharbonDrawer";
+import { memo } from "react";
+import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
+import { formatDate } from "@app/helpers/formatDate";
 
 type CharbonEditorProps = {
     defaultCharbon: Charbon;
 };
 
 const CharbonEditor = ({ defaultCharbon }: CharbonEditorProps) => {
-    const { onClose } = useEditCharbonDrawer();
     const { data: resources, loading: loadingResources } =
         useResourcesByCharbonIdQuery(defaultCharbon.id);
 
-    const { mutate: updateCharbon, loading } = useUpdateCharbonMutation();
+    const { mutate: updateCharbon } = useUpdateCharbonMutation();
 
-    const submit = async (formData: FormData) => {
-        const charbon: CharbonUpdateInput = {
-            title: formData.get("title") as string,
-            description: formData.get("description") as string,
-            courseId: Number(formData.get("courseId")),
-            actionneurIds: Array.from(formData.getAll("actionneurIds")).map(
-                Number
-            ),
+    const publishCharbon = () => {
+        updateCharbon(defaultCharbon.id, {
             isDraft: false,
-        };
-        await updateCharbon(defaultCharbon.id, charbon);
-        onClose();
+        });
     };
 
     return (
-        <form action={submit} className="flex flex-col justify-between  h-full">
+        <div className="flex flex-col justify-between h-full">
             <ScrollShadow className="h-full" hideScrollBar>
+                {defaultCharbon.status === "SCHEDULED" && (
+                    <Alert
+                        color="default"
+                        description={`Charbon planifié pour le ${formatDate(
+                            defaultCharbon.timestamp
+                        )}`}
+                        variant="faded"
+                    />
+                )}
+                {defaultCharbon.status === "ONGOING" && (
+                    <Alert
+                        color="success"
+                        description={`Charbon en cours !`}
+                        variant="faded"
+                    />
+                )}
+                {defaultCharbon.status === "FINISHED" && (
+                    <Alert
+                        color="default"
+                        description={`Ce charbon a eu lieu le ${formatDate(
+                            defaultCharbon.timestamp,
+                            false
+                        )}`}
+                        variant="faded"
+                    />
+                )}
+                {defaultCharbon.isDraft && (
+                    <Alert
+                        classNames={{
+                            description: "text-yellow-600",
+                            alertIcon: "text-yellow-600",
+                            base: "border-default-600",
+                        }}
+                        color="warning"
+                        description="Ce charbon est toujours en mode brouillon"
+                        variant="faded"
+                        endContent={
+                            <Button
+                                variant="ghost"
+                                className="text-yellow-600   border-2"
+                                color="warning"
+                                onPress={publishCharbon}
+                            >
+                                Publier
+                            </Button>
+                        }
+                    />
+                )}
+                {defaultCharbon.isCancelled && (
+                    <Alert
+                        color="danger"
+                        description="Charbon annulé"
+                        variant="faded"
+                    />
+                )}
                 <Accordion
                     defaultExpandedKeys={["1"]}
                     selectionMode="multiple"
@@ -65,7 +113,9 @@ const CharbonEditor = ({ defaultCharbon }: CharbonEditorProps) => {
                                         !!resources?.length && (
                                             <CardResources
                                                 resources={resources}
-                                                editMode
+                                                editMode={
+                                                    !defaultCharbon.isCancelled
+                                                }
                                             />
                                         )}
                                     {loadingResources && (
@@ -77,36 +127,17 @@ const CharbonEditor = ({ defaultCharbon }: CharbonEditorProps) => {
                             )}
                         </div>
                     </AccordionItem>
-                    <AccordionItem key={3} title="Ajouter des ressources">
+                    <AccordionItem
+                        key={3}
+                        title="Ajouter des ressources"
+                        isDisabled={defaultCharbon.isCancelled}
+                    >
                         <ResourceForm charbonId={defaultCharbon.id} />
                     </AccordionItem>
                 </Accordion>
             </ScrollShadow>
-            <div className="flex justify-evenly gap-4 mt-2">
-                <Button
-                    type="button"
-                    disabled={loading}
-                    onPress={onClose}
-                    size="md"
-                    fullWidth
-                >
-                    {loading ? "Loading..." : "Annuler"}
-                </Button>
-                <Button type="reset" disabled={loading} size="md" fullWidth>
-                    {loading ? "Loading..." : "Réinitialiser"}
-                </Button>
-                <Button
-                    type="submit"
-                    disabled={loading}
-                    fullWidth
-                    size="md"
-                    isLoading={loading}
-                >
-                    {defaultCharbon.isDraft ? "Publier" : "Editer"}
-                </Button>
-            </div>
-        </form>
+        </div>
     );
 };
 
-export default CharbonEditor;
+export default memo(CharbonEditor);

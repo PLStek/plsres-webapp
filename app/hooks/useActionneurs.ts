@@ -1,4 +1,3 @@
-import { useActionneurContext } from "@app/context/ActionneurContext";
 import {
     createActionneurAction,
     updateActionneurAction,
@@ -9,15 +8,21 @@ import { ActionneurCreateInput } from "@lib/models/actionneur";
 import { useEffect } from "react";
 import { Actionneur } from "@lib/models/actionneur";
 import { useMutationState, useQueryState } from "./useQueryState";
+import { useAtom, useAtomValue } from "jotai";
+import {
+    actionneursAtom,
+    addActionneurAtom,
+    updateActionneurAtom,
+} from "@app/atoms/actionneurAtoms";
 
 export const useActionneursQuery = () => {
-    const { actionneurs } = useActionneurContext();
+    const actionneurs = useAtomValue(actionneursAtom);
     //TODO: add option to not use cache
     return { data: actionneurs };
 };
 
 export const useActionneursByIdsQuery = (ids: number[]) => {
-    const { actionneurs } = useActionneurContext();
+    const actionneurs = useAtomValue(actionneursAtom);
     const { state, setResult } = useQueryState<Actionneur[]>({
         loading: true,
     });
@@ -35,7 +40,7 @@ export const useActionneursByIdsQuery = (ids: number[]) => {
 };
 
 export const useCreateActionneurMutation = () => {
-    const { addActionneur } = useActionneurContext();
+    const [, addActionneur] = useAtom(addActionneurAtom);
 
     const mutate = async (newActionneur: ActionneurCreateInput) => {
         const { data: actionneur, error } = await createActionneurAction(
@@ -49,13 +54,13 @@ export const useCreateActionneurMutation = () => {
         return { data: actionneur, error: refreshError };
     };
 
-    const result = useMutationState<Actionneur>({ mutation: mutate });
+    const result = useMutationState({ mutation: mutate });
 
     return result;
 };
 
 export const useUpdateActionneurMutation = () => {
-    const { updateActionneur } = useActionneurContext();
+    const [, updateActionneur] = useAtom(updateActionneurAtom);
 
     const mutation = async (
         id: number,
@@ -63,12 +68,12 @@ export const useUpdateActionneurMutation = () => {
     ) => {
         const result = await updateActionneurAction(id, updatedActionneur);
         if (result.data) {
-            updateActionneur(id, result.data);
+            updateActionneur(result.data);
         }
         return result;
     };
 
-    const result = useMutationState<Actionneur>({ mutation });
+    const result = useMutationState({ mutation });
 
     return result;
 };

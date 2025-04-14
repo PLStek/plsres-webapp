@@ -1,3 +1,4 @@
+import { formatDate } from "@app/helpers/formatDate";
 import { UserIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import { Actionneur } from "@lib/models/actionneur";
 
@@ -25,13 +26,7 @@ const CardFooter = ({ actionneurs, timestamp }: CardFooterProps) => {
             <div className={styles.iconTextContainer}>
                 <CalendarIcon className={styles.icon} />
                 <span className="text-sm">
-                    {new Date(timestamp).toLocaleDateString("fr-FR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}
+                    {formatDate(timestamp)}
                 </span>
             </div>
         </div>

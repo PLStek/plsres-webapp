@@ -1,4 +1,4 @@
-import { useAuthContext } from "@app/context/AuthContext";
+import { authAtom } from "@app/atoms/authAtoms";
 import { useEffect, useState } from "react";
 import {
     connectAction,
@@ -9,32 +9,33 @@ import {
 } from "@lib/actions";
 import { AuthState } from "@lib/models/auth";
 import { addToast } from "@heroui/react";
+import { useAtomValue, useSetAtom } from "jotai";
 
 export const useIsVerified = () => {
-    const { authData } = useAuthContext();
+    const authData = useAtomValue(authAtom);
     return authData.isVerified;
 };
 
 export const useIsActionneur = () => {
-    const { authData } = useAuthContext();
+    const authData = useAtomValue(authAtom);
     return !!authData.actionneurId;
 };
 
 export const useIsAdmin = () => {
-    const { authData } = useAuthContext();
+    const authData = useAtomValue(authAtom);
     return authData.isAdmin;
 };
 
 export const useIsActionneurAuthentified = () => {
     //TODO: change ?
-    const { authData } = useAuthContext();
+    const authData = useAtomValue(authAtom);
     return !!authData.isActionneurAuthentified;
 };
 
 //TODO: maybe refactor to use a single hook for auth data
 
 export const useConnect = () => {
-    const { setAuthData } = useAuthContext();
+    const setAuthData = useSetAtom(authAtom);
     const [data, setData] = useState<AuthState | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -103,7 +104,7 @@ export const useConnect = () => {
 };
 
 export const useConnectFromDiscordId = () => {
-    const { setAuthData } = useAuthContext();
+    const setAuthData = useSetAtom(authAtom);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -130,7 +131,7 @@ export const useConnectFromDiscordId = () => {
 };
 
 export const useAuthenticate = () => {
-    const { setAuthData } = useAuthContext();
+    const setAuthData = useSetAtom(authAtom);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -148,7 +149,7 @@ export const useAuthenticate = () => {
 };
 
 export const useConnectActionneur = () => {
-    const { setAuthData } = useAuthContext();
+    const setAuthData = useSetAtom(authAtom);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -174,7 +175,7 @@ export const useConnectActionneur = () => {
 };
 
 export const useDisconnect = () => {
-    const { setAuthData } = useAuthContext();
+    const setAuthData = useSetAtom(authAtom);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 

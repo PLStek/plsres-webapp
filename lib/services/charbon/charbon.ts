@@ -116,7 +116,7 @@ export const createCharbonService = async ({
 export const updateCharbonService = async (
     id: number,
     { courseId, actionneurIds, ...data }: CharbonUpdateInput
-): Promise<Charbon> => {
+): Promise<FullCharbon> => {
     const course = courseId ? { connect: { id: courseId } } : undefined;
 
     const actionneursUpdate = actionneurIds
@@ -135,7 +135,7 @@ export const updateCharbonService = async (
 
     const updatedCharbon = await putCharbon(id, newCharbonPutData);
 
-    return buildCharbonWithActionneurs(updatedCharbon);
+    return buildFullCharbonWithActionneurs(updatedCharbon);
 };
 
 export const startCharbonService = async (id: number): Promise<Charbon> => {

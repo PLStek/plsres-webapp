@@ -5,11 +5,16 @@ import {
     deleteActionneurInvitesAction,
 } from "@lib/actions";
 import { Invite } from "@lib/models/actionneur";
-import { useInviteContext } from "@app/context/InviteContext";
 import { useMutationState, useQueryState } from "./useQueryState";
+import {
+    addInviteAtom,
+    invitesAtom,
+    removeInviteAtom,
+} from "@app/atoms/inviteAtoms";
+import { useAtom } from "jotai";
 
 export const useActionneurInvitesQuery = () => {
-    const { invites, setInvites } = useInviteContext();
+    const [invites, setInvites] = useAtom(invitesAtom);
     const { state, setResult, makeLoading } = useQueryState<Invite[]>({});
 
     const fetchData = useCallback(async () => {
@@ -33,7 +38,7 @@ export const useActionneurInvitesQuery = () => {
 };
 
 export const useCreateActionneurInviteMutation = () => {
-    const { addInvite } = useInviteContext();
+    const [, addInvite] = useAtom(addInviteAtom);
 
     const mutation = async (discordId: string) => {
         const result = await createActionneurInviteAction(discordId);
@@ -43,12 +48,12 @@ export const useCreateActionneurInviteMutation = () => {
         return result;
     };
 
-    const result = useMutationState<Invite>({ mutation });
+    const result = useMutationState({ mutation });
     return result;
 };
 
 export const useDeleteActionneurInvitesMutation = () => {
-    const { removeInvite } = useInviteContext();
+    const [, removeInvite] = useAtom(removeInviteAtom);
 
     const mutation = async (ids: number[]) => {
         const result = await deleteActionneurInvitesAction(ids);
@@ -58,7 +63,7 @@ export const useDeleteActionneurInvitesMutation = () => {
         return result;
     };
 
-    const result = useMutationState<void>({ mutation });
+    const result = useMutationState({ mutation });
 
     return result;
 };
