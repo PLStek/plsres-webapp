@@ -1,7 +1,6 @@
 declare namespace NodeJS {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface ProcessEnv extends Record<EnvKeys, string> {
-        DATABASE_UR: string;
         TOKEN_SECRET: string;
         PEPPER: string;
         NEXT_PUBLIC_DISCORD_CLIENT_ID: string;

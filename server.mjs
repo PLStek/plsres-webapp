@@ -8,7 +8,6 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const environnementVariables = [
-    "DATABASE_URL",
     "TOKEN_SECRET",
     "PEPPER",
     "NEXT_PUBLIC_DISCORD_CLIENT_ID",
