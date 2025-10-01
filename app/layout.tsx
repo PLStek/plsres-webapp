@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "../lib/discord";
 import { Commissioner } from "next/font/google";
 import { ReactNode } from "react";
 

@@ -1,6 +1,8 @@
 import { createServer } from "http";
 import { parse } from "url";
 import next from "next";
+import "./lib/prisma.ts";
+import { initDiscordClient } from "./lib/services/discord/init.js";
 
 const port = parseInt(process.env.PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
@@ -18,7 +20,7 @@ const environnementVariables = [
     "DISCORD_COMMUNICATION_CHANNEL_ID",
     "DISCORD_BOT_TOKEN",
     "NEXT_PUBLIC_WEBAPP_URL",
-]
+];
 
 app.prepare().then(() => {
     environnementVariables.forEach((key) => {
@@ -29,7 +31,7 @@ app.prepare().then(() => {
     });
 
     const server = createServer((req, res) => {
-        const parsedUrl = parse(req.url, true);
+        const parsedUrl = parse(req.url || "", true);
         handle(req, res, parsedUrl);
     });
 
@@ -39,5 +41,11 @@ app.prepare().then(() => {
                 dev ? "development" : process.env.NODE_ENV
             }`
         );
+
+        try {
+            await initDiscordClient();
+        } catch (error) {
+            console.error("Erreur lors de l'initialisation de Discord:", error);
+        }
     });
 });

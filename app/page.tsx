@@ -3,7 +3,6 @@ import CharbonMine from "./home/charbonMine/CharbonMine";
 import Sidebar from "./home/sidebar/Sidebar";
 import InviteModal from "./home/modals/inviteModal/InviteModal";
 import EditCharbonDrawerWrapper from "./home/modals/editCharbonDrawer/EditCharbonDrawerWrapper";
-import Providers from "./Providers";
 import AdminDrawer from "./home/modals/AdminDrawer";
 import EditCharbonDrawer from "./home/modals/editCharbonDrawer/EditCharbonDrawer";
 import VerificationModal from "./home/modals/VerificationModal";

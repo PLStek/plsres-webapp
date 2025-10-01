@@ -5,24 +5,21 @@ const nextConfig = {
     reactStrictMode: false,
     experimental: {
         serverActions: {
+            // Allows larger file uploads with server actions
             bodySizeLimit: "8mb",
         },
     },
+    
+    output: 'standalone',
     webpack: (config, { isServer }) => {
+        // Prevent Discord.js from being bundled on server-side to avoid native module conflicts
         if (isServer) {
-            const externals = ["discord.js"];
+            if (!config.externals) config.externals = [];
 
-            if (!config.externals) {
-                config.externals = [];
-            }
-
-            config.externals.push(
-                ...externals.map((mod) => ({
-                    [mod]: `commonjs ${mod}`,
-                }))
-            );
+            config.externals.push({
+                ["discord.js"]: "commonjs discord.js",
+            });
         }
-
         return config;
     },
 };
