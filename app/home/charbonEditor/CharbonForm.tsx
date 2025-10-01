@@ -8,11 +8,13 @@ import {
     SharedSelection,
     Textarea,
 } from "@heroui/react";
-import { Charbon } from "@lib/models/charbon";
+import { FullCharbon } from "@lib/models/charbon";
 import { useState, useRef } from "react";
+import Icon from "../components/Icon";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 type CharbonFormProps = {
-    defaultCharbon: Charbon;
+    defaultCharbon: FullCharbon;
 };
 
 export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
@@ -33,9 +35,28 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
     const [descriptionInput, setDescriptionInput] = useState(
         defaultCharbon.description
     );
+    const [replayUrlInput, setReplayUrlInput] = useState(
+        defaultCharbon.replayUrl ?? null
+    );
+
+    const [editingReplayUrl, setEditingReplayUrl] = useState(
+        !!defaultCharbon.replayUrl
+    );
+
+    const isValidUrl = !!replayUrlInput?.match(
+        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+/
+    );
 
     const titleTimerRef = useRef<NodeJS.Timeout | null>(null);
     const descriptionTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const replayUrlTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    const transformUrl = (url: string) => {
+        const videoIdMatch = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+        if (videoIdMatch) {
+            return `https://youtu.be/${videoIdMatch[1]}`;
+        }
+    };
 
     const updateTitle = () => {
         if (titleInput !== defaultCharbon.title) {
@@ -56,6 +77,24 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
             updateCharbon(defaultCharbon.id, {
                 description: descriptionInput,
             });
+        }
+    };
+
+    const updateReplayUrl = () => {
+        if (
+            replayUrlInput &&
+            isValidUrl &&
+            replayUrlInput !== defaultCharbon.replayUrl
+        ) {
+            const transformedUrl = transformUrl(replayUrlInput);
+            if (transformedUrl) {
+                if (replayUrlTimerRef.current) {
+                    clearTimeout(replayUrlTimerRef.current);
+                }
+                updateCharbon(defaultCharbon.id, {
+                    replayUrl: transformedUrl,
+                });
+            }
         }
     };
 
@@ -91,6 +130,20 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
         }, 1500);
     };
 
+    const handleReplayUrlChange = (value: string) => {
+        setReplayUrlInput(value);
+
+        if (replayUrlTimerRef.current) {
+            clearTimeout(replayUrlTimerRef.current);
+        }
+
+        replayUrlTimerRef.current = setTimeout(() => {
+            if (value !== defaultCharbon.replayUrl) {
+                updateReplayUrl();
+            }
+        }, 1500);
+    };
+
     const updateCourse = (course: SharedSelection) => {
         updateCharbon(defaultCharbon.id, {
             courseId: Number([...course][0]),
@@ -106,7 +159,6 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
     return (
         <div className="flex flex-col gap-4">
             <Input
-                name="title"
                 label="Titre"
                 defaultValue={defaultCharbon.title}
                 size="sm"
@@ -116,7 +168,6 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
                 isDisabled={defaultCharbon.isCancelled}
             />
             <Textarea
-                name="description"
                 label="Description"
                 defaultValue={defaultCharbon.description}
                 size="sm"
@@ -127,7 +178,6 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
             />
             <div className="flex gap-4">
                 <Select
-                    name="courseId"
                     placeholder="Cours"
                     defaultSelectedKeys={
                         defaultCourse
@@ -143,7 +193,6 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
                     ))}
                 </Select>
                 <Select
-                    name="actionneurIds"
                     selectionMode="multiple"
                     placeholder="Actionneurs"
                     defaultSelectedKeys={defaultActionneurs}
@@ -158,6 +207,24 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
                     ))}
                 </Select>
             </div>
+            {defaultCharbon.status === "FINISHED" && (
+                <Input
+                    label="Lien du replay"
+                    defaultValue={defaultCharbon.replayUrl ?? undefined}
+                    size="sm"
+                    onValueChange={handleReplayUrlChange}
+                    onBlur={updateReplayUrl}
+                    isDisabled={defaultCharbon.isCancelled}
+                    /* isReadOnly */
+                    isInvalid={!isValidUrl}
+                    errorMessage="URL invalide"
+                    endContent={
+                        <Icon>
+                            <PencilSquareIcon></PencilSquareIcon>
+                        </Icon>
+                    }
+                />
+            )}
         </div>
     );
 };

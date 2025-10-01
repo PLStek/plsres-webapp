@@ -29,7 +29,7 @@ const EditCourseModalContent = ({
         useState("");
     const [discordVoiceChannelId, setDiscordVoiceChannelId] = useState("");
     const [category, setCategory] = useState<CourseCategory | undefined>(
-        undefined
+        undefined,
     );
 
     const reset = useCallback(() => {

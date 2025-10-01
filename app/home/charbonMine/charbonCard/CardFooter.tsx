@@ -25,9 +25,7 @@ const CardFooter = ({ actionneurs, timestamp }: CardFooterProps) => {
 
             <div className={styles.iconTextContainer}>
                 <CalendarIcon className={styles.icon} />
-                <span className="text-sm">
-                    {formatDate(timestamp)}
-                </span>
+                <span className="text-sm">{formatDate(timestamp)}</span>
             </div>
         </div>
     );

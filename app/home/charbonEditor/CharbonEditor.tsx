@@ -1,6 +1,6 @@
 "use client";
 
-import { Charbon } from "@lib/models/charbon";
+import { FullCharbon } from "@lib/models/charbon";
 import CardResources from "@app/home/charbonMine/charbonCard/CardResources";
 import { useResourcesByCharbonIdQuery } from "@app/hooks/useResources";
 import {
@@ -18,7 +18,7 @@ import { useUpdateCharbonMutation } from "@app/hooks/useCharbons";
 import { formatDate } from "@app/helpers/formatDate";
 
 type CharbonEditorProps = {
-    defaultCharbon: Charbon;
+    defaultCharbon: FullCharbon;
 };
 
 const CharbonEditor = ({ defaultCharbon }: CharbonEditorProps) => {

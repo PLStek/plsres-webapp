@@ -27,7 +27,7 @@ type EditCourseModalContextType = {
 };
 
 const EditCourseModalContext = createContext<EditCourseModalContextType | null>(
-    null
+    null,
 );
 
 const EditCourseModal = ({ children }: { children: ReactNode }) => {
@@ -99,7 +99,7 @@ export const useEditCourseModal = () => {
     const context = useContext(EditCourseModalContext);
     if (!context) {
         throw new Error(
-            "useEditCourseModal must be used within the EditCourseModal provider"
+            "useEditCourseModal must be used within the EditCourseModal provider",
         );
     }
     return context;

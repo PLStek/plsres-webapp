@@ -18,6 +18,7 @@ import {
 } from "./services/auth";
 import {
     deleteCharbonService,
+    getCharbonReplayByIdService,
     getCharbonsGroupedByMonthService,
     getFullCharbonByIdService,
     updateCharbonService,
@@ -108,6 +109,10 @@ export const getCharbonsGroupedByMonthAction = withAuth(
 export const getFullCharbonByIdAction = withAuth(
     "actionneur",
     getFullCharbonByIdService
+);
+export const getCharbonReplayByIdAction = withAuth(
+    "verified",
+    getCharbonReplayByIdService
 );
 export const updateCharbonAction = withAuth("actionneur", updateCharbonService);
 export const deleteCharbonAction = withAuth("actionneur", deleteCharbonService);

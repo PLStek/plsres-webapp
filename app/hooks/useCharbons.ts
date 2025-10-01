@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { CharbonUpdateInput, FullCharbon } from "@lib/models/charbon";
 import {
     deleteCharbonAction,
+    getCharbonReplayByIdAction,
     getFullCharbonByIdAction,
     updateCharbonAction,
 } from "@lib/actions";
@@ -140,4 +141,17 @@ export const useDeleteCharbonMutation = () => {
 export const useCharbonFilters = () => {
     const [filters, setFilters] = useAtom(filtersAtom);
     return { filters, setFilters };
+};
+
+export const useOpenCharbonReplay = () => {
+    const mutation = async (id: number) => {
+        const result = await getCharbonReplayByIdAction(id);
+        if (result.data) {
+            window.open(result.data);
+        }
+        return result;
+    };
+
+    const result = useMutationState({ mutation });
+    return result;
 };

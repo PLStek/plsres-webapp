@@ -15,7 +15,11 @@ const Icon = ({
     children,
 }: IconProps) => {
     return (
-        <Tooltip content={tooltipContent} isDisabled={!tooltipContent} closeDelay={0}>
+        <Tooltip
+            content={tooltipContent}
+            isDisabled={!tooltipContent}
+            closeDelay={0}
+        >
             <button
                 type="button"
                 className={
