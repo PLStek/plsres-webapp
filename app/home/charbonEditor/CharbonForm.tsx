@@ -10,8 +10,6 @@ import {
 } from "@heroui/react";
 import { FullCharbon } from "@lib/models/charbon";
 import { useState, useRef } from "react";
-import Icon from "../components/Icon";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 type CharbonFormProps = {
     defaultCharbon: FullCharbon;
@@ -38,10 +36,7 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
     const [replayUrlInput, setReplayUrlInput] = useState(
         defaultCharbon.replayUrl ?? null
     );
-
-    const [editingReplayUrl, setEditingReplayUrl] = useState(
-        !!defaultCharbon.replayUrl
-    );
+    console.log("replayUrlInput", replayUrlInput);
 
     const isValidUrl = !!replayUrlInput?.match(
         /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+/
@@ -50,13 +45,6 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
     const titleTimerRef = useRef<NodeJS.Timeout | null>(null);
     const descriptionTimerRef = useRef<NodeJS.Timeout | null>(null);
     const replayUrlTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-    const transformUrl = (url: string) => {
-        const videoIdMatch = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-        if (videoIdMatch) {
-            return `https://youtu.be/${videoIdMatch[1]}`;
-        }
-    };
 
     const updateTitle = () => {
         if (titleInput !== defaultCharbon.title) {
@@ -86,13 +74,12 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
             isValidUrl &&
             replayUrlInput !== defaultCharbon.replayUrl
         ) {
-            const transformedUrl = transformUrl(replayUrlInput);
-            if (transformedUrl) {
+            if (replayUrlInput) {
                 if (replayUrlTimerRef.current) {
                     clearTimeout(replayUrlTimerRef.current);
                 }
                 updateCharbon(defaultCharbon.id, {
-                    replayUrl: transformedUrl,
+                    replayUrl: replayUrlInput,
                 });
             }
         }
@@ -215,14 +202,8 @@ export const CharbonForm = ({ defaultCharbon }: CharbonFormProps) => {
                     onValueChange={handleReplayUrlChange}
                     onBlur={updateReplayUrl}
                     isDisabled={defaultCharbon.isCancelled}
-                    /* isReadOnly */
                     isInvalid={!isValidUrl}
                     errorMessage="URL invalide"
-                    endContent={
-                        <Icon>
-                            <PencilSquareIcon></PencilSquareIcon>
-                        </Icon>
-                    }
                 />
             )}
         </div>

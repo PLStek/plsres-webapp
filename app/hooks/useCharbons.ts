@@ -88,8 +88,9 @@ export const useFullCharbonByIdQuery = (id: number | null) => {
             setResult({ data: null, error: null });
             return;
         }
-        if (fullCharbons[id]) {
-            setResult({ data: fullCharbons[id], error: null });
+        const cached = fullCharbons.find((charbon) => charbon.id === id);
+        if (cached) {
+            setResult({ data: cached, error: null });
             return;
         }
         const result = await getFullCharbonByIdAction(id); //TODO: attention: réservé aux actionneurs => faire un check
