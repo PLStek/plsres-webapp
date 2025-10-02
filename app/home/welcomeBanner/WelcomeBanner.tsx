@@ -5,7 +5,12 @@ import Image from "next/image";
 import charbonImage from "@images/charbon.svg";
 import { useVerificationModal } from "../modals/VerificationModal";
 import { useAdminDrawer } from "../modals/AdminDrawer";
-import { useConnect, useDisconnect, useIsAdmin, useIsVerified } from "@app/hooks/useAuth";
+import {
+    useConnect,
+    useDisconnect,
+    useIsAdmin,
+    useIsVerified,
+} from "@app/hooks/useAuth";
 import { Button, Card } from "@heroui/react";
 
 const WelcomeBanner = () => {

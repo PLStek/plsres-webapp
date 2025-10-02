@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { CharbonUpdateInput, FullCharbon } from "@lib/models/charbon";
 import {
     deleteCharbonAction,
+    getCharbonReplayByIdAction,
     getFullCharbonByIdAction,
     updateCharbonAction,
 } from "@lib/actions";
@@ -87,8 +88,9 @@ export const useFullCharbonByIdQuery = (id: number | null) => {
             setResult({ data: null, error: null });
             return;
         }
-        if (fullCharbons[id]) {
-            setResult({ data: fullCharbons[id], error: null });
+        const cached = fullCharbons.find((charbon) => charbon.id === id);
+        if (cached) {
+            setResult({ data: cached, error: null });
             return;
         }
         const result = await getFullCharbonByIdAction(id); //TODO: attention: réservé aux actionneurs => faire un check
@@ -140,4 +142,17 @@ export const useDeleteCharbonMutation = () => {
 export const useCharbonFilters = () => {
     const [filters, setFilters] = useAtom(filtersAtom);
     return { filters, setFilters };
+};
+
+export const useOpenCharbonReplay = () => {
+    const mutation = async (id: number) => {
+        const result = await getCharbonReplayByIdAction(id);
+        if (result.data) {
+            window.open(result.data);
+        }
+        return result;
+    };
+
+    const result = useMutationState({ mutation });
+    return result;
 };

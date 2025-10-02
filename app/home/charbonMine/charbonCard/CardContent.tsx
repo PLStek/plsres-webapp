@@ -1,6 +1,7 @@
 import Icon from "@app/home/components/Icon";
 import { useEditCharbonDrawer } from "@app/home/modals/editCharbonDrawer/EditCharbonDrawer";
 import { useIsActionneur, useIsVerified } from "@app/hooks/useAuth";
+import { useOpenCharbonReplay } from "@app/hooks/useCharbons";
 import {
     ArchiveBoxIcon,
     Cog6ToothIcon,
@@ -40,6 +41,7 @@ const CardContent = ({
     toggleResources,
 }: CardContentProps) => {
     const { onOpen: onEditModalOpen } = useEditCharbonDrawer();
+    const { mutate: openCharbonReplay } = useOpenCharbonReplay();
 
     const isVerified = useIsVerified();
     const isActionneur = useIsActionneur();
@@ -72,8 +74,10 @@ const CardContent = ({
                             <ArchiveBoxIcon />
                         </Icon>
                         <Icon
-                            onClick={() => {}}
-                            disabled={!charbon.resourcesCount}
+                            onClick={() => {
+                                openCharbonReplay(charbon.id);
+                            }}
+                            disabled={!charbon.hasReplay}
                         >
                             <PlayCircleIcon />
                         </Icon>
