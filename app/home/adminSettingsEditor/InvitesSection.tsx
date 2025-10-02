@@ -7,6 +7,7 @@ import {
     addToast,
     Button,
     Input,
+    Selection,
     Table,
     TableBody,
     TableCell,
@@ -24,8 +25,7 @@ const InvitesSection = () => {
         useCreateActionneurInviteMutation();
     const { mutate: deleteInvites } = useDeleteActionneurInvitesMutation();
 
-    const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
-
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
     const [discordIdInput, setDiscordIdInput] = useState<string>("");
 
     const copyLink = async (link: string) => {
@@ -45,9 +45,12 @@ const InvitesSection = () => {
     };
 
     const deleteSelectedInvites = async () => {
-        const ids = Array.from(selectedKeys).map((id) => parseInt(id));
+        const ids =
+            selectedKeys === "all"
+                ? (invites || []).map((invite) => invite.id)
+                : Array.from(selectedKeys).map((id) => parseInt(`${id}`));
         await deleteInvites(ids);
-        setSelectedKeys(new Set<string>([]));
+        setSelectedKeys(new Set());
     };
 
     return (
@@ -73,19 +76,6 @@ const InvitesSection = () => {
                 onSelectionChange={setSelectedKeys}
                 removeWrapper
                 onRowAction={() => {}}
-                /*  bottomContent={
-                        <div className="flex w-full justify-center mb-2">
-                            <Pagination
-                                isCompact
-                                showControls
-                                showShadow
-                                color="default"
-                                page={page}
-                                total={pages}
-                                onChange={(page) => setPage(page)}
-                            />
-                        </div>
-                    } */
             >
                 <TableHeader>
                     <TableColumn>ID Discord</TableColumn>
@@ -94,7 +84,10 @@ const InvitesSection = () => {
                         <div className="flex gap-2">
                             <Icon
                                 onClick={deleteSelectedInvites}
-                                disabled={selectedKeys.size === 0}
+                                disabled={
+                                    selectedKeys !== "all" &&
+                                    selectedKeys.size === 0
+                                }
                             >
                                 <TrashIcon />
                             </Icon>
