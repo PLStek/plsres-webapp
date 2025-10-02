@@ -4,8 +4,14 @@ import {
     useCreateCourseMutation,
     useUpdateCourseMutation,
 } from "@app/hooks/useCourses";
-import { Input, Select, SelectItem, Button } from "@heroui/react";
-import { memo, useCallback, useEffect, useState } from "react";
+import {
+    Input,
+    Select,
+    SelectItem,
+    Button,
+    SharedSelection,
+} from "@heroui/react";
+import { FormEvent, memo, useCallback, useEffect, useState } from "react";
 import { Course, CourseCategory } from "@lib/models/course";
 import { useEditCourseModal } from "./EditCourseModal";
 
@@ -32,6 +38,8 @@ const EditCourseModalContent = ({
         undefined
     );
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const reset = useCallback(() => {
         if (defaultCourse) {
             setCode(defaultCourse.code);
@@ -39,6 +47,12 @@ const EditCourseModalContent = ({
             setDiscordResourceChannelId(defaultCourse.discordResourceChannelId);
             setDiscordVoiceChannelId(defaultCourse.discordVoiceChannelId);
             setCategory(defaultCourse.category);
+        } else {
+            setCode("");
+            setTitle("");
+            setDiscordResourceChannelId("");
+            setDiscordVoiceChannelId("");
+            setCategory(undefined);
         }
     }, [defaultCourse]);
 
@@ -52,55 +66,60 @@ const EditCourseModalContent = ({
         }
     }, [isUpdating, defaultCourse, onClose]);
 
-    const submit = () => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        
+        if (!code.trim() || !title.trim() || !category) {
+            return;
+        }
+
+        setIsSubmitting(true);
+
         if (isUpdating && defaultCourse) {
             updateCourse(defaultCourse.id, {
-                code,
-                title,
+                code: code.trim(),
+                title: title.trim(),
                 discordResourceChannelId,
                 discordVoiceChannelId,
-                category, //TODO: handle case where undefined
+                category,
             });
         } else {
             createCourse({
-                code,
-                title,
+                code: code.trim(),
+                title: title.trim(),
                 discordResourceChannelId,
                 discordVoiceChannelId,
-                category, //TODO: handle case where undefined
+                category,
             });
         }
+        setIsSubmitting(false);
         onClose();
     };
 
     return (
-        <div className="grid grid-cols-6 gap-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-6 gap-4">
             <Input
                 className="col-span-3"
                 label="Code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 size="sm"
+                isRequired
             />
             <Select
                 label="Catégorie"
                 size="sm"
                 className="col-span-3"
-                value={category}
-                onChange={(e) => setCategory(e.target.value as CourseCategory)}
+                selectedKeys={category ? [category] : []}
+                onSelectionChange={(value: SharedSelection) => {
+                    setCategory([...value][0] as CourseCategory);
+                }}
+                isRequired
             >
-                <SelectItem key="ELEC" value="ELEC">
-                    Elec
-                </SelectItem>
-                <SelectItem key="INFO" value="INFO">
-                    Info
-                </SelectItem>
-                <SelectItem key="MECA" value="MECA">
-                    Meca
-                </SelectItem>
-                <SelectItem key="MATH" value="MATH">
-                    Math
-                </SelectItem>
+                <SelectItem key="ELEC">Elec</SelectItem>
+                <SelectItem key="INFO">Info</SelectItem>
+                <SelectItem key="MECA">Meca</SelectItem>
+                <SelectItem key="MATH">Math</SelectItem>
             </Select>
             <Input
                 className="col-span-6"
@@ -108,6 +127,7 @@ const EditCourseModalContent = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 size="sm"
+                isRequired
             />
             <Input
                 className="col-span-3"
@@ -115,6 +135,7 @@ const EditCourseModalContent = ({
                 value={discordResourceChannelId}
                 onChange={(e) => setDiscordResourceChannelId(e.target.value)}
                 size="sm"
+                isRequired
             />
             <Input
                 className="col-span-3"
@@ -122,6 +143,7 @@ const EditCourseModalContent = ({
                 value={discordVoiceChannelId}
                 onChange={(e) => setDiscordVoiceChannelId(e.target.value)}
                 size="sm"
+                isRequired
             />
             <Button onPress={onClose} className="col-span-2">
                 Annuler
@@ -129,10 +151,10 @@ const EditCourseModalContent = ({
             <Button onPress={reset} className="col-span-2">
                 Réinitialiser
             </Button>
-            <Button onPress={submit} className="col-span-2">
+            <Button type="submit" className="col-span-2" isLoading={isSubmitting}>
                 Enregistrer
             </Button>
-        </div>
+        </form>
     );
 };
 

@@ -78,14 +78,9 @@ export const useCreateResourceMutation = () => {
 
     const mutation = async (newResource: ResourceCreateInput) => {
         const formData = new FormData();
-        Object.entries(newResource).forEach(([key, value]) => {
-            //TODO: review (AI generated)
-            if (Array.isArray(value)) {
-                value.forEach((item) => formData.append(key, item as any));
-            } else {
-                formData.append(key, value as any);
-            }
-        });
+        formData.append("title", newResource.title);
+        formData.append("charbonId", newResource.charbonId.toString());
+        formData.append("file", newResource.file);
 
         const result = await createResourceAction(formData);
         const resource = result.data;
