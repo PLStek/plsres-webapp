@@ -1,16 +1,15 @@
 "use client";
 
 import { CircularProgress } from "@heroui/react";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, use } from "react";
 
-const Auth = () => {
-    const searchParams = useSearchParams();
-
-    //TODO: voir si on peut enlever le useEffect
+const AuthContent = ({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+    const code = use(searchParams).code;
     useEffect(() => {
-        const code = searchParams.get("code");
-
         if (code) {
             window.opener.postMessage({ code }, window.location.origin);
             window.close();
@@ -18,9 +17,9 @@ const Auth = () => {
             //TODO: handle
             window.close();
         }
-    }, []);
+    }, [code]);
 
     return <CircularProgress />;
 };
 
-export default Auth;
+export default AuthContent;

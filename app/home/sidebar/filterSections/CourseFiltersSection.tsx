@@ -60,7 +60,7 @@ export const CourseFiltersSection = () => {
                     size="sm"
                 >
                     {courses.map((course) => (
-                        <SelectItem key={course.id} value={course.id}>
+                        <SelectItem key={course.id} >
                             {course.code}
                         </SelectItem>
                     ))}
