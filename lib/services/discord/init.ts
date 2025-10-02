@@ -32,7 +32,6 @@ export const initDiscordClient = async () => {
     discordClient.on("guildScheduledEventDelete", guildScheduledEventDelete);
     discordClient.on("voiceStateUpdate", voiceStateUpdate);
 
-    // Gestion propre de l'arrêt
     const shutdown = async () => {
         console.log("Arrêt du client discord...");
         await discordClient.destroy();

@@ -8,6 +8,7 @@ import {
 } from "@app/hooks/useResources";
 import { Resource } from "@lib/models/resource";
 import {
+    Selection,
     Table,
     TableBody,
     TableCell,
@@ -26,7 +27,7 @@ const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
     const { download } = useResourceFileById();
     const { mutate: deleteResource } = useDeleteResourceMutation();
 
-    const [selectedKeys, setSelectedKeys] = useState(new Set<string>([]));
+    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
 
     return (
         <Table
@@ -43,15 +44,25 @@ const CardResources = ({ resources, editMode = false }: CardResourcesProps) => {
                 <TableColumn>
                     <div className="flex gap-2">
                         <Icon
-                            onClick={() => {}}
-                            disabled={selectedKeys.size === 0}
+                            onClick={() => {
+                                //TODO: download selected
+                            }}
+                            disabled={
+                                selectedKeys !== "all" &&
+                                selectedKeys.size === 0
+                            }
                         >
                             <ArrowDownTrayIcon />
                         </Icon>
                         {editMode && (
                             <Icon
-                                onClick={() => {}}
-                                disabled={selectedKeys.size === 0}
+                                onClick={() => {
+                                    //TODO: delete selected
+                                }}
+                                disabled={
+                                    selectedKeys !== "all" &&
+                                    selectedKeys.size === 0
+                                }
                             >
                                 <TrashIcon />
                             </Icon>
