@@ -11,5 +11,8 @@ declare namespace NodeJS {
         DISCORD_COMMUNICATION_CHANNEL_ID: string;
         DISCORD_BOT_TOKEN: string;
         NEXT_PUBLIC_WEBAPP_URL: string;
+        TURSO_AUTH_TOKEN: string;
+        TURSO_DATABASE_URL: string;
+        LOCAL_DATABASE_URL: string;
     }
 }

@@ -20,6 +20,9 @@ const environnementVariables = [
     "DISCORD_COMMUNICATION_CHANNEL_ID",
     "DISCORD_BOT_TOKEN",
     "NEXT_PUBLIC_WEBAPP_URL",
+    "TURSO_AUTH_TOKEN",
+    "TURSO_DATABASE_URL",
+    "LOCAL_DATABASE_URL",
 ];
 
 app.prepare().then(() => {

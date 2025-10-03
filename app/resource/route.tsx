@@ -37,7 +37,9 @@ export async function GET(request: Request) {
         const mimeType =
             mime.getType(resource.extension) || "application/octet-stream";
 
-        return new Response(fileBuffer, {
+        const fileUint8Array = new Uint8Array(fileBuffer);
+
+        return new Response(fileUint8Array, {
             status: 200,
             headers: {
                 "Content-Type": mimeType,
