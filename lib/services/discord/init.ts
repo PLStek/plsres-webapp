@@ -15,7 +15,7 @@ export const initDiscordClient = async () => {
 
     await discordClient.login(process.env.DISCORD_BOT_TOKEN);
 
-    discordClient.on("ready", () => {
+    discordClient.on("clientReady", () => {
         console.log(
             `Bot Discord connecté en tant que ${discordClient.user?.tag}`
         );

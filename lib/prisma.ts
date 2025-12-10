@@ -1,15 +1,20 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaLibSQL } from "@prisma/adapter-libsql";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-export const prisma = globalForPrisma.prisma || new PrismaClient();
+console.log(
+    "Initializing the database. Make sure the path to the local database exists."
+);
+const adapter = new PrismaLibSQL({
+    url: process.env.LOCAL_DATABASE_URL,
+    syncUrl: process.env.TURSO_DATABASE_URL,
+    authToken: process.env.TURSO_AUTH_TOKEN,
+    syncInterval: 1000 * 1800, // 30 min
+});
+
+export const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-/* await prisma.$queryRawUnsafe("PRAGMA mmap_size = 268435456;");
-await prisma.$queryRawUnsafe("PRAGMA cache_size = -200000;");
-await prisma.$queryRawUnsafe("PRAGMA journal_mode = WAL;");
-await prisma.$queryRawUnsafe("PRAGMA synchronous = NORMAL;");
-await prisma.$queryRawUnsafe("PRAGMA temp_store = MEMORY;");
-await prisma.$queryRawUnsafe("PRAGMA locking_mode = EXCLUSIVE;"); */
 console.log("Prisma initialized");

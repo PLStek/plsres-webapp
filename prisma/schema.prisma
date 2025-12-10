@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
     provider = "sqlite"
-    url      = "file:.//database/plsres.db"
+    url      = env("LOCAL_DATABASE_URL")
 }
 
 model Charbon {
